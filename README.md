@@ -1,0 +1,2 @@
+# Gram-Panchayat-Complaint-Management-System
+The Gram Panchayat Complaint Management System (GPCMS) is a web-based application  designed to simplify the process of registering, tracking, and resolving public complaints within a Gram Panchayat. I
