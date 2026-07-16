@@ -10,3 +10,4 @@ Developers:
 6. Chetan Ugale
 7. Tanmay Dhonde
 8. Dhruv Vyavahare 
+9. Om Uttarwar
