@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gram Panchayat Complaint Management System (GPCMS) | Digital Governance Portal</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Official Gram Panchayat Complaint Management System. Register complaints, track status, explore government schemes, apply for certificates, and stay connected with your village administration.">
+    <meta name="keywords" content="Gram Panchayat, GPCMS, Complaint Management, Grievance Portal, Rural India, Government Schemes, Digital Governance">
+    <meta name="author" content="Gram Panchayat Digital Cell">
+    <meta property="og:title" content="GPCMS — Gram Panchayat Complaint Management System">
+    <meta property="og:description" content="Empowering rural India with transparent, accountable and efficient digital governance.">
+    <meta property="og:type" content="website">
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- AOS — Animate On Scroll -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PAGE LOADER
+═══════════════════════════════════════════════════════════ -->
+<div id="page-loader">
+    <div class="loader-ring"></div>
+    <span class="loader-text">GPCMS &nbsp;|&nbsp; Loading…</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCROLL TO TOP
+═══════════════════════════════════════════════════════════ -->
+<button id="scroll-top" aria-label="Back to top"><i class="fa-solid fa-chevron-up"></i></button>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STICKY HEADER
+═══════════════════════════════════════════════════════════ -->
+<header id="main-header" class="glass-nav fixed-top py-2">
+    <div class="container">
+        <nav class="navbar navbar-expand-lg p-0">
+
+            <!-- Brand / Logo -->
+            <a class="navbar-brand-wrap" href="#home" style="text-decoration:none;">
+                <div class="brand-logo-circle">
+                    <img src="assets/images/panchayat_logo.png" alt="Gram Panchayat Logo">
+                </div>
+                <div class="brand-title-text">
+                    <span class="brand-name">Gram Panchayat</span>
+                    <span class="brand-sub">Together for a Better Village</span>
+                </div>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler border-0 ms-auto me-2" type="button"
+                    data-bs-toggle="collapse" data-bs-target="#navbarMain"
+                    aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation"
+                    style="background:transparent;">
+                <i class="fa-solid fa-bars" style="color:var(--primary);font-size:1.2rem;"></i>
+            </button>
+
+            <!-- Nav Menu -->
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav mx-auto align-items-center gap-1 my-3 my-lg-0">
+                    <li class="nav-item"><a class="nav-link active-nav" href="#home" data-i18n="nav-home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#about" data-i18n="nav-about">About Us</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#quick-services" data-i18n="nav-services">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#schemes" data-i18n="nav-schemes">Government Schemes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#notices" data-i18n="nav-notices">Notices</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#gallery" data-i18n="nav-gallery">Gallery</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#contact" data-i18n="nav-contact">Contact Us</a></li>
+                </ul>
+
+                <!-- Right Side Controls -->
+                <div class="d-flex align-items-center gap-2 ms-lg-3 my-2 my-lg-0">
+
+                    <!-- Language Selector -->
+                    <div class="nav-item dropdown">
+                        <div class="language-selector dropdown-toggle" id="langDropdown"
+                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-globe" style="color:var(--primary);"></i>
+                            <span id="current-lang-text">🇬🇧 English</span>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown" style="min-width:150px;">
+                            <li><a class="dropdown-item lang-select-item" href="#" data-lang="en">🇬🇧 English</a></li>
+                            <li><a class="dropdown-item lang-select-item" href="#" data-lang="mr">🇮🇳 मराठी</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Login Dropdown -->
+                    <div class="nav-item dropdown">
+                        <button class="btn-login-main dropdown-toggle" id="loginDropdown"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user"></i>
+                            <span data-i18n="nav-login">Login</span>
+                        </button>
+                        <ul class="dropdown-menu login-dropdown-menu dropdown-menu-end" aria-labelledby="loginDropdown">
+                            <!-- Citizen Login -->
+                            <li>
+                                <a class="dropdown-item login-role-card d-flex align-items-start gap-3"
+                                   href="citizen-login.html" id="citizen-login-btn">
+                                    <div class="login-role-icon">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    <div>
+                                        <div class="login-role-title" data-i18n="citizen-login-title">👨 Citizen Login</div>
+                                        <div class="login-role-desc" data-i18n="citizen-login-desc">Register complaints, track status, view schemes & certificates.</div>
+                                        <div class="mt-1">
+                                            <span style="font-size:0.72rem;font-weight:700;color:var(--primary);" data-i18n="citizen-login-btn">Login as Citizen →</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider" style="border-color:rgba(139,94,52,0.12);margin:0.4rem 1rem;"></li>
+                            <!-- Official Login -->
+                            <li>
+                                <a class="dropdown-item login-role-card d-flex align-items-start gap-3"
+                                   href="official-login.html" id="official-login-btn">
+                                    <div class="login-role-icon" style="background:rgba(212,175,55,0.12);color:#9a7e1a;">
+                                        <i class="fa-solid fa-building-columns"></i>
+                                    </div>
+                                    <div>
+                                        <div class="login-role-title" data-i18n="official-login-title">🏛 Official Login</div>
+                                        <div class="login-role-desc" data-i18n="official-login-desc">Manage complaints, publish notices & access the admin dashboard.</div>
+                                        <div class="mt-1">
+                                            <span style="font-size:0.72rem;font-weight:700;color:var(--primary);" data-i18n="official-login-btn">Login as Official →</span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div><!-- /navbar-collapse -->
+        </nav>
+    </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════
+     HERO SECTION
+═══════════════════════════════════════════════════════════ -->
+<section id="home" class="hero-section">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="row">
+            <div class="col-lg-7 col-xl-6">
+                <div class="hero-welcome-badge" data-i18n="hero-badge">
+                    <i class="fa-solid fa-leaf me-1"></i> Welcome to
+                </div>
+                <h1 class="hero-title mb-2" data-i18n="hero-title">
+                    <span class="accent-word">Gram</span> Panchayat
+                </h1>
+                <p class="hero-subtitle-main" data-i18n="hero-subtitle-main">Building a Stronger and Better Village</p>
+                <p class="hero-desc" data-i18n="hero-desc">
+                    Our mission is to bring transparency, accountability, and efficient governance while providing better public services to every citizen.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#tracker" class="btn-hero-primary" id="hero-register-btn">
+                        <i class="fa-solid fa-bullhorn me-2"></i>
+                        <span data-i18n="btn-register">📢 Register Complaint</span>
+                    </a>
+                    <a href="#tracker" class="btn-hero-secondary" id="hero-track-btn">
+                        <i class="fa-solid fa-magnifying-glass me-2"></i>
+                        <span data-i18n="btn-track-complaint">🔍 Track Complaint</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-scroll-indicator">
+        <span>Scroll Down</span>
+        <i class="fa-solid fa-chevron-down"></i>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     QUICK SERVICE CARDS
+═══════════════════════════════════════════════════════════ -->
+<section id="quick-services" class="section-padding bg-light-warm">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag" data-i18n="services-tag">Our Services</span>
+            <h2 class="section-title" data-i18n="services-title">Quick Citizen Services</h2>
+            <p class="section-subtitle" data-i18n="services-subtitle">Access all panchayat services in one click — fast, transparent and fully digital.</p>
+        </div>
+        <div class="row g-4">
+            <!-- Card 1 -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-file-pen"></i></div>
+                    <div class="service-title" data-i18n="s1-title">📄 Register Complaint</div>
+                    <p class="service-desc" data-i18n="s1-desc">Raise issues related to roads, water supply, sanitation, electricity and public services.</p>
+                    <div class="service-arrow">Get Started <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="60">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                    <div class="service-title" data-i18n="s2-title">🔍 Track Complaint</div>
+                    <p class="service-desc" data-i18n="s2-desc">Track the real-time status of your complaint using your unique Complaint ID.</p>
+                    <div class="service-arrow">Track Now <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="120">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="service-title" data-i18n="s3-title">🏛 Government Schemes</div>
+                    <p class="service-desc" data-i18n="s3-desc">Explore central and state government schemes available for villagers and rural families.</p>
+                    <div class="service-arrow">Explore <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <!-- Card 4 -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="180">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-file-certificate"></i></div>
+                    <div class="service-title" data-i18n="s4-title">📑 Certificates</div>
+                    <p class="service-desc" data-i18n="s4-desc">Apply online for Birth, Death, Income, Residence and other official certificates.</p>
+                    <div class="service-arrow">Apply Now <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <!-- Card 5 -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="240">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-coins"></i></div>
+                    <div class="service-title" data-i18n="s5-title">💰 Tax & Payments</div>
+                    <p class="service-desc" data-i18n="s5-desc">Pay House Tax, Water Tax and other Panchayat charges securely online.</p>
+                    <div class="service-arrow">Pay Now <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+            <!-- Card 6 -->
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                <div class="service-card">
+                    <div class="service-icon"><i class="fa-solid fa-comments"></i></div>
+                    <div class="service-title" data-i18n="s6-title">💬 Feedback</div>
+                    <p class="service-desc" data-i18n="s6-desc">Submit your suggestions and feedback to help improve village administration and services.</p>
+                    <div class="service-arrow">Share Now <i class="fa-solid fa-arrow-right"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     STATISTICS SECTION
+═══════════════════════════════════════════════════════════ -->
+<section class="stats-section" id="stats">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-number" data-target="1245" data-suffix="">0</div>
+                    <div class="stat-label" data-i18n="stat-residents">👥 Total Residents</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="stat-number" data-target="428" data-suffix="">0</div>
+                    <div class="stat-label" data-i18n="stat-resolved">📋 Complaints Resolved</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-landmark"></i></div>
+                    <div class="stat-number" data-target="36" data-suffix="">0</div>
+                    <div class="stat-label" data-i18n="stat-schemes">🏛 Government Schemes</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-calendar-days"></i></div>
+                    <div class="stat-number" data-target="12" data-suffix="">0</div>
+                    <div class="stat-label" data-i18n="stat-events">📅 Upcoming Events</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LATEST NOTICES
+═══════════════════════════════════════════════════════════ -->
+<section id="notices" class="section-padding">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+            <!-- Left: Section heading -->
+            <div class="col-lg-4" data-aos="fade-right">
+                <span class="section-tag" data-i18n="notices-tag">Official Board</span>
+                <h2 class="section-title" data-i18n="notices-title">Latest Notices</h2>
+                <p class="section-subtitle text-start" style="max-width:none;" data-i18n="notices-subtitle">
+                    Stay informed with the most recent official announcements, meetings, and updates from your Gram Panchayat.
+                </p>
+                <a href="#" class="btn-primary-custom mt-2">
+                    <i class="fa-solid fa-bell me-2"></i> <span data-i18n="notices-subscribe">Subscribe Alerts</span>
+                </a>
+            </div>
+            <!-- Right: Notices Board -->
+            <div class="col-lg-8" data-aos="fade-left">
+                <div class="notices-board">
+                    <div class="notices-header">
+                        <div class="notices-header-title">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                            <span data-i18n="notices-board-title">Notice Board</span>
+                        </div>
+                        <a href="#" class="view-all-link" data-i18n="notices-view-all">View All →</a>
+                    </div>
+                    <!-- Notice Items -->
+                    <div class="notice-item">
+                        <div class="notice-bell"><i class="fa-solid fa-bell"></i></div>
+                        <div class="notice-content">
+                            <div class="notice-title" data-i18n="notice-1-title">Gram Sabha Meeting — July 2026</div>
+                            <div class="notice-date"><i class="fa-regular fa-calendar me-1"></i>21 Jul 2026</div>
+                        </div>
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="notice-item">
+                        <div class="notice-bell"><i class="fa-solid fa-bell"></i></div>
+                        <div class="notice-content">
+                            <div class="notice-title" data-i18n="notice-2-title">Road Repair Work — Main Bazaar Lane</div>
+                            <div class="notice-date"><i class="fa-regular fa-calendar me-1"></i>19 Jul 2026</div>
+                        </div>
+                        <span class="badge-new">NEW</span>
+                    </div>
+                    <div class="notice-item">
+                        <div class="notice-bell"><i class="fa-solid fa-bell"></i></div>
+                        <div class="notice-content">
+                            <div class="notice-title" data-i18n="notice-3-title">Water Supply Schedule Change — 22–24 July</div>
+                            <div class="notice-date"><i class="fa-regular fa-calendar me-1"></i>17 Jul 2026</div>
+                        </div>
+                    </div>
+                    <div class="notice-item">
+                        <div class="notice-bell"><i class="fa-solid fa-bell"></i></div>
+                        <div class="notice-content">
+                            <div class="notice-title" data-i18n="notice-4-title">Agriculture Subsidy Scheme — Apply Now</div>
+                            <div class="notice-date"><i class="fa-regular fa-calendar me-1"></i>15 Jul 2026</div>
+                        </div>
+                    </div>
+                    <div class="notice-item">
+                        <div class="notice-bell"><i class="fa-solid fa-bell"></i></div>
+                        <div class="notice-content">
+                            <div class="notice-title" data-i18n="notice-5-title">Panchayat Election Notice — August 2026</div>
+                            <div class="notice-date"><i class="fa-regular fa-calendar me-1"></i>10 Jul 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GOVERNMENT SCHEMES — FEATURED
+═══════════════════════════════════════════════════════════ -->
+<section id="schemes" class="section-padding bg-light-warm">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag" data-i18n="schemes-tag">Benefits</span>
+            <h2 class="section-title" data-i18n="schemes-title">Government Schemes</h2>
+            <p class="section-subtitle" data-i18n="schemes-subtitle">Discover welfare schemes initiated by Central and State Governments. Apply online or view eligibility.</p>
+        </div>
+
+        <!-- Featured 3 -->
+        <div class="row g-4 mb-5">
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="scheme-featured-card">
+                    <div class="scheme-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80" alt="PM Awas Yojana">
+                        <div class="scheme-img-overlay"></div>
+                        <span class="scheme-badge-overlay">Central Govt.</span>
+                    </div>
+                    <div class="scheme-body">
+                        <h5 class="scheme-title" data-i18n="scheme-pmay-title">PM Awas Yojana (PMAY)</h5>
+                        <p class="scheme-desc" data-i18n="scheme-pmay-desc">Providing affordable housing for all rural families with subsidized home loan options and direct financial assistance to build pucca homes.</p>
+                        <a href="#" class="btn-learn-more"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="scheme-learn-more">Learn More</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="80">
+                <div class="scheme-featured-card">
+                    <div class="scheme-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&auto=format&fit=crop&q=80" alt="Jal Jeevan Mission">
+                        <div class="scheme-img-overlay"></div>
+                        <span class="scheme-badge-overlay">Central Govt.</span>
+                    </div>
+                    <div class="scheme-body">
+                        <h5 class="scheme-title" data-i18n="scheme-jjm-title">Jal Jeevan Mission</h5>
+                        <p class="scheme-desc" data-i18n="scheme-jjm-desc">Delivering clean and sufficient drinking water through functional household tap connections to every rural household by 2024.</p>
+                        <a href="#" class="btn-learn-more"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="scheme-learn-more">Learn More</span></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="160">
+                <div class="scheme-featured-card">
+                    <div class="scheme-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80" alt="PM Kisan Samman Nidhi">
+                        <div class="scheme-img-overlay"></div>
+                        <span class="scheme-badge-overlay">Central Govt.</span>
+                    </div>
+                    <div class="scheme-body">
+                        <h5 class="scheme-title" data-i18n="scheme-pmkisan-title">PM Kisan Samman Nidhi</h5>
+                        <p class="scheme-desc" data-i18n="scheme-pmkisan-desc">Direct financial benefit of ₹6,000 per year in three equal installments directly into the bank accounts of eligible small farmers.</p>
+                        <a href="#" class="btn-learn-more"><i class="fa-solid fa-arrow-right"></i> <span data-i18n="scheme-learn-more">Learn More</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- More Schemes Grid -->
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
+                <div class="glass-card scheme-card">
+                    <div class="feature-icon-box bg-primary-soft"><i class="fa-solid fa-heart-pulse"></i></div>
+                    <h6 class="scheme-title" data-i18n="s-ayushman">Ayushman Bharat (PM-JAY)</h6>
+                    <p class="scheme-desc" data-i18n="s-ayushman-desc">Free health cover up to ₹5 Lakhs per family for secondary & tertiary hospitalization.</p>
+                    <div class="scheme-eligibility"><strong>Eligibility:</strong> SECC-listed BPL families. <a href="#" class="btn btn-secondary-custom w-100 btn-sm mt-2" data-i18n="scheme-learn-more">Learn More</a></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="60">
+                <div class="glass-card scheme-card">
+                    <div class="feature-icon-box bg-secondary-soft"><i class="fa-solid fa-hands-clean"></i></div>
+                    <h6 class="scheme-title">Swachh Bharat Mission</h6>
+                    <p class="scheme-desc">Financial support up to ₹12,000 for constructing individual household toilets to promote sanitation.</p>
+                    <div class="scheme-eligibility"><strong>Eligibility:</strong> Rural households lacking toilets. <a href="#" class="btn btn-secondary-custom w-100 btn-sm mt-2" data-i18n="scheme-learn-more">Learn More</a></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="120">
+                <div class="glass-card scheme-card">
+                    <div class="feature-icon-box bg-accent-soft"><i class="fa-solid fa-person-digging"></i></div>
+                    <h6 class="scheme-title">MGNREGA</h6>
+                    <p class="scheme-desc">Guarantees 100 days of manual wage employment in a financial year to adult rural household members.</p>
+                    <div class="scheme-eligibility"><strong>Eligibility:</strong> Adult rural household members. <a href="#" class="btn btn-secondary-custom w-100 btn-sm mt-2" data-i18n="scheme-learn-more">Learn More</a></div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="180">
+                <div class="glass-card scheme-card">
+                    <div class="feature-icon-box bg-primary-soft"><i class="fa-solid fa-graduation-cap"></i></div>
+                    <h6 class="scheme-title">Beti Bachao Beti Padhao</h6>
+                    <p class="scheme-desc">Welfare programs focused on protecting the girl child and securing primary and secondary education.</p>
+                    <div class="scheme-eligibility"><strong>Eligibility:</strong> Families with female children. <a href="#" class="btn btn-secondary-custom w-100 btn-sm mt-2" data-i18n="scheme-learn-more">Learn More</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     EMERGENCY CONTACTS
+═══════════════════════════════════════════════════════════ -->
+<section id="emergency" class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag" data-i18n="emergency-tag">24×7 Helplines</span>
+            <h2 class="section-title" data-i18n="emergency-title">Emergency Contacts</h2>
+            <p class="section-subtitle" data-i18n="emergency-subtitle">Reach out immediately for critical local assistance, medical aids, and administrative queries.</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="0">
+                <div class="emergency-card">
+                    <div class="emergency-icon bg-primary-soft"><i class="fa-solid fa-shield-heart"></i></div>
+                    <div>
+                        <div class="emergency-title">Police Department</div>
+                        <div class="emergency-number">100</div>
+                    </div>
+                    <a href="tel:100" class="btn-call"><i class="fa-solid fa-phone"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="50">
+                <div class="emergency-card">
+                    <div class="emergency-icon bg-secondary-soft"><i class="fa-solid fa-truck-medical"></i></div>
+                    <div>
+                        <div class="emergency-title">Ambulance Service</div>
+                        <div class="emergency-number">108</div>
+                    </div>
+                    <a href="tel:108" class="btn-call"><i class="fa-solid fa-phone"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="emergency-card">
+                    <div class="emergency-icon bg-accent-soft"><i class="fa-solid fa-fire-extinguisher"></i></div>
+                    <div>
+                        <div class="emergency-title">Fire Brigade</div>
+                        <div class="emergency-number">101</div>
+                    </div>
+                    <a href="tel:101" class="btn-call"><i class="fa-solid fa-phone"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="150">
+                <div class="emergency-card">
+                    <div class="emergency-icon bg-primary-soft"><i class="fa-solid fa-person-dress"></i></div>
+                    <div>
+                        <div class="emergency-title">Women Helpline</div>
+                        <div class="emergency-number">1091</div>
+                    </div>
+                    <a href="tel:1091" class="btn-call"><i class="fa-solid fa-phone"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="emergency-card">
+                    <div class="emergency-icon bg-secondary-soft"><i class="fa-solid fa-bolt"></i></div>
+                    <div>
+                        <div class="emergency-title">Electricity Office</div>
+                        <div class="emergency-number" style="font-size:0.9rem;">Local Contact</div>
+                    </div>
+                    <a href="tel:1800233343" class="btn-call"><i class="fa-solid fa-phone"></i></a>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="250">
+                <div class="emergency-card">
+                    <div class="emergency-icon bg-accent-soft"><i class="fa-solid fa-droplet"></i></div>
+                    <div>
+                        <div class="emergency-title">Water Supply Office</div>
+                        <div class="emergency-number" style="font-size:0.9rem;">Local Contact</div>
+                    </div>
+                    <a href="tel:1800233445" class="btn-call"><i class="fa-solid fa-phone"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     COMPLAINT STATUS CHECKER
+═══════════════════════════════════════════════════════════ -->
+<section id="tracker" class="tracker-section">
+    <div class="container">
+        <div class="text-center mb-4">
+            <span class="section-tag" data-i18n="tracker-tag">Real-Time Tracking</span>
+            <h2 class="section-title" data-i18n="tracker-title">Complaint Status Checker</h2>
+            <p class="section-subtitle" data-i18n="tracker-subtitle">Enter your Complaint ID to view the live status timeline of your grievance.</p>
+        </div>
+        <div class="tracker-card" data-aos="zoom-in">
+            <form id="tracker-form">
+                <div class="tracker-input-wrap">
+                    <i class="fa-solid fa-hashtag" style="color:var(--text-muted);"></i>
+                    <input type="text" id="complaint-id-input" class="tracker-input"
+                           placeholder="e.g., GPCMS202600123" data-i18n="tracker-placeholder" autocomplete="off">
+                    <button type="submit" id="btn-track" class="btn-track">
+                        <i class="fa-solid fa-magnifying-glass me-1"></i>
+                        <span data-i18n="btn-track">Track Complaint</span>
+                    </button>
+                </div>
+                <p class="text-center mt-3" style="font-size:0.78rem;color:var(--text-muted);">
+                    <i class="fa-solid fa-circle-info me-1"></i>
+                    <span data-i18n="tracker-hint">Try: <strong>GPCMS202600123</strong> or <strong>GPCMS202600999</strong></span>
+                </p>
+            </form>
+
+            <!-- Timeline Result -->
+            <div id="timeline-card" class="timeline-result">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <span style="font-size:0.78rem;color:var(--text-muted);" data-i18n="tracker-id-label">Complaint ID:</span>
+                        <strong id="tracking-no" style="color:var(--primary);margin-left:5px;"></strong>
+                    </div>
+                    <span class="badge bg-success rounded-pill px-3 py-2" style="font-size:0.72rem;">● Live Tracking</span>
+                </div>
+                <div class="timeline-steps">
+                    <div class="timeline-bar" id="timeline-bar"></div>
+                    <div class="step-node" id="step-1">
+                        <div class="step-circle"><i class="fa-solid fa-file-pen"></i></div>
+                        <div class="step-label" data-i18n="step-registered">Complaint<br>Submitted</div>
+                        <div class="step-date" id="date-1">—</div>
+                    </div>
+                    <div class="step-node" id="step-2">
+                        <div class="step-circle"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+                        <div class="step-label" data-i18n="step-review">Under<br>Review</div>
+                        <div class="step-date" id="date-2">—</div>
+                    </div>
+                    <div class="step-node" id="step-3">
+                        <div class="step-circle"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="step-label" data-i18n="step-assigned">Assigned<br>to Officer</div>
+                        <div class="step-date" id="date-3">—</div>
+                    </div>
+                    <div class="step-node" id="step-4">
+                        <div class="step-circle"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+                        <div class="step-label" data-i18n="step-progress">In<br>Progress</div>
+                        <div class="step-date" id="date-4">—</div>
+                    </div>
+                    <div class="step-node" id="step-5">
+                        <div class="step-circle"><i class="fa-solid fa-circle-check"></i></div>
+                        <div class="step-label" data-i18n="step-resolved">Resolved</div>
+                        <div class="step-date" id="date-5">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     GALLERY SECTION
+═══════════════════════════════════════════════════════════ -->
+<section id="gallery" class="section-padding bg-light-warm">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag" data-i18n="gallery-tag">Visual Stories</span>
+            <h2 class="section-title" data-i18n="gallery-title">Gallery</h2>
+            <p class="section-subtitle" data-i18n="gallery-subtitle">A glimpse into village life, governance, and community development through our lens.</p>
+        </div>
+        <div class="gallery-grid" data-aos="fade-up">
+            <div class="gallery-item">
+                <img src="assets/images/gallery_office.png" alt="Gram Panchayat Office" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-building me-2"></i>Gram Panchayat Office</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/images/gallery_lake.png" alt="Village Lake" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-water me-2"></i>Village Lake</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&auto=format&fit=crop&q=80" alt="Village Roads" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-road me-2"></i>Village Roads</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/images/gallery_school.png" alt="Village School" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-school me-2"></i>Village School</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/images/gallery_plantation.png" alt="Plantation Drive" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-tree me-2"></i>Plantation Drive</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="assets/images/gallery_community.png" alt="Community Hall" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-people-roof me-2"></i>Community Hall</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1532094349884-543559c5bc5b?w=600&auto=format&fit=crop&q=80" alt="Clean Village Campaign" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-broom me-2"></i>Clean Village Campaign</div>
+                </div>
+            </div>
+            <div class="gallery-item">
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&auto=format&fit=crop&q=80" alt="Gram Sabha Meeting" loading="lazy">
+                <div class="gallery-overlay">
+                    <div class="gallery-overlay-title"><i class="fa-solid fa-people-group me-2"></i>Gram Sabha Meeting</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ANNOUNCEMENT SLIDER
+═══════════════════════════════════════════════════════════ -->
+<section class="announcement-slider-section">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Updates</span>
+            <h2 class="section-title" data-i18n="announcements-title">Public Announcements</h2>
+            <p class="section-subtitle" data-i18n="announcements-subtitle" style="color:rgba(255,255,255,0.6);">Stay updated with official statements and local alerts from your Panchayat body.</p>
+        </div>
+        <div class="announcement-slider-wrap" id="announcement-slider">
+            <div class="announcement-slide active">
+                <div class="announcement-card-slide">
+                    <div class="announce-icon-circle"><i class="fa-solid fa-syringe"></i></div>
+                    <div>
+                        <div class="announce-title" data-i18n="ann-1-title">Vaccination Drive — July 2026</div>
+                        <div class="announce-desc" data-i18n="ann-1-desc">Free polio and measles vaccination camp will be held at the Panchayat premises for all children aged 0–5. Please bring your health card. All families are requested to participate.</div>
+                        <div class="announce-date"><i class="fa-regular fa-clock me-1"></i>21 Jul 2026</div>
+                    </div>
+                </div>
+            </div>
+            <div class="announcement-slide">
+                <div class="announcement-card-slide">
+                    <div class="announce-icon-circle"><i class="fa-solid fa-people-group"></i></div>
+                    <div>
+                        <div class="announce-title">Gram Sabha Meeting</div>
+                        <div class="announce-desc">All villagers are invited to the monthly Gram Sabha meeting at Panchayat Bhawan. Agenda includes agricultural development budget, road repair approval, and water scheme update.</div>
+                        <div class="announce-date"><i class="fa-regular fa-clock me-1"></i>25 Jul 2026</div>
+                    </div>
+                </div>
+            </div>
+            <div class="announcement-slide">
+                <div class="announcement-card-slide">
+                    <div class="announce-icon-circle"><i class="fa-solid fa-broom"></i></div>
+                    <div>
+                        <div class="announce-title">Clean Village Campaign</div>
+                        <div class="announce-desc">Join the Swachh Bharat weekly cleanliness drive this Sunday. Volunteers please assemble at the main chowk by 7:00 AM. Waste segregation bins will be distributed to all participating households.</div>
+                        <div class="announce-date"><i class="fa-regular fa-clock me-1"></i>27 Jul 2026</div>
+                    </div>
+                </div>
+            </div>
+            <div class="announcement-slide">
+                <div class="announcement-card-slide">
+                    <div class="announce-icon-circle"><i class="fa-solid fa-droplet"></i></div>
+                    <div>
+                        <div class="announce-title">Water Supply Update</div>
+                        <div class="announce-desc">Due to pipeline maintenance work on Ward No. 4 & 5, water supply will remain suspended from 9:00 AM to 4:00 PM on July 22 and 23. Citizens are requested to store water in advance.</div>
+                        <div class="announce-date"><i class="fa-regular fa-clock me-1"></i>22 Jul 2026</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="slider-dots" id="slider-dots">
+            <button class="slider-dot active" data-slide="0"></button>
+            <button class="slider-dot" data-slide="1"></button>
+            <button class="slider-dot" data-slide="2"></button>
+            <button class="slider-dot" data-slide="3"></button>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     ABOUT GRAM PANCHAYAT — TWO COLUMN
+═══════════════════════════════════════════════════════════ -->
+<section id="about" class="section-padding">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <!-- Left: Image -->
+            <div class="col-lg-5" data-aos="fade-right">
+                <div class="about-image-wrap">
+                    <img src="https://images.unsplash.com/photo-1605462863863-10d9e47e15ee?w=800&auto=format&fit=crop&q=80" alt="Gram Panchayat Village" style="width:100%;height:420px;object-fit:cover;">
+                    <div class="about-image-badge">
+                        <div class="about-badge-icon"><i class="fa-solid fa-leaf"></i></div>
+                        <div>
+                            <div class="about-badge-text">Serving Since 1950</div>
+                            <div class="about-badge-sub">Gram Panchayat, Maharashtra</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right: Content -->
+            <div class="col-lg-7" data-aos="fade-left">
+                <span class="section-tag" data-i18n="about-tag">About Us</span>
+                <h2 class="section-title" data-i18n="about-title">About Gram Panchayat</h2>
+                <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.8;margin-bottom:1rem;" data-i18n="about-desc">
+                    The Gram Panchayat is committed to transparent governance, public participation, digital services, and rural development. Citizens can register complaints, track progress, access schemes, and stay informed through this portal.
+                </p>
+                <ul class="about-content-list">
+                    <li><i class="fa-solid fa-check-circle"></i> <span data-i18n="about-f1">Transparent and accountable local governance for every citizen</span></li>
+                    <li><i class="fa-solid fa-check-circle"></i> <span data-i18n="about-f2">Digital complaint registration with real-time status tracking</span></li>
+                    <li><i class="fa-solid fa-check-circle"></i> <span data-i18n="about-f3">Access to all Central & State government welfare schemes</span></li>
+                    <li><i class="fa-solid fa-check-circle"></i> <span data-i18n="about-f4">Online certificates, tax payments and public notices</span></li>
+                    <li><i class="fa-solid fa-check-circle"></i> <span data-i18n="about-f5">24×7 citizen support with emergency helpline numbers</span></li>
+                </ul>
+                <div class="d-flex gap-3 mt-3">
+                    <a href="#tracker" class="btn-primary-custom" data-i18n="about-cta-1">Register Complaint</a>
+                    <a href="#schemes" class="btn-secondary-custom" data-i18n="about-cta-2">View Schemes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TESTIMONIALS
+═══════════════════════════════════════════════════════════ -->
+<section id="testimonials" class="section-padding bg-light-warm">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Feedback</span>
+            <h2 class="section-title" data-i18n="testimonials-title">Citizen Testimonials</h2>
+            <p class="section-subtitle" data-i18n="testimonials-subtitle">Read how the GPCMS portal helped actual residents get grievances resolved in record time.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
+                <div class="glass-card testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="testimonial-quote">"Complaint was resolved within two days. The street lighting in our ward was non-functional for three weeks. I filed online and within 48 hours the local electrician fixed it. Real transparency!"</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&q=80" alt="Mukund Thorat" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">Mukund Thorat</div>
+                            <div class="testimonial-loc">Ward No. 3, Village Nandur</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="80">
+                <div class="glass-card testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="testimonial-quote">"I was skeptical about e-governance, but this portal surprised me. Tracking my PM Awas status online meant zero trips to the block office. Real transparency in practice!"</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&q=80" alt="Vedika Gavane" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">Vedika Gavane</div>
+                            <div class="testimonial-loc">Ward No. 7, Village Palus</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="160">
+                <div class="glass-card testimonial-card">
+                    <div class="testimonial-stars">
+                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                    </div>
+                    <div class="testimonial-quote">"Water quality in our area was very concerning. I filed an official complaint with photos. The sanitary officer inspected within days and flushed the lines. Brilliant system!"</div>
+                    <div class="d-flex align-items-center gap-3">
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&q=80" alt="Smit Ahirrao" class="testimonial-avatar">
+                        <div>
+                            <div class="testimonial-name">Smit Ahirrao</div>
+                            <div class="testimonial-loc">Ward No. 1, Village Shirpur</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FAQ SECTION
+═══════════════════════════════════════════════════════════ -->
+<section id="faq" class="section-padding">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Help Center</span>
+            <h2 class="section-title" data-i18n="faq-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle" data-i18n="faq-subtitle">Quick answers to common questions about registering, tracking, and resolving complaints.</p>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="accordion" id="faqAccordion">
+                    <!-- Question 1 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="true">
+                                <i class="fa-regular fa-circle-question me-2" style="color:var(--primary);"></i> <span data-i18n="faq-q1">How do I register a complaint?</span>
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body" data-i18n="faq-a1">Click <strong>"Register Complaint"</strong> on the hero section or the Services card. Log in with Citizen credentials, choose the department, fill in complaint details, attach photos if needed, and submit. You'll receive a unique Complaint ID instantly via SMS.</div>
+                        </div>
+                    </div>
+                    <!-- Question 2 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                <i class="fa-regular fa-circle-question me-2" style="color:var(--primary);"></i> <span data-i18n="faq-q2">How long does resolution take?</span>
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body" data-i18n="faq-a2">Resolution time varies by category. Critical issues like streetlights, sewage, or water supply are usually resolved within <strong>3–5 working days</strong>. Complex structural issues may take up to 15 working days. The system updates status at each step.</div>
+                        </div>
+                    </div>
+                    <!-- Question 3 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                <i class="fa-regular fa-circle-question me-2" style="color:var(--primary);"></i> <span data-i18n="faq-q3">How can I track complaint status?</span>
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body" data-i18n="faq-a3">Enter your <strong>Complaint ID</strong> (e.g., GPCMS202600123) in the "Complaint Status Checker" section on this page and click Track. A live timeline will show all stages from submission to resolution.</div>
+                        </div>
+                    </div>
+                    <!-- Question 4 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                <i class="fa-regular fa-circle-question me-2" style="color:var(--primary);"></i> <span data-i18n="faq-q4">Which schemes are available?</span>
+                            </button>
+                        </h2>
+                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body" data-i18n="faq-a4">We list <strong>36+ schemes</strong> including PM Awas Yojana, Jal Jeevan Mission, PM Kisan Samman Nidhi, Ayushman Bharat, MGNREGA, Ujjwala Yojana, Swachh Bharat Mission, and many more. Visit the <a href="#schemes" style="color:var(--primary);">Government Schemes</a> section to explore all.</div>
+                        </div>
+                    </div>
+                    <!-- Question 5 -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                                <i class="fa-regular fa-circle-question me-2" style="color:var(--primary);"></i> <span data-i18n="faq-q5">Is Aadhaar required to register?</span>
+                            </button>
+                        </h2>
+                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body" data-i18n="faq-a5">Yes, Aadhaar-based OTP verification is required for first-time registration to prevent spam and ensure authenticity. However, <strong>tracking an existing Complaint ID is open to all</strong> without login.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     CONTACT SECTION
+═══════════════════════════════════════════════════════════ -->
+<section id="contact" class="section-padding bg-light-warm">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Get In Touch</span>
+            <h2 class="section-title" data-i18n="contact-title">Contact Us</h2>
+            <p class="section-subtitle" data-i18n="contact-subtitle">Visit the Gram Panchayat office or reach us through the details below.</p>
+        </div>
+        <div class="row g-4 align-items-stretch">
+            <!-- Map -->
+            <div class="col-lg-6" data-aos="fade-right">
+                <div class="contact-map-wrap">
+                    <iframe
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d121085.79013736!2d73.75440459!3d18.52042135!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43bf9d9ee343!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1690000000000"
+                        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                        title="Gram Panchayat Office Location"></iframe>
+                </div>
+            </div>
+            <!-- Info -->
+            <div class="col-lg-6" data-aos="fade-left">
+                <div class="contact-info-card">
+                    <h4 class="section-title mb-0" style="font-size:1.3rem;" data-i18n="contact-office-title">Office Information</h4>
+                    <p style="font-size:0.82rem;color:var(--text-muted);margin:0.3rem 0 1rem;" data-i18n="contact-office-sub">Gram Panchayat Office — Open Monday to Saturday</p>
+
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon"><i class="fa-solid fa-map-location-dot"></i></div>
+                        <div>
+                            <div class="contact-info-label">📍 Address</div>
+                            <div class="contact-info-value">Gram Panchayat Office, Village Nandur,<br>Shirpur Taluka, Dhule District, Maharashtra - 425405</div>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div>
+                            <div class="contact-info-label">📧 Email</div>
+                            <div class="contact-info-value">office@grampanchayat.gov.in</div>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div>
+                            <div class="contact-info-label">☎ Phone</div>
+                            <div class="contact-info-value">+91 98765 43210</div>
+                        </div>
+                    </div>
+                    <div class="contact-info-item">
+                        <div class="contact-info-icon"><i class="fa-regular fa-clock"></i></div>
+                        <div>
+                            <div class="contact-info-label">🕐 Working Hours</div>
+                            <div class="contact-info-value">Monday – Saturday: 9:00 AM – 5:00 PM<br><span style="font-size:0.8rem;color:var(--text-muted);">Closed on Sundays & Public Holidays</span></div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2 mt-3 flex-wrap">
+                        <a href="mailto:office@grampanchayat.gov.in" class="btn-primary-custom btn-sm" style="font-size:0.82rem;padding:0.5rem 1.2rem;">
+                            <i class="fa-solid fa-envelope me-1"></i> Send Email
+                        </a>
+                        <a href="tel:+919876543210" class="btn-secondary-custom btn-sm" style="font-size:0.82rem;padding:0.5rem 1.2rem;">
+                            <i class="fa-solid fa-phone me-1"></i> Call Us
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════ -->
+<footer id="footer" class="pt-5 pb-2">
+    <div class="container">
+        <div class="row g-4">
+
+            <!-- Column 1: Brand -->
+            <div class="col-lg-3 col-md-6">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="brand-logo-circle" style="width:44px;height:44px;border-color:rgba(212,175,55,0.3);">
+                        <img src="assets/images/panchayat_logo.png" alt="GPCMS Logo">
+                    </div>
+                    <div>
+                        <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;">Gram Panchayat</div>
+                        <div style="font-size:0.65rem;color:rgba(255,255,255,0.5);">Together for a Better Village</div>
+                    </div>
+                </div>
+                <p class="footer-contact-item" style="color:rgba(255,255,255,0.55);font-size:0.82rem;line-height:1.7;">
+                    The GPCMS is a digital solution to modernize grievance filing and monitoring for rural India. Connect with ward authorities and track resolution in real-time.
+                </p>
+                <div class="d-flex gap-2 mt-3">
+                    <a href="#" class="social-icon" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="#" class="social-icon" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div class="col-lg-2 col-md-6 col-6">
+                <h5 class="footer-title" data-i18n="footer-links">Quick Links</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2">
+                    <li><a href="#home" data-i18n="nav-home">Home</a></li>
+                    <li><a href="#about" data-i18n="nav-about">About Us</a></li>
+                    <li><a href="#quick-services" data-i18n="nav-services">Services</a></li>
+                    <li><a href="#schemes" data-i18n="nav-schemes">Schemes</a></li>
+                    <li><a href="#gallery" data-i18n="nav-gallery">Gallery</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Help -->
+            <div class="col-lg-2 col-md-6 col-6">
+                <h5 class="footer-title" data-i18n="footer-help">Help</h5>
+                <ul class="list-unstyled d-flex flex-column gap-2">
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#contact" data-i18n="nav-contact">Contact Us</a></li>
+                    <li><a href="citizen-login.html" data-i18n="citizen-login-title">Citizen Login</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Contact -->
+            <div class="col-lg-3 col-md-6">
+                <h5 class="footer-title">Contact Details</h5>
+                <div class="d-flex flex-column gap-2">
+                    <div class="footer-contact-item"><i class="fa-solid fa-map-location-dot"></i><span>Gram Panchayat Office, Nandur, Maharashtra</span></div>
+                    <div class="footer-contact-item"><i class="fa-solid fa-phone"></i><span>+91 98765 43210</span></div>
+                    <div class="footer-contact-item"><i class="fa-solid fa-envelope"></i><span>office@grampanchayat.gov.in</span></div>
+                    <div class="footer-contact-item"><i class="fa-solid fa-globe"></i><span>www.gpcms.gov.in</span></div>
+                </div>
+            </div>
+
+        </div>
+
+        <hr class="footer-divider">
+
+        <!-- Bottom Bar -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 footer-bottom pb-2">
+            <span>© 2025 Gram Panchayat Complaint Management System. All Rights Reserved.</span>
+            <div class="d-flex gap-3">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Disclaimer</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
