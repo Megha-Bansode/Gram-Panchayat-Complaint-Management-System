@@ -191,6 +191,11 @@ const translations = {
         'contact-office-title': 'Office Information', 'contact-office-sub': 'Gram Panchayat Office — Open Monday to Saturday',
         /* Footer */
         'footer-links': 'Quick Links', 'footer-help': 'Help',
+        'footer-emergency-title': 'Emergency Contacts',
+        'footer-police': 'Police',
+        'footer-ambulance': 'Ambulance',
+        'footer-fire': 'Fire',
+        'footer-helpline': 'Women Helpline',
     },
 
     mr: {
@@ -285,6 +290,11 @@ const translations = {
         'contact-office-title': 'कार्यालय माहिती', 'contact-office-sub': 'ग्रामपंचायत कार्यालय — सोमवार ते शनिवार उघडे',
         /* Footer */
         'footer-links': 'द्रुत लिंक्स', 'footer-help': 'मदत',
+        'footer-emergency-title': 'आपत्कालीन संपर्क',
+        'footer-police': 'पोलीस',
+        'footer-ambulance': 'रुग्णवाहिका',
+        'footer-fire': 'अग्निशामक दल',
+        'footer-helpline': 'महिला हेल्पलाइन',
     }
 };
 
