@@ -6,6 +6,66 @@
 include 'includes/header.php';
 ?>
 
+<!-- Fixed Canvas & Overlay for 60fps Frame-Sequence Parallax Scroll Effect -->
+<canvas id="parallax-scroll-canvas"></canvas>
+<div id="parallax-scroll-overlay"></div>
+
+<style id="parallax-scroll-styles">
+    #parallax-scroll-canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -2;
+        pointer-events: none;
+        object-fit: cover;
+    }
+
+    #parallax-scroll-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+        background: radial-gradient(circle at center, rgba(247, 243, 232, 0.15) 0%, rgba(247, 243, 232, 0.35) 100%);
+        backdrop-filter: blur(2px);
+        -webkit-backdrop-filter: blur(2px);
+    }
+
+    body {
+        background-color: transparent !important;
+    }
+
+    .hero-section {
+        background-color: transparent !important;
+    }
+
+    .hero-overlay {
+        background: linear-gradient(135deg, rgba(62, 44, 35, 0.25) 0%, rgba(138, 114, 76, 0.20) 100%) !important;
+    }
+
+    .bg-light-warm {
+        background: rgba(247, 243, 232, 0.22) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    #notices, #faq, #about {
+        background: rgba(255, 255, 255, 0.25) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+
+    .stats-section {
+        background: linear-gradient(135deg, rgba(62, 44, 35, 0.25) 0%, rgba(42, 29, 23, 0.30) 100%) !important;
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+    }
+</style>
+
 <!-- ═══════════════════════════════════════════════════════════
  1. HERO SECTION
 ═══════════════════════════════════════════════════════════ -->
@@ -1026,5 +1086,132 @@ include 'includes/header.php';
         </div>
     </div>
 </section>
+
+<!-- Parallax Scroll Animation Script -->
+<script>
+(function() {
+    const TOTAL_FRAMES = 240;
+    const canvas = document.getElementById('parallax-scroll-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    
+    const images = [];
+    const loadedStatus = new Array(TOTAL_FRAMES + 1).fill(false);
+    let targetFrame = 1;
+    let currentFrame = 1;
+    
+    function getFramePath(index) {
+        const frameNum = String(index).padStart(3, '0');
+        return `scroll-img/ezgif-frame-${frameNum}.jpg`;
+    }
+
+    function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        render();
+    }
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+
+    function drawFrame(img) {
+        if (!img || !img.complete || img.naturalWidth === 0) return;
+        const cW = canvas.width;
+        const cH = canvas.height;
+        const iW = img.naturalWidth;
+        const iH = img.naturalHeight;
+
+        const scale = Math.max(cW / iW, cH / iH);
+        const x = (cW - iW * scale) / 2;
+        const y = (cH - iH * scale) / 2;
+
+        ctx.clearRect(0, 0, cW, cH);
+        ctx.drawImage(img, x, y, iW * scale, iH * scale);
+    }
+
+    function getBestFrameImage(frameIndex) {
+        if (loadedStatus[frameIndex] && images[frameIndex]) {
+            return images[frameIndex];
+        }
+        for (let offset = 1; offset < TOTAL_FRAMES; offset++) {
+            const prev = frameIndex - offset;
+            const next = frameIndex + offset;
+            if (prev >= 1 && loadedStatus[prev] && images[prev]) return images[prev];
+            if (next <= TOTAL_FRAMES && loadedStatus[next] && images[next]) return images[next];
+        }
+        return null;
+    }
+
+    function render() {
+        const roundedFrame = Math.round(currentFrame);
+        const imgToDraw = getBestFrameImage(roundedFrame);
+        if (imgToDraw) {
+            drawFrame(imgToDraw);
+        }
+    }
+
+    function updateTargetFrame() {
+        const scrollTop = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+        const maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+        const scrollFraction = Math.max(0, Math.min(1, scrollTop / maxScroll));
+        targetFrame = 1 + Math.floor(scrollFraction * (TOTAL_FRAMES - 1));
+    }
+
+    window.addEventListener('scroll', updateTargetFrame, { passive: true });
+
+    function animLoop() {
+        const diff = targetFrame - currentFrame;
+        if (Math.abs(diff) > 0.01) {
+            currentFrame += diff * 0.18;
+            render();
+        } else if (Math.round(currentFrame) !== Math.round(targetFrame)) {
+            currentFrame = targetFrame;
+            render();
+        }
+        requestAnimationFrame(animLoop);
+    }
+
+    function preloadFrames() {
+        // Frame 1 initial load
+        const img1 = new Image();
+        img1.src = getFramePath(1);
+        img1.onload = function() {
+            images[1] = img1;
+            loadedStatus[1] = true;
+            resizeCanvas();
+        };
+
+        // Keyframe sampling every 5 frames for fast responsiveness
+        for (let i = 1; i <= TOTAL_FRAMES; i += 5) {
+            if (i === 1) continue;
+            const img = new Image();
+            img.src = getFramePath(i);
+            const idx = i;
+            img.onload = function() {
+                images[idx] = img;
+                loadedStatus[idx] = true;
+                if (Math.round(currentFrame) === idx) render();
+            };
+        }
+
+        // Full sequence preload
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+            if (images[i]) continue;
+            const img = new Image();
+            img.src = getFramePath(i);
+            const idx = i;
+            img.onload = function() {
+                images[idx] = img;
+                loadedStatus[idx] = true;
+                if (Math.round(currentFrame) === idx) render();
+            };
+        }
+    }
+
+    preloadFrames();
+    resizeCanvas();
+    updateTargetFrame();
+    requestAnimationFrame(animLoop);
+})();
+</script>
 
 <?php include 'includes/footer.php'; ?>
