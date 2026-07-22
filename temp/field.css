@@ -1,0 +1,7 @@
+/* GPCMS Module #6 — Field Officer CSS */
+@import url('style.css');
+
+.field-layout {
+    display: flex;
+    min-height: 100vh;
+}
