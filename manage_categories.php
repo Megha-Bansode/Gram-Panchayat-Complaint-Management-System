@@ -25,7 +25,7 @@
   <!-- Sidebar Navigation -->
   <aside id="app-sidebar" class="app-sidebar">
     <div class="sidebar-header">
-      <a href="admin_dashboard.html" class="sidebar-brand">
+      <a href="admin_dashboard.php" class="sidebar-brand">
         <div class="sidebar-brand-icon">
           <i class="bi bi-building-flag"></i>
         </div>
@@ -43,32 +43,32 @@
       <div class="menu-label">Main Navigation</div>
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="admin_dashboard.html" class="nav-link">
+          <a href="admin_dashboard.php" class="nav-link">
             <i class="bi bi-grid-1x2-fill"></i>
             <span class="nav-text">Dashboard</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="manage_categories.html" class="nav-link active">
+          <a href="manage_categories.php" class="nav-link active">
             <i class="bi bi-tags-fill"></i>
             <span class="nav-text">Complaint Categories</span>
             <span class="badge bg-light text-dark sidebar-badge">14</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="reports.html" class="nav-link">
+          <a href="reports.php" class="nav-link">
             <i class="bi bi-file-earmark-bar-graph-fill"></i>
             <span class="nav-text">Reports</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="statistics_dashboard.html" class="nav-link">
+          <a href="statistics_dashboard.php" class="nav-link">
             <i class="bi bi-pie-chart-fill"></i>
             <span class="nav-text">Statistics</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="system_settings.html" class="nav-link">
+          <a href="system_settings.php" class="nav-link">
             <i class="bi bi-gear-fill"></i>
             <span class="nav-text">System Settings</span>
           </a>
@@ -78,27 +78,43 @@
       <div class="menu-label mt-3">Complaints & Operations</div>
       <ul class="nav-menu">
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="view_complaints.php" class="nav-link">
             <i class="bi bi-inbox-fill"></i>
             <span class="nav-text">All Complaints</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="view_complaints.php?status=assigned" class="nav-link">
             <i class="bi bi-person-workspace"></i>
             <span class="nav-text">Assigned Work</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="view_complaints.php?status=pending" class="nav-link">
             <i class="bi bi-bell-fill"></i>
             <span class="nav-text">Notifications</span>
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link">
+          <a href="system_settings.php" class="nav-link">
             <i class="bi bi-question-circle-fill"></i>
-            <span class="nav-text">Help & Support</span>
+            <span class="nav-text">Help &amp; Support</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="menu-label mt-3">Account</div>
+      <ul class="nav-menu">
+        <li class="nav-item">
+          <a href="system_settings.php" class="nav-link">
+            <i class="bi bi-person-circle"></i>
+            <span class="nav-text">Profile</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="admin_dashboard.php" class="nav-link">
+            <i class="bi bi-box-arrow-right"></i>
+            <span class="nav-text">Logout</span>
           </a>
         </li>
       </ul>
@@ -155,7 +171,7 @@
             <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Avatar" class="avatar-img" style="width: 36px; height: 36px;">
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow-sm">
-            <li><a class="dropdown-item" href="system_settings.html">Settings</a></li>
+            <li><a class="dropdown-item" href="system_settings.php">Settings</a></li>
             <li><a class="dropdown-item text-danger" href="#">Logout</a></li>
           </ul>
         </div>
@@ -170,7 +186,7 @@
           <h1 class="page-title">Complaint Category Management</h1>
           <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
-              <li class="breadcrumb-item"><a href="admin_dashboard.html">Home</a></li>
+              <li class="breadcrumb-item"><a href="admin_dashboard.php">Home</a></li>
               <li class="breadcrumb-item active" aria-current="page">Categories</li>
             </ol>
           </nav>
@@ -364,8 +380,8 @@
         <strong>Gram Panchayat Complaint Management System (GPCMS)</strong> &copy; 2026 Government Portal.
       </div>
       <ul class="footer-links">
-        <li><a href="admin_dashboard.html">Dashboard</a></li>
-        <li><a href="system_settings.html">Settings</a></li>
+        <li><a href="admin_dashboard.php">Dashboard</a></li>
+        <li><a href="system_settings.php">Settings</a></li>
         <li><span class="badge bg-secondary">Category Module v1.0</span></li>
       </ul>
     </footer>

@@ -140,18 +140,30 @@ GPCMS.exportTableToCSV = function (tableId, filename = 'export.csv') {
   const rows = table.querySelectorAll('tr');
 
   for (let i = 0; i < rows.length; i++) {
-    const row = [], cols = rows[i].querySelectorAll('td, th');
-    for (let j = 0; j < cols.length - 1; j++) { // Exclude action column
-      let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/g, '""');
+    const rowEl = rows[i];
+    
+    // Skip empty state placeholder row and hidden rows (filtered out)
+    if (rowEl.style.display === 'none' || rowEl.closest('#no-complaints-data') || rowEl.offsetParent === null) {
+      continue;
+    }
+
+    const row = [], cols = rowEl.querySelectorAll('td, th');
+    if (cols.length === 0) continue;
+
+    // Export row cols except last action column
+    for (let j = 0; j < cols.length - 1; j++) {
+      let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, ' ').replace(/"/g, '""').trim();
       row.push('"' + data + '"');
     }
     csv.push(row.join(','));
   }
 
-  const csvFile = new Blob([csv.join('\n')], { type: 'text/csv' });
+  // Prepend UTF-8 BOM so Excel opens regional text correctly
+  const csvContent = '\uFEFF' + csv.join('\n');
+  const csvBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
   const downloadLink = document.createElement('a');
   downloadLink.download = filename;
-  downloadLink.href = window.URL.createObjectURL(csvFile);
+  downloadLink.href = window.URL.createObjectURL(csvBlob);
   downloadLink.style.display = 'none';
   document.body.appendChild(downloadLink);
   downloadLink.click();

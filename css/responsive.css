@@ -130,3 +130,64 @@
     font-size: 1.4rem;
   }
 }
+
+/* ==========================================================================
+   Module #6 Responsive Additions
+   View Complaints & Complaint Details
+   ========================================================================== */
+
+/* --- Tablet: detail grid collapses to single column --- */
+@media (max-width: 991.98px) {
+  .detail-info-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .quick-action-desc {
+    white-space: normal;
+  }
+}
+
+/* --- Mobile: full stacking for filter bar and detail grid --- */
+@media (max-width: 767.98px) {
+  /* Filter bar inputs stack vertically */
+  .filter-bar .row > [class*="col-"] {
+    margin-bottom: 0;
+  }
+
+  /* Detail info grid: single column on mobile */
+  .detail-info-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  /* Smaller thumbnail on mobile */
+  .complaint-thumb {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Quick action cards: wrap text on mobile */
+  .quick-action-desc {
+    display: none;
+  }
+
+  .quick-action-card {
+    min-height: 60px;
+  }
+
+  /* Complaint image: reduce aspect ratio on small screens */
+  .complaint-image-full {
+    aspect-ratio: 16 / 9;
+  }
+}
+
+/* --- Small Mobile (375px): tighten filter bar padding --- */
+@media (max-width: 375px) {
+  .filter-bar {
+    padding: 1rem;
+  }
+
+  .quick-action-title {
+    font-size: 0.82rem;
+  }
+}

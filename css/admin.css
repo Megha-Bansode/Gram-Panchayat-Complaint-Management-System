@@ -969,3 +969,246 @@ a:hover {
   font-size: 0.75rem;
   color: var(--gpcms-text-muted);
 }
+
+/* ==========================================================================
+   Module #6 - Gram Sevak Dashboard Extension
+   View Complaints & Complaint Details
+   ========================================================================== */
+
+/* --- Quick Action Cards (Dashboard Quick Actions Section) --- */
+.quick-action-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background-color: var(--gpcms-bg);
+  border: 1px solid var(--gpcms-border);
+  border-radius: var(--gpcms-radius);
+  padding: 1rem 1.25rem;
+  text-decoration: none;
+  color: var(--gpcms-text);
+  transition: var(--gpcms-transition);
+  height: 100%;
+  min-height: 76px;
+}
+
+.quick-action-card:hover {
+  background-color: var(--gpcms-primary-light);
+  border-color: var(--gpcms-secondary);
+  color: var(--gpcms-primary);
+  transform: translateY(-3px);
+  box-shadow: var(--gpcms-shadow);
+}
+
+.quick-action-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, var(--gpcms-primary), var(--gpcms-secondary));
+  color: #FFFFFF;
+  border-radius: var(--gpcms-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  transition: var(--gpcms-transition);
+}
+
+.quick-action-card:hover .quick-action-icon {
+  transform: scale(1.08);
+  box-shadow: 0 4px 12px rgba(138, 114, 76, 0.3);
+}
+
+.quick-action-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.quick-action-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.15rem;
+  color: var(--gpcms-text);
+  transition: var(--gpcms-transition);
+}
+
+.quick-action-card:hover .quick-action-title {
+  color: var(--gpcms-primary);
+}
+
+.quick-action-desc {
+  font-size: 0.78rem;
+  color: var(--gpcms-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Filter Toolbar (View Complaints Page) --- */
+.filter-bar {
+  padding: 1.25rem 1.5rem;
+}
+
+/* --- Complaint Image Thumbnail (Complaints Table) --- */
+.complaint-thumb {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--gpcms-radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--gpcms-border);
+  background-color: var(--gpcms-bg);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.complaint-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Table Empty State --- */
+.table-empty-icon {
+  margin-bottom: 0.5rem;
+  opacity: 0.5;
+}
+
+/* --- Complaint Detail Info Grid (complaint_details.html) --- */
+.detail-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 1.5rem;
+}
+
+.detail-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detail-info-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--gpcms-text-muted);
+}
+
+.detail-info-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gpcms-text);
+}
+
+/* --- Full Complaint Image Panel (complaint_details.html) --- */
+.complaint-image-full {
+  border-radius: var(--gpcms-radius);
+  overflow: hidden;
+  border: 1px solid var(--gpcms-border);
+  background-color: var(--gpcms-bg);
+  aspect-ratio: 16 / 7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.complaint-image-full img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- Status Badge Large (Complaint Details Header) --- */
+.status-badge-large {
+  font-size: 0.88rem;
+  padding: 0.45em 1.1em;
+}
+
+/* --- Remarks List (complaint_details.html) --- */
+.remarks-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.remark-item {
+  background-color: var(--gpcms-bg);
+  border: 1px solid var(--gpcms-border);
+  border-left: 3px solid var(--gpcms-primary);
+  border-radius: var(--gpcms-radius-sm);
+  padding: 0.85rem 1rem;
+}
+
+.remark-author {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gpcms-text);
+  margin-bottom: 0.15rem;
+}
+
+.remark-time {
+  font-size: 0.73rem;
+  color: var(--gpcms-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.remark-text {
+  font-size: 0.85rem;
+  color: var(--gpcms-text);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   Print Stylesheet Rule (@media print)
+   ========================================================================== */
+@media print {
+  /* Hide interactive, layout & non-essential elements */
+  .app-sidebar,
+  .app-header,
+  .filter-bar,
+  .top-actions,
+  .app-footer,
+  .btn,
+  .fab-btn,
+  th:last-child,
+  td:last-child {
+    display: none !important;
+  }
+
+  /* Reset main layout wrapper for full width page usage */
+  .main-wrapper {
+    margin-left: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  body {
+    background-color: #FFFFFF !important;
+    color: #000000 !important;
+  }
+
+  /* Make table look clean and fully expanded on printed page */
+  .table-custom-wrapper {
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .table-custom {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  .table-custom th,
+  .table-custom td {
+    border: 1px solid #DDDDDD !important;
+    padding: 8px !important;
+    color: #000000 !important;
+  }
+}
+
