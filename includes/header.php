@@ -164,7 +164,7 @@ $lang_labels = [
                                 <!-- Citizen Login -->
                                 <li>
                                     <a class="dropdown-item login-role-card d-flex align-items-start gap-3"
-                                        href="<?php echo $base_path; ?>login/citizen_login.php" id="citizen-login-btn">
+                                        href="<?php echo $base_path; ?>login.php" id="citizen-login-btn">
                                         <div class="login-role-icon">
                                             <i class="fa-solid fa-user"></i>
                                         </div>
@@ -184,7 +184,7 @@ $lang_labels = [
                                 <!-- Official Login -->
                                 <li>
                                     <a class="dropdown-item login-role-card d-flex align-items-start gap-3"
-                                        href="<?php echo $base_path; ?>login/official_login.php" id="official-login-btn">
+                                        href="<?php echo $base_path; ?>official_login.php" id="official-login-btn">
                                         <div class="login-role-icon"
                                             style="background:rgba(212,175,55,0.12);color:#9a7e1a;">
                                             <i class="fa-solid fa-building-columns"></i>
