@@ -1,0 +1,7 @@
+/* GPCMS Module #2 — Landing CSS */
+@import url('style.css');
+
+.landing-page {
+    position: relative;
+    background-color: var(--bg);
+}
