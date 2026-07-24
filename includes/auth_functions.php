@@ -39,7 +39,7 @@ function auth_require_guest(): void
     auth_start_session();
 
     if (!empty($_SESSION['is_logged_in'])) {
-        auth_redirect(auth_get_dashboard_path((string) ($_SESSION['role_name'] ?? '')));
+        auth_redirect(auth_get_post_login_path((string) ($_SESSION['role_name'] ?? '')));
     }
 }
 
@@ -59,24 +59,12 @@ function auth_require_auth(): array
     ];
 }
 
-function auth_get_dashboard_path(string $roleName): string
+function auth_get_post_login_path(string $roleName): string
 {
     $role = strtolower(trim($roleName));
 
-    if ($role === 'citizen') {
-        return 'citizen_dashboard.php';
-    }
-
-    if ($role === 'gram sevak') {
-        return 'admin_dashboard.php';
-    }
-
-    if ($role === 'field officer') {
-        return 'field_dashboard.php';
-    }
-
-    if ($role === 'super admin') {
-        return 'super_admin_dashboard.php';
+    if (in_array($role, ['citizen', 'gram sevak', 'field officer', 'super admin'], true)) {
+        return 'index.php';
     }
 
     return 'login.php';

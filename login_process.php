@@ -48,4 +48,4 @@ if (!password_verify($password, (string) $user['password_hash'])) {
 }
 
 auth_set_user_session($user);
-auth_redirect(auth_get_dashboard_path($roleName));
+auth_redirect(auth_get_post_login_path($roleName));
