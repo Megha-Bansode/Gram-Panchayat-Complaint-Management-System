@@ -458,9 +458,16 @@ header.scrolled {
     right: 0.75rem;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* Active nav — clearly visible pill highlight */
 .nav-link.active-nav {
     color: var(--primary) !important;
+    font-weight: 700 !important;
+    background: rgba(139, 94, 52, 0.12);
+    border-radius: 20px;
 }
 
 /* Language Selector */

@@ -145,24 +145,7 @@ include 'includes/header.php';
                     </div>
                 </a>
             </div>
-            <!-- Card 4 -->
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="180">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-file-certificate"></i></div>
-                    <div class="service-title"><?php echo __('s4_title'); ?></div>
-                    <p class="service-desc"><?php echo __('s4_desc'); ?></p>
-                    <div class="service-arrow"><?php echo __('apply_now'); ?> <i class="fa-solid fa-arrow-right"></i></div>
-                </div>
-            </div>
-            <!-- Card 5 -->
-            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="240">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-coins"></i></div>
-                    <div class="service-title"><?php echo __('s5_title'); ?></div>
-                    <p class="service-desc"><?php echo __('s5_desc'); ?></p>
-                    <div class="service-arrow"><?php echo __('pay_now'); ?> <i class="fa-solid fa-arrow-right"></i></div>
-                </div>
-            </div>
+
             <!-- Card 6 -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
                 <div class="service-card">
@@ -436,7 +419,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_1_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 21 Jul 2026 &nbsp;•&nbsp; <span class="badge" style="background:#8A724C; color:#fff;"><?php echo __('badge_new'); ?></span></div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Annual Gram Sabha general body meeting regarding rural infrastructure allocation, water conservation plans, and budget approval for FY 2026-27.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_1_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_meeting'); ?></span>
@@ -453,7 +436,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_2_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 19 Jul 2026 &nbsp;•&nbsp; <span class="badge" style="background:#8A724C; color:#fff;"><?php echo __('badge_new'); ?></span></div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Concrete road re-surfacing and drainage laying work commencing on Main Market Road. Commuters requested to take bypass route.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_2_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_works'); ?></span>
@@ -470,7 +453,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_3_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 17 Jul 2026</div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Scheduled pipeline maintenance in North & West Wards. Morning water supply timing adjusted to 6:00 AM - 8:00 AM.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_3_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_utility'); ?></span>
@@ -487,7 +470,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_4_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 15 Jul 2026</div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Application open for 50% solar pump subsidy under Chief Minister Rural Agriculture Welfare Scheme. Apply before 10th August.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_4_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_scheme'); ?></span>
@@ -504,7 +487,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_5_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 10 Jul 2026</div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Provisional voter electoral roll published for Ward No. 1 to 5. Objections/corrections can be submitted at Panchayat office by 5th August.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_5_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_election'); ?></span>
@@ -521,7 +504,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_6_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 05 Jul 2026</div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Citizens paying full property tax and water bills before 31st August will receive an early payment discount of 10% on total bill amount.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_6_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_utility'); ?></span>
@@ -538,7 +521,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_7_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 01 Jul 2026</div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Free multi-specialty health checkup camp and routine child immunization drive organised at Sub-Health Centre, Main Road.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_7_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_meeting'); ?></span>
@@ -555,7 +538,7 @@ include 'includes/header.php';
                                 <div>
                                     <h6 class="fw-bold mb-1" style="color:#3E2C23;"><?php echo __('notice_8_title'); ?></h6>
                                     <div class="small mb-2" style="color:#8C7A65;"><i class="fa-regular fa-calendar me-1"></i> 25 Jun 2026</div>
-                                    <p class="small mb-0" style="color:#5A4A35;">Final list of sanctioned applicants under Pradhan Mantri Awas Yojana (Gramin) Phase III displayed on notice board & portal.</p>
+                                    <p class="small mb-0" style="color:#5A4A35;"><?php echo __('notice_8_desc'); ?></p>
                                 </div>
                             </div>
                             <span class="badge px-3 py-2 small" style="background:#EDE2CC; color:#755f3c; border: 1px solid #DCC9A7; font-weight:600;"><?php echo __('cat_scheme'); ?></span>
@@ -584,87 +567,168 @@ include 'includes/header.php';
             <p class="section-subtitle"><?php echo __('schemes_subtitle'); ?></p>
         </div>
 
-        <div class="row g-4 mb-5">
+        <!-- Featured Scheme Cards — Accordion Expand -->
+        <div class="row g-4 mb-5 align-items-start">
+
+            <!-- PM Awas Yojana -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
-                <div class="scheme-featured-card">
+                <div class="scheme-featured-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="scheme-img-wrap">
                         <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&auto=format&fit=crop&q=80" alt="PM Awas Yojana">
                         <div class="scheme-img-overlay"></div>
                         <span class="scheme-badge-overlay"><?php echo __('central_govt'); ?></span>
                     </div>
-                    <div class="scheme-body">
+                    <div class="scheme-body d-flex flex-column flex-grow-1">
                         <h5 class="scheme-title"><?php echo __('scheme_pmay_title'); ?></h5>
                         <p class="scheme-desc"><?php echo __('scheme_pmay_desc'); ?></p>
-                        <a href="schemes/scheme_details.php?scheme=pmay" class="btn-learn-more"><i class="fa-solid fa-arrow-right"></i> <span><?php echo __('learn_more'); ?></span></a>
+                        <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                        </button>
+                    </div>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('pmay_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-user-check"></i></span><div><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('pmay_elig'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('pmay_doc'); ?></div></div>
+                        <a href="https://pmayg.nic.in" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
                     </div>
                 </div>
             </div>
+
+            <!-- Jal Jeevan Mission -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="80">
-                <div class="scheme-featured-card">
+                <div class="scheme-featured-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="scheme-img-wrap">
                         <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&auto=format&fit=crop&q=80" alt="Jal Jeevan Mission">
                         <div class="scheme-img-overlay"></div>
                         <span class="scheme-badge-overlay"><?php echo __('central_govt'); ?></span>
                     </div>
-                    <div class="scheme-body">
+                    <div class="scheme-body d-flex flex-column flex-grow-1">
                         <h5 class="scheme-title"><?php echo __('scheme_jjm_title'); ?></h5>
                         <p class="scheme-desc"><?php echo __('scheme_jjm_desc'); ?></p>
-                        <a href="schemes/scheme_details.php?scheme=jjm" class="btn-learn-more"><i class="fa-solid fa-arrow-right"></i> <span><?php echo __('learn_more'); ?></span></a>
+                        <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                        </button>
+                    </div>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('jjm_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-user-check"></i></span><div><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('jjm_elig'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('jjm_doc'); ?></div></div>
+                        <a href="https://jaljeevanmission.gov.in" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
                     </div>
                 </div>
             </div>
+
+            <!-- PM Kisan Samman Nidhi -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="160">
-                <div class="scheme-featured-card">
+                <div class="scheme-featured-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="scheme-img-wrap">
                         <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600&auto=format&fit=crop&q=80" alt="PM Kisan Samman Nidhi">
                         <div class="scheme-img-overlay"></div>
                         <span class="scheme-badge-overlay"><?php echo __('central_govt'); ?></span>
                     </div>
-                    <div class="scheme-body">
+                    <div class="scheme-body d-flex flex-column flex-grow-1">
                         <h5 class="scheme-title"><?php echo __('scheme_pmkisan_title'); ?></h5>
                         <p class="scheme-desc"><?php echo __('scheme_pmkisan_desc'); ?></p>
-                        <a href="schemes/scheme_details.php?scheme=pmkisan" class="btn-learn-more"><i class="fa-solid fa-arrow-right"></i> <span><?php echo __('learn_more'); ?></span></a>
+                        <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                            <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                        </button>
+                    </div>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('pmkisan_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-user-check"></i></span><div><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('pmkisan_elig'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('pmkisan_doc'); ?></div></div>
+                        <a href="https://pmkisan.gov.in" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="row g-4">
+        <!-- Small Scheme Cards — Accordion Expand -->
+        <div class="row g-4 align-items-start">
+
+            <!-- Ayushman Bharat -->
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="0">
-                <div class="glass-card scheme-card">
+                <div class="glass-card scheme-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="feature-icon-box bg-primary-soft"><i class="fa-solid fa-heart-pulse"></i></div>
                     <h6 class="scheme-title"><?php echo __('s_ayushman_title'); ?></h6>
                     <p class="scheme-desc"><?php echo __('s_ayushman_desc'); ?></p>
-                    <div class="scheme-eligibility"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_ayushman_elig'); ?> <a href="schemes/scheme_details.php?scheme=pmjay" class="btn btn-secondary-custom w-100 btn-sm mt-2"><?php echo __('learn_more'); ?></a></div>
+                    <div class="scheme-eligibility mb-3"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_ayushman_elig'); ?></div>
+                    <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                        <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                    </button>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row mt-3"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('ayushman_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('ayushman_doc'); ?></div></div>
+                        <a href="https://pmjay.gov.in" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
+                    </div>
                 </div>
             </div>
+
+            <!-- Swachh Bharat Mission -->
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="60">
-                <div class="glass-card scheme-card">
+                <div class="glass-card scheme-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="feature-icon-box bg-secondary-soft"><i class="fa-solid fa-hands-clean"></i></div>
                     <h6 class="scheme-title"><?php echo __('s_sbm_title'); ?></h6>
                     <p class="scheme-desc"><?php echo __('s_sbm_desc'); ?></p>
-                    <div class="scheme-eligibility"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_sbm_elig'); ?> <a href="schemes/scheme_details.php?scheme=sbm" class="btn btn-secondary-custom w-100 btn-sm mt-2"><?php echo __('learn_more'); ?></a></div>
+                    <div class="scheme-eligibility mb-3"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_sbm_elig'); ?></div>
+                    <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                        <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                    </button>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row mt-3"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('sbm_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('sbm_doc'); ?></div></div>
+                        <a href="https://swachhbharatmission.gov.in" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
+                    </div>
                 </div>
             </div>
+
+            <!-- MGNREGA -->
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="120">
-                <div class="glass-card scheme-card">
+                <div class="glass-card scheme-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="feature-icon-box bg-accent-soft"><i class="fa-solid fa-person-digging"></i></div>
                     <h6 class="scheme-title"><?php echo __('s_mgnrega_title'); ?></h6>
                     <p class="scheme-desc"><?php echo __('s_mgnrega_desc'); ?></p>
-                    <div class="scheme-eligibility"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_mgnrega_elig'); ?> <a href="schemes/scheme_details.php?scheme=mgnrega" class="btn btn-secondary-custom w-100 btn-sm mt-2"><?php echo __('learn_more'); ?></a></div>
+                    <div class="scheme-eligibility mb-3"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_mgnrega_elig'); ?></div>
+                    <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                        <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                    </button>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row mt-3"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('mgnrega_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('mgnrega_doc'); ?></div></div>
+                        <a href="https://nrega.nic.in" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
+                    </div>
                 </div>
             </div>
+
+            <!-- Beti Bachao Beti Padhao -->
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="180">
-                <div class="glass-card scheme-card">
+                <div class="glass-card scheme-card scheme-card-wrap d-flex flex-column h-100">
                     <div class="feature-icon-box bg-primary-soft"><i class="fa-solid fa-graduation-cap"></i></div>
                     <h6 class="scheme-title"><?php echo __('s_bbbp_title'); ?></h6>
                     <p class="scheme-desc"><?php echo __('s_bbbp_desc'); ?></p>
-                    <div class="scheme-eligibility"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_bbbp_elig'); ?> <a href="schemes/scheme_details.php?scheme=bbbp" class="btn btn-secondary-custom w-100 btn-sm mt-2"><?php echo __('learn_more'); ?></a></div>
+                    <div class="scheme-eligibility mb-3"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_bbbp_elig'); ?></div>
+                    <button class="scheme-view-btn mt-auto" onclick="toggleAccordion(this)">
+                        <i class="fa-solid fa-circle-info me-1"></i> <?php echo __('btn_view_details'); ?> <i class="fa-solid fa-chevron-down ms-1 btn-chevron"></i>
+                    </button>
+                    <div class="scheme-overlay-panel">
+                        <div class="scheme-detail-row mt-3"><span class="scheme-detail-icon"><i class="fa-solid fa-gift"></i></span><div><strong><?php echo __('lbl_benefits'); ?></strong> <?php echo __('bbbp_ben'); ?></div></div>
+                        <div class="scheme-detail-row"><span class="scheme-detail-icon"><i class="fa-solid fa-folder-open"></i></span><div><strong><?php echo __('lbl_documents'); ?></strong> <?php echo __('bbbp_doc'); ?></div></div>
+                        <a href="https://wcd.nic.in/bbbp-schemes" target="_blank" class="scheme-apply-btn d-block text-center mt-3"><?php echo __('btn_apply_online'); ?> <i class="fa-solid fa-arrow-up-right-from-square ms-1"></i></a>
+                    </div>
                 </div>
             </div>
+
         </div>
+
+
+
+
     </div>
 </section>
+
+
+
 
 <!-- ═══════════════════════════════════════════════════════════
  6. COMPLAINT STATUS CHECKER

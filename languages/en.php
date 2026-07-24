@@ -243,5 +243,28 @@ return [
     'role_label' => 'Official Designation / Role',
     'employee_id' => 'Official Employee ID',
     'register_new' => 'Register New Citizen',
-    'submit_complaint' => 'Submit Complaint & Generate ID'
+    'submit_complaint' => 'Submit Complaint & Generate ID',
+
+    // Scheme Translations
+    'lbl_benefits' => 'Benefits:',
+    'lbl_documents' => 'Documents:',
+    'btn_apply_online' => 'Apply Online',
+    'btn_view_details' => 'View Details',
+    'pmay_ben' => 'Financial assistance of ₹1.20 Lakh in plains and ₹1.30 Lakh in hilly areas for house construction.',
+    'pmay_doc' => 'Aadhaar Card, Bank Passbook, MGNREGA Job Card, BPL Certificate.',
+    'pmay_elig' => 'Kutcha house owners, homeless rural families under SECC data.',
+    'jjm_ben' => '100% functional tap water connection per family at zero installation cost.',
+    'jjm_doc' => 'Aadhaar Card, Household tax receipt.',
+    'jjm_elig' => 'All rural households lacking tap water connection.',
+    'pmkisan_ben' => '₹6,000 per year in 3 equal instalments of ₹2,000 directly into bank account.',
+    'pmkisan_doc' => 'Aadhaar Card, Land records (Khasra/Khatauni), Bank Account details.',
+    'pmkisan_elig' => 'Small and marginal farmer families owning cultivable land.',
+    'ayushman_ben' => 'Cashless treatment at empanelled hospitals. Covers 1,500+ procedures.',
+    'ayushman_doc' => 'Aadhaar Card, Ration Card, SECC enrollment proof.',
+    'sbm_ben' => 'Financial support of ₹12,000 for constructing individual household toilets.',
+    'sbm_doc' => 'Aadhaar Card, BPL card, Bank account details.',
+    'mgnrega_ben' => 'Guaranteed daily wage paid within 15 days directly into bank/post office account.',
+    'mgnrega_doc' => 'Aadhaar Card, Passport photo, Address proof, Bank account details.',
+    'bbbp_ben' => 'Educational scholarships, awareness drives, and cash transfers for girl education.',
+    'bbbp_doc' => 'Aadhaar Card, Birth Certificate, Bank account details of girl child.'
 ];

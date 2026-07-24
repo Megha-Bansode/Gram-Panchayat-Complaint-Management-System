@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCounterAnimation();
     initComplaintTracker();
     initModalNoticeFilterListeners();
+    initScrollSpy();
 });
 
 /* --------------------------------------------------------------------------
@@ -226,3 +227,116 @@ function initModalNoticeFilterListeners() {
         searchBtn.addEventListener('click', window.filterModalNotices);
     }
 }
+
+/* --------------------------------------------------------------------------
+   9. Scroll Spy — Highlight active nav link as sections enter the viewport
+   -------------------------------------------------------------------------- */
+function initScrollSpy() {
+    // Section IDs on the landing page mapped to nav anchor fragment
+    const sectionMap = {
+        'home'          : 'home',
+        'quick-services': 'quick-services',
+        'notices'       : 'notices',
+        'schemes'       : 'schemes',
+        'gallery'       : 'gallery',
+        'about'         : 'about',
+        'contact'       : 'contact'
+    };
+
+    // Build navLinks map: sectionId -> <a> element
+    // Match by href fragment (#id) regardless of base_path prefix
+    const navLinks = {};
+    Object.keys(sectionMap).forEach(id => {
+        const frag = sectionMap[id];
+        const link = document.querySelector(`a.nav-link[href$="#${frag}"]`);
+        if (link) navLinks[id] = link;
+    });
+
+    // Collect only sections that actually exist on this page
+    const sectionsOnPage = Object.keys(sectionMap).filter(id => document.getElementById(id));
+    if (sectionsOnPage.length === 0) return; // Sub-pages — PHP handles highlighting
+
+    const headerEl  = document.getElementById('main-header');
+    const headerH   = () => headerEl ? headerEl.offsetHeight : 70;
+
+    // --- Active state setter ---
+    function setActive(id) {
+        Object.values(navLinks).forEach(l => l.classList.remove('active-nav'));
+        if (id && navLinks[id]) navLinks[id].classList.add('active-nav');
+    }
+
+    // --- IntersectionObserver (primary method) ---
+    let currentSection = sectionsOnPage[0];
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                currentSection = entry.target.id;
+                setActive(currentSection);
+            }
+        });
+    }, {
+        // Fire when a section crosses the top 30% of the viewport
+        rootMargin: `-${headerH() + 10}px 0px -60% 0px`,
+        threshold: 0
+    });
+
+    sectionsOnPage.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) observer.observe(el);
+    });
+
+    // --- Fallback: position-based on scroll (handles fast scrolls & edge) ---
+    function getActiveSectionByScroll() {
+        const scrollY = window.scrollY + headerH() + 40;
+        let active = sectionsOnPage[0];
+        sectionsOnPage.forEach(id => {
+            const el = document.getElementById(id);
+            if (el && el.offsetTop <= scrollY) active = id;
+        });
+        return active;
+    }
+
+    window.addEventListener('scroll', () => {
+        const id = getActiveSectionByScroll();
+        if (id !== currentSection) {
+            currentSection = id;
+            setActive(id);
+        }
+    }, { passive: true });
+
+    // --- Instant highlight on nav click ---
+    Object.entries(navLinks).forEach(([id, link]) => {
+        link.addEventListener('click', () => {
+            currentSection = id;
+            setActive(id);
+        });
+    });
+
+    // --- On page load: honour URL hash, then fallback ---
+    const hash = window.location.hash.replace('#', '');
+    if (hash && navLinks[hash]) {
+        setActive(hash);
+        currentSection = hash;
+    } else {
+        const initial = getActiveSectionByScroll();
+        setActive(initial);
+        currentSection = initial;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   10. Scheme Expandable Cards — Toggle inline detail panel
+   -------------------------------------------------------------------------- */
+window.toggleAccordion = function(btn) {
+    const card = btn.closest('.scheme-card-wrap');
+    const isOpen = card.classList.contains('accordion-open');
+    
+    // Close all other open scheme cards first
+    document.querySelectorAll('.scheme-card-wrap.accordion-open').forEach(c => {
+        if (c !== card) c.classList.remove('accordion-open');
+    });
+    
+    // Toggle this card
+    card.classList.toggle('accordion-open', !isOpen);
+};

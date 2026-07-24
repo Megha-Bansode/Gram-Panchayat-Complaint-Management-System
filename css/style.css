@@ -458,9 +458,16 @@ header.scrolled {
     right: 0.75rem;
 }
 
-.nav-link:hover,
+.nav-link:hover {
+    color: var(--primary) !important;
+}
+
+/* Active nav — clearly visible pill highlight */
 .nav-link.active-nav {
     color: var(--primary) !important;
+    font-weight: 700 !important;
+    background: rgba(139, 94, 52, 0.12);
+    border-radius: 20px;
 }
 
 /* Language Selector */
@@ -2505,10 +2512,215 @@ footer ul a::before {
     background: var(--bg) !important;
 }
 
+/* ============================================================
+   SCHEME EXPANDABLE PANELS
+   ============================================================ */
+.scheme-expandable {
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+.scheme-expandable:hover {
+    box-shadow: 0 12px 40px rgba(139, 94, 52, 0.18);
+    transform: translateY(-3px);
+}
+
+/* Hidden detail panel — expands on click */
+.scheme-detail-panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.45s ease, opacity 0.35s ease, padding 0.3s ease;
+    opacity: 0;
+    padding-top: 0;
+    border-top: 0px solid transparent;
+}
+.scheme-expandable.open .scheme-detail-panel {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(139, 94, 52, 0.15);
+    margin-top: 0.75rem;
+}
+
+/* Each info row inside detail panel */
+.scheme-detail-row {
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+    margin-bottom: 0.65rem;
+    font-size: 0.83rem;
+    color: var(--text);
+    line-height: 1.5;
+}
+.scheme-detail-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(139, 94, 52, 0.1);
+    color: var(--primary);
+    font-size: 0.7rem;
+    margin-top: 1px;
+}
+
+/* Apply Online button inside detail panel */
+.scheme-apply-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 0.6rem;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #fff !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.scheme-apply-btn:hover {
+    opacity: 0.88;
+    transform: translateX(2px);
+}
+
+/* Expand icon in featured card image */
+.scheme-expand-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    color: var(--primary);
+    transition: transform 0.35s ease;
+}
+.scheme-expandable.open .scheme-expand-icon {
+    transform: rotate(180deg);
+}
+
+/* "View Details" hint text on small scheme cards */
+.scheme-tap-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 0.5rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--primary);
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+.scheme-expandable:hover .scheme-tap-hint,
+.scheme-expandable.open .scheme-tap-hint {
+    opacity: 1;
+}
+.scheme-expandable.open .scheme-tap-hint i {
+    transform: rotate(180deg);
+    transition: transform 0.35s ease;
+}
 .rounded-custom {
     border-radius: var(--radius) !important;
 }
 
 .gap-custom {
     gap: 1.5rem;
+}
+
+/* ============================================================
+   SCHEME ACCORDION — View Details Panel
+   ============================================================ */
+
+/* Card wrapper */
+.scheme-card-wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+/* The accordion detail panel */
+.scheme-overlay-panel {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    background: transparent;
+    padding: 0 1.5rem;
+    margin-top: 0;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease, padding 0.4s ease;
+    border-top: 0px solid rgba(139, 94, 52, 0.15);
+}
+.scheme-card-wrap.accordion-open .scheme-overlay-panel {
+    max-height: 500px;
+    opacity: 1;
+    padding: 1rem 1.5rem 1.5rem 1.5rem;
+    margin-top: 0;
+    border-top: 1px solid rgba(139, 94, 52, 0.2);
+}
+
+/* "View Details" trigger button */
+.scheme-view-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    margin-top: 1rem;
+    border-radius: 6px;
+    border: 1px solid rgba(139, 94, 52, 0.4);
+    background: rgba(139, 94, 52, 0.05);
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.scheme-view-btn:hover,
+.scheme-card-wrap.accordion-open .scheme-view-btn {
+    background: rgba(139, 94, 52, 0.12);
+    border-color: var(--primary);
+}
+.scheme-view-btn .btn-chevron {
+    transition: transform 0.35s ease;
+}
+.scheme-card-wrap.accordion-open .scheme-view-btn .btn-chevron {
+    transform: rotate(180deg);
+}
+
+/* Reuse existing detail row styles inside overlay */
+.scheme-detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.55rem;
+    font-size: 0.85rem;
+    color: var(--text);
+}
+.scheme-detail-icon {
+    color: var(--primary);
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+.scheme-apply-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    background: transparent;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+.scheme-apply-btn:hover {
+    background: var(--accent);
+    color: var(--text);
 }

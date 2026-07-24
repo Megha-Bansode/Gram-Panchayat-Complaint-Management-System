@@ -34,6 +34,33 @@ $lang_labels = [
     'mr' => '🇮🇳 मराठी',
     'hi' => '🇮🇳 हिन्दी'
 ];
+
+// ── Active Nav Detection ──────────────────────────────────────────────────────
+// Determine which nav section is active based on the current page.
+// On index.php the JS scrollspy handles highlighting — PHP outputs nothing.
+$current_file = basename($_SERVER['PHP_SELF']);
+
+// Map page filename → active nav key
+$page_nav_map = [
+    // index.php — scrollspy handles this, PHP outputs no class
+    'index.php'              => '',
+    // complaint pages → Services
+    'register_complaint.php' => 'services',
+    'track_complaint.php'    => 'services',
+    // scheme detail → Government Schemes
+    'scheme_details.php'     => 'schemes',
+    // login pages → no specific section highlighted
+    'citizen_login.php'      => '',
+    'official_login.php'     => '',
+];
+
+$active_nav = $page_nav_map[$current_file] ?? '';
+
+// Helper: output " active-nav" CSS class if the key matches current page
+function navActive(string $key): string {
+    global $active_nav;
+    return ($active_nav !== '' && $active_nav === $key) ? ' active-nav' : '';
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo htmlspecialchars($current_lang); ?>">
@@ -63,8 +90,8 @@ $lang_labels = [
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo $base_path; ?>css/style.css">
-    <link rel="stylesheet" href="<?php echo $base_path; ?>css/landing.css">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo $base_path; ?>css/landing.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
@@ -111,13 +138,13 @@ $lang_labels = [
                 <!-- Nav Menu -->
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav mx-auto align-items-center gap-1 my-3 my-lg-0">
-                        <li class="nav-item"><a class="nav-link active-nav" href="<?php echo $base_path; ?>index.php#home"><?php echo __('nav_home'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo $base_path; ?>index.php#quick-services"><?php echo __('nav_services'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo $base_path; ?>index.php#notices"><?php echo __('nav_notices'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo $base_path; ?>index.php#schemes"><?php echo __('nav_schemes'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo $base_path; ?>index.php#gallery"><?php echo __('nav_gallery'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo $base_path; ?>index.php#about"><?php echo __('nav_about'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?php echo $base_path; ?>index.php#contact"><?php echo __('nav_contact'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('home'); ?>" href="<?php echo $base_path; ?>index.php#home"><?php echo __('nav_home'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('services'); ?>" href="<?php echo $base_path; ?>index.php#quick-services"><?php echo __('nav_services'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('notices'); ?>" href="<?php echo $base_path; ?>index.php#notices"><?php echo __('nav_notices'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('schemes'); ?>" href="<?php echo $base_path; ?>index.php#schemes"><?php echo __('nav_schemes'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('gallery'); ?>" href="<?php echo $base_path; ?>index.php#gallery"><?php echo __('nav_gallery'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('about'); ?>" href="<?php echo $base_path; ?>index.php#about"><?php echo __('nav_about'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('contact'); ?>" href="<?php echo $base_path; ?>index.php#contact"><?php echo __('nav_contact'); ?></a></li>
                     </ul>
 
                     <!-- Right Side Controls -->
