@@ -73,7 +73,7 @@ function auth_get_post_login_path(string $roleName): string
     }
 
     if (str_contains($role, 'field') || str_contains($role, 'officer')) {
-        return '../officer/officer_dashboard.php';
+        return '../officer/field_dashboard.php';
     }
 
     if (str_contains($role, 'citizen')) {
