@@ -63,10 +63,24 @@ function auth_get_post_login_path(string $roleName): string
 {
     $role = strtolower(trim($roleName));
 
-    if (in_array($role, ['citizen', 'gram sevak', 'field officer', 'super admin'], true)) {
-        return 'index.php';
+    // Map known role name patterns to dashboard paths (relative to the includes/ folder)
+    if (str_contains($role, 'super') || str_contains($role, 'admin')) {
+        return '../admin/admin_dashboard.php';
     }
 
+    if (str_contains($role, 'gram') || str_contains($role, 'sevak') || str_contains($role, 'panchayat')) {
+        return '../gramsevak/gramsevak_dashboard.php';
+    }
+
+    if (str_contains($role, 'field') || str_contains($role, 'officer')) {
+        return '../officer/officer_dashboard.php';
+    }
+
+    if (str_contains($role, 'citizen')) {
+        return '../citizen/citizen_dashboard.php';
+    }
+
+    // Fallback to login page
     return 'login.php';
 }
 
