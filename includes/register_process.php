@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/auth_functions.php';
+require_once __DIR__ . '/auth_functions.php';
 
 auth_require_guest();
 
@@ -62,7 +62,7 @@ if (auth_get_user_by_login_id($loginId) !== null) {
 
 $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 $stmt = $conn->prepare(
-    'INSERT INTO users (full_name, login_id, password_hash, role_id, mobile_number, status, created_at)
+    'INSERT INTO users (full_name, username, password_hash, role_id, mobile_number, status, created_at)
      VALUES (?, ?, ?, ?, ?, ?, NOW())'
 );
 $stmt->bind_param('sssiss', $fullName, $loginId, $passwordHash, $citizenRoleId, $mobileNumber, $status);

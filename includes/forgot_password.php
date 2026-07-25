@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/auth_functions.php';
+require_once __DIR__ . '/auth_functions.php';
 
 auth_require_guest();
 
@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $conn = get_db_connection();
                 $passwordHash = password_hash($newPassword, PASSWORD_BCRYPT);
-                $stmt = $conn->prepare('UPDATE users SET password_hash = ? WHERE login_id = ? AND mobile_number = ?');
+                $stmt = $conn->prepare('UPDATE users SET password_hash = ? WHERE username = ? AND mobile_number = ?');
                 $stmt->bind_param('sss', $passwordHash, $loginId, $mobileNumber);
                 $stmt->execute();
                 $stmt->close();
@@ -79,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="../css/auth.css">
 </head>
 <body>
     <div class="auth-shell">
@@ -138,6 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
+    <script src="../js/auth.js"></script>
 </body>
 </html>

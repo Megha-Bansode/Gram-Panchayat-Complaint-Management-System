@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/auth_functions.php';
+require_once __DIR__ . '/auth_functions.php';
 
 auth_require_guest();
 

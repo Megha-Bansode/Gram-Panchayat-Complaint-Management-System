@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/auth_functions.php';
+require_once __DIR__ . '/auth_functions.php';
 
 auth_require_guest();
 
@@ -26,7 +26,7 @@ if (isset($_GET['error']) && $_GET['error'] !== '') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="../css/auth.css">
 </head>
 <body>
     <div class="auth-shell">
@@ -80,6 +80,6 @@ if (isset($_GET['error']) && $_GET['error'] !== '') {
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
+    <script src="../js/auth.js"></script>
 </body>
 </html>
