@@ -60,8 +60,9 @@ $page_nav_map = [
     // scheme detail → Government Schemes
     'scheme_details.php'     => 'schemes',
     // login pages → no specific section highlighted
-    'citizen_login.php'      => '',
-    'official_login.php'     => '',
+    'login.php'              => '',
+    'register.php'           => '',
+    'forgot_password.php'    => '',
 ];
 
 $active_nav = $page_nav_map[$current_file] ?? '';
@@ -206,7 +207,7 @@ function navActive(string $key): string {
                                 <!-- Citizen Login -->
                                 <li>
                                     <a class="dropdown-item login-role-card d-flex align-items-start gap-3"
-                                        href="<?php echo $base_path; ?>login/citizen_login.php" id="citizen-login-btn">
+                                        href="<?php echo $base_path; ?>includes/login.php?role=citizen" id="citizen-login-btn">
                                         <div class="login-role-icon">
                                             <i class="fa-solid fa-user"></i>
                                         </div>
@@ -226,7 +227,7 @@ function navActive(string $key): string {
                                 <!-- Official Login -->
                                 <li>
                                     <a class="dropdown-item login-role-card d-flex align-items-start gap-3"
-                                        href="<?php echo $base_path; ?>login/official_login.php" id="official-login-btn">
+                                        href="<?php echo $base_path; ?>includes/official_login.php?role=official" id="official-login-btn">
                                         <div class="login-role-icon"
                                             style="background:rgba(212,175,55,0.12);color:#9a7e1a;">
                                             <i class="fa-solid fa-building-columns"></i>

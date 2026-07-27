@@ -83,7 +83,7 @@ include 'includes/header.php';
                 <p class="hero-subtitle-main"><?php echo __('hero_subtitle_main'); ?></p>
                 <p class="hero-desc"><?php echo __('hero_desc'); ?></p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="complaint/register_complaint.php" class="btn-hero-primary" id="hero-register-btn">
+                    <a href="includes/register.php" class="btn-hero-primary" id="hero-register-btn">
                         <i class="fa-solid fa-bullhorn me-2"></i>
                         <span><?php echo __('btn_register'); ?></span>
                     </a>
@@ -114,7 +114,7 @@ include 'includes/header.php';
         <div class="row g-4">
             <!-- Card 1 -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="0">
-                <a href="complaint/register_complaint.php" class="text-decoration-none">
+                <a href="includes/register.php" class="text-decoration-none">
                     <div class="service-card">
                         <div class="service-icon"><i class="fa-solid fa-file-pen"></i></div>
                         <div class="service-title"><?php echo __('s1_title'); ?></div>
@@ -741,7 +741,7 @@ include 'includes/header.php';
             <p class="section-subtitle"><?php echo __('tracker_subtitle'); ?></p>
         </div>
         <div class="tracker-card" data-aos="zoom-in">
-            <form id="tracker-form" action="complaint/track_complaint.php" method="GET">
+            <form id="tracker-form" action="citizen/track_complaint.php" method="GET">
                 <div class="tracker-input-wrap">
                     <i class="fa-solid fa-hashtag" style="color:var(--text-muted);"></i>
                     <input type="text" name="complaint_id" id="complaint-id-input" class="tracker-input"
@@ -942,7 +942,7 @@ include 'includes/header.php';
                     <li><i class="fa-solid fa-check-circle"></i> <span><?php echo __('about_f5'); ?></span></li>
                 </ul>
                 <div class="d-flex gap-3 mt-3">
-                    <a href="complaint/register_complaint.php" class="btn-primary-custom"><?php echo __('about_cta_1'); ?></a>
+                    <a href="includes/register.php" class="btn-primary-custom"><?php echo __('about_cta_1'); ?></a>
                     <a href="#schemes" class="btn-secondary-custom"><?php echo __('about_cta_2'); ?></a>
                 </div>
             </div>
