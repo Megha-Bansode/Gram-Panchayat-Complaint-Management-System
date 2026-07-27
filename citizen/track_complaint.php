@@ -7,9 +7,17 @@
  */
 
 // ── CONTRACT INCLUDES (required on every protected page) ─
+declare(strict_types=1);
+
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
 require_once 'citizen_helpers.php';
+
+$user = auth_require_auth();
+if ((string) $user['role_name'] !== 'Citizen') {
+    auth_redirect('../includes/login.php', 'Unauthorized access.');
+}
+
 
 $user_id = intval($_SESSION['user_id']);
 $search_id = isset($_GET['complaint_id']) ? intval($_GET['complaint_id']) : null;

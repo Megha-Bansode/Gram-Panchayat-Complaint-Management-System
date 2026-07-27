@@ -9,11 +9,17 @@
  */
 
 // ── CONTRACT INCLUDES (required on every protected page) ─
+declare(strict_types=1);
+
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
 require_once 'citizen_helpers.php';
 
-$user_id = intval($_SESSION['user_id']);
+$user = auth_require_auth();
+if ((string) $user['role_name'] !== 'Citizen') {
+    auth_redirect('../includes/login.php', 'Unauthorized access.');
+}
+
 
 
 // ── READ ?created= PARAM FOR SUCCESS BANNER ───────────────────────────────────
