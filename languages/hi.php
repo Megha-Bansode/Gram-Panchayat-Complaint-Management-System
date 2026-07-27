@@ -17,6 +17,7 @@ return [
     'nav_services' => 'सेवाएं',
     'nav_notices' => 'सूचनाएं',
     'nav_schemes' => 'सरकारी योजनाएं',
+    'nav_track' => 'शिकायत स्थिति',
     'nav_gallery' => 'गैलरी',
     'nav_about' => 'हमारे बारे में',
     'nav_contact' => 'संपर्क करें',

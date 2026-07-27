@@ -87,7 +87,7 @@ include 'includes/header.php';
                         <i class="fa-solid fa-bullhorn me-2"></i>
                         <span><?php echo __('btn_register'); ?></span>
                     </a>
-                    <a href="complaint/track_complaint.php" class="btn-hero-secondary" id="hero-track-btn">
+                    <a href="#track-status" class="btn-hero-secondary" id="hero-track-btn">
                         <i class="fa-solid fa-magnifying-glass me-2"></i>
                         <span><?php echo __('btn_track'); ?></span>
                     </a>
@@ -125,7 +125,7 @@ include 'includes/header.php';
             </div>
             <!-- Card 2 -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="60">
-                <a href="complaint/track_complaint.php" class="text-decoration-none">
+                <a href="#track-status" class="text-decoration-none">
                     <div class="service-card">
                         <div class="service-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
                         <div class="service-title"><?php echo __('s2_title'); ?></div>
@@ -733,7 +733,7 @@ include 'includes/header.php';
 <!-- ═══════════════════════════════════════════════════════════
  6. COMPLAINT STATUS CHECKER
 ═══════════════════════════════════════════════════════════ -->
-<section id="tracker" class="tracker-section">
+<section id="track-status" class="tracker-section">
     <div class="container">
         <div class="text-center mb-4">
             <span class="section-tag"><?php echo __('tracker_tag'); ?></span>
@@ -919,8 +919,8 @@ include 'includes/header.php';
         <div class="row g-5 align-items-center">
             <div class="col-lg-5" data-aos="fade-right">
                 <div class="about-image-wrap">
-                    <img src="https://images.unsplash.com/photo-1605462863863-10d9e47e15ee?w=800&auto=format&fit=crop&q=80"
-                        alt="Gram Panchayat Village" style="width:100%;height:420px;object-fit:cover;">
+                    <img src="assets/images/gram_sabha_meeting.png"
+                        alt="Gram Sabha Village Meeting" style="width:100%;height:420px;object-fit:cover;object-position:center top;">
                     <div class="about-image-badge">
                         <div class="about-badge-icon"><i class="fa-solid fa-leaf"></i></div>
                         <div>

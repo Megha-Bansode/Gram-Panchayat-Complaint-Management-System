@@ -17,6 +17,7 @@ return [
     'nav_services' => 'Services',
     'nav_notices' => 'Notices',
     'nav_schemes' => 'Government Schemes',
+    'nav_track' => 'Track Status',
     'nav_gallery' => 'Gallery',
     'nav_about' => 'About Us',
     'nav_contact' => 'Contact Us',

@@ -15,6 +15,11 @@ if ($pos !== false) {
     $base_path = file_exists('css/style.css') ? '' : '../';
 }
 
+// Absolute root-relative URL prefix for the project (works from any subfolder depth)
+$project_root_url = ($pos !== false)
+    ? substr($script_name, 0, $pos + strlen('/' . $project_folder)) . '/'
+    : '/Gram-Panchayat-Complaint-Management-System/';
+
 if (!function_exists('getLangUrl')) {
     function getLangUrl($langCode) {
         $uri = $_SERVER['REQUEST_URI'];
@@ -38,15 +43,20 @@ $lang_labels = [
 // ── Active Nav Detection ──────────────────────────────────────────────────────
 // Determine which nav section is active based on the current page.
 // On index.php the JS scrollspy handles highlighting — PHP outputs nothing.
-$current_file = basename($_SERVER['PHP_SELF']);
+$request_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+$current_file = !empty($request_path) ? basename($request_path) : basename($_SERVER['PHP_SELF'] ?? '');
 
 // Map page filename → active nav key
 $page_nav_map = [
     // index.php — scrollspy handles this, PHP outputs no class
     'index.php'              => '',
-    // complaint pages → Services
+    // register complaint → Services
     'register_complaint.php' => 'services',
-    'track_complaint.php'    => 'services',
+    // track complaint → Track Status tab
+    'track_complaint.php'    => 'track',
+    'complaint_status.php'   => 'track',
+    'complaint-status.php'   => 'track',
+    'status.php'             => 'track',
     // scheme detail → Government Schemes
     'scheme_details.php'     => 'schemes',
     // login pages → no specific section highlighted
@@ -56,10 +66,10 @@ $page_nav_map = [
 
 $active_nav = $page_nav_map[$current_file] ?? '';
 
-// Helper: output " active-nav" CSS class if the key matches current page
+// Helper: output " active-nav active" CSS class if the key matches current page
 function navActive(string $key): string {
     global $active_nav;
-    return ($active_nav !== '' && $active_nav === $key) ? ' active-nav' : '';
+    return ($active_nav !== '' && $active_nav === $key) ? ' active-nav active' : '';
 }
 ?>
 <!DOCTYPE html>
@@ -138,17 +148,22 @@ function navActive(string $key): string {
                 <!-- Nav Menu -->
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav mx-auto align-items-center gap-1 my-3 my-lg-0">
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('home'); ?>" href="<?php echo $base_path; ?>index.php#home"><?php echo __('nav_home'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('services'); ?>" href="<?php echo $base_path; ?>index.php#quick-services"><?php echo __('nav_services'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('notices'); ?>" href="<?php echo $base_path; ?>index.php#notices"><?php echo __('nav_notices'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('schemes'); ?>" href="<?php echo $base_path; ?>index.php#schemes"><?php echo __('nav_schemes'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('gallery'); ?>" href="<?php echo $base_path; ?>index.php#gallery"><?php echo __('nav_gallery'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('about'); ?>" href="<?php echo $base_path; ?>index.php#about"><?php echo __('nav_about'); ?></a></li>
-                        <li class="nav-item"><a class="nav-link<?php echo navActive('contact'); ?>" href="<?php echo $base_path; ?>index.php#contact"><?php echo __('nav_contact'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('home'); ?>" data-nav-key="home" href="<?php echo $base_path; ?>index.php#home"><?php echo __('nav_home'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('services'); ?>" data-nav-key="services" href="<?php echo $base_path; ?>index.php#quick-services"><?php echo __('nav_services'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('notices'); ?>" data-nav-key="notices" href="<?php echo $base_path; ?>index.php#notices"><?php echo __('nav_notices'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('schemes'); ?>" data-nav-key="schemes" href="<?php echo $base_path; ?>index.php#schemes"><?php echo __('nav_schemes'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('track'); ?>" data-nav-key="track" href="<?php echo $base_path; ?>index.php#track-status"><?php echo __('nav_track'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('gallery'); ?>" data-nav-key="gallery" href="<?php echo $base_path; ?>index.php#gallery"><?php echo __('nav_gallery'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('about'); ?>" data-nav-key="about" href="<?php echo $base_path; ?>index.php#about"><?php echo __('nav_about'); ?></a></li>
+                        <li class="nav-item"><a class="nav-link<?php echo navActive('contact'); ?>" data-nav-key="contact" href="<?php echo $base_path; ?>index.php#contact"><?php echo __('nav_contact'); ?></a></li>
                     </ul>
+
+
 
                     <!-- Right Side Controls -->
                     <div class="d-flex align-items-center gap-2 ms-lg-3 my-2 my-lg-0">
+
+
 
                         <!-- Global Language Switcher -->
                         <div class="nav-item dropdown">
@@ -233,3 +248,5 @@ function navActive(string $key): string {
             </nav>
         </div>
     </header>
+
+

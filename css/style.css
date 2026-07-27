@@ -453,9 +453,10 @@ header.scrolled {
 }
 
 .nav-link:hover::after,
-.nav-link.active-nav::after {
-    left: 0.75rem;
-    right: 0.75rem;
+.nav-link.active-nav::after,
+.nav-link.active::after {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
 }
 
 .nav-link:hover {
@@ -463,11 +464,12 @@ header.scrolled {
 }
 
 /* Active nav — clearly visible pill highlight */
-.nav-link.active-nav {
+.nav-link.active-nav,
+.nav-link.active {
     color: var(--primary) !important;
     font-weight: 700 !important;
-    background: rgba(139, 94, 52, 0.12);
-    border-radius: 20px;
+    background: rgba(138, 114, 76, 0.18) !important;
+    border-radius: 20px !important;
 }
 
 /* Language Selector */

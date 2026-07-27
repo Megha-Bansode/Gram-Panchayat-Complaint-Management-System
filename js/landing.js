@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initComplaintTracker();
     initModalNoticeFilterListeners();
     initScrollSpy();
+    initSubpageNavHighlight();
 });
 
 /* --------------------------------------------------------------------------
@@ -238,6 +239,7 @@ function initScrollSpy() {
         'quick-services': 'quick-services',
         'notices'       : 'notices',
         'schemes'       : 'schemes',
+        'track-status'  : 'track-status',
         'gallery'       : 'gallery',
         'about'         : 'about',
         'contact'       : 'contact'
@@ -340,3 +342,32 @@ window.toggleAccordion = function(btn) {
     // Toggle this card
     card.classList.toggle('accordion-open', !isOpen);
 };
+
+/* --------------------------------------------------------------------------
+   11. Sub-page Dynamic Active Navigation Highlight Detector
+   -------------------------------------------------------------------------- */
+function initSubpageNavHighlight() {
+    const path = window.location.pathname.toLowerCase();
+    
+    // Check if on standalone complaint tracking page / route
+    const isTrackPage = (path.includes('track_complaint') || 
+                        path.includes('complaint_status') || 
+                        path.includes('complaint-status')) &&
+                        !path.endsWith('index.php') && 
+                        !path.endsWith('/');
+
+    if (isTrackPage) {
+        // Ensure ONLY ONE navigation item is active at a time
+        document.querySelectorAll('.navbar-nav .nav-link').forEach(link => {
+            link.classList.remove('active-nav', 'active');
+        });
+
+        const trackLink = document.querySelector('.navbar-nav a.nav-link[data-nav-key="track"]') ||
+                          document.querySelector('.navbar-nav a.nav-link[href*="track-status"]') ||
+                          document.querySelector('.navbar-nav a.nav-link[href*="track_complaint"]');
+
+        if (trackLink) {
+            trackLink.classList.add('active-nav', 'active');
+        }
+    }
+}
