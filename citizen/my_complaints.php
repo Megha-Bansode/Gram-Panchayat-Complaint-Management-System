@@ -11,7 +11,7 @@
 // ── CONTRACT INCLUDES (required on every protected page) ─
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
-
+require_once '../includes/citizen_helpers.php';
 
 $user_id = intval($_SESSION['user_id']);
 
@@ -82,34 +82,7 @@ $conn->close();
 $total_count = count($complaints);
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-
-/**
- * Returns a human-readable label for a complaint status.
- */
-function mc_status_label(string $status): string
-{
-    $map = [
-        'pending'     => 'Pending',
-        'assigned'    => 'Assigned',
-        'in_progress' => 'In Progress',
-        'resolved'    => 'Resolved',
-    ];
-    return $map[$status] ?? htmlspecialchars(ucfirst(str_replace('_', ' ', $status)));
-}
-
-/**
- * Returns the CSS class suffix for a complaint status badge.
- */
-function mc_status_badge(string $status): string
-{
-    $map = [
-        'pending'     => 'badge-status-pending',
-        'assigned'    => 'badge-status-assigned',
-        'in_progress' => 'badge-status-inprogress',
-        'resolved'    => 'badge-status-resolved',
-    ];
-    return $map[$status] ?? 'badge-status-default';
-}
+// Helpers moved to includes/citizen_helpers.php per Handbook §12
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -136,7 +109,7 @@ function mc_status_badge(string $status): string
     <?php require_once '../includes/sidebar.php'; ?>
 
     <div class="citizen-main-content">
-        <?php require_once '../includes/topheader.php'; ?>
+        <?php require_once '../includes/header.php'; ?>
 
         <!-- ═══════════════════════════════════════════════════════
              PAGE WRAPPER
@@ -441,8 +414,8 @@ function mc_status_badge(string $status): string
                             </td>
 
                             <td>
-                                <span class="citizen-status-badge <?php echo mc_status_badge($status); ?>">
-                                    <?php echo mc_status_label($status); ?>
+                                <span class="citizen-badge <?php echo status_badge_class($status); ?>">
+                                    <?php echo status_label($status); ?>
                                 </span>
                             </td>
 
@@ -505,7 +478,7 @@ function mc_status_badge(string $status): string
                         <?php endif; ?>
                     </div>
                     <span class="citizen-status-badge <?php echo mc_status_badge($status); ?>">
-                        <?php echo mc_status_label($status); ?>
+                        <?php echo status_label($status); ?>
                     </span>
                 </div>
 
@@ -574,32 +547,5 @@ function mc_status_badge(string $status): string
 <!-- ═══════════════════════════════════════════════════════
      FOOTER
      ═══════════════════════════════════════════════════════ -->
-<footer class="citizen-footer" id="citizenFooter">
-    <div class="container-fluid px-3 px-lg-4">
-        <div class="d-flex flex-column flex-md-row
-                    justify-content-between align-items-center gap-2">
-            <div class="citizen-footer-brand">
-                <i class="bi bi-building me-1" aria-hidden="true"></i>
-                <strong>Gram Panchayat Complaint Management System</strong>
-            </div>
-            <div class="citizen-footer-meta">
-                <span><i class="bi bi-telephone me-1" aria-hidden="true"></i>1800-123-456</span>
-                <span class="citizen-footer-sep" aria-hidden="true">·</span>
-                <span><i class="bi bi-envelope me-1" aria-hidden="true"></i>support@gpcms.gov.in</span>
-                <span class="citizen-footer-sep" aria-hidden="true">·</span>
-                <span>v3.1</span>
-            </div>
-        </div>
-    </div>
-</footer>
+<?php require_once '../includes/footer.php'; ?>
 
-<!-- Bootstrap 5 JS Bundle -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Citizen Module JavaScript -->
-<script src="../js/citizen.js"></script>
-
-    </div><!-- /.citizen-main-content -->
-</div><!-- /.citizen-layout -->
-
-</body>
-</html>

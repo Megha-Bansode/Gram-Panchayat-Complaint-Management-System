@@ -93,7 +93,7 @@ $conn->close();
     <?php require_once '../includes/sidebar.php'; ?>
 
     <div class="citizen-main-content">
-        <?php require_once '../includes/topheader.php'; ?>
+        <?php require_once '../includes/header.php'; ?>
 
         <main class="citizen-page-wrapper" id="mainContent">
     <div class="container-fluid px-3 px-lg-4 py-4">
@@ -286,22 +286,5 @@ $conn->close();
     </div><!-- /.container-fluid -->
 </main>
 
-        <footer class="citizen-footer" id="citizenFooter">
-            <div class="container-fluid px-3 px-lg-4">
-                <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-                    <div class="citizen-footer-brand">
-                        <i class="bi bi-building me-1" aria-hidden="true"></i>
-                        <strong>Gram Panchayat Complaint Management System</strong>
-                    </div>
-                    <div class="citizen-footer-meta"><span>v3.1</span></div>
-                </div>
-            </div>
-        </footer>
+        <?php require_once '../includes/footer.php'; ?>
 
-    </div><!-- /.citizen-main-content -->
-</div><!-- /.citizen-layout -->
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/citizen.js"></script>
-</body>
-</html>

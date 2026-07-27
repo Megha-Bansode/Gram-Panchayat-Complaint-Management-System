@@ -40,3 +40,10 @@ if (empty($_SESSION['user_id']) || !is_numeric($_SESSION['user_id'])) {
 
 // Clean up internal variable
 unset($_auth_login_url);
+
+// ── CSRF Token (generated once per session) ───────────────
+// Handbook §10 — CSRF protection required on all POST forms.
+// Read with $_SESSION['csrf_token']; verify with hash_equals().
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}

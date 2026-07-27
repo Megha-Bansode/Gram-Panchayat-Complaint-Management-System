@@ -9,7 +9,7 @@
 // ── CONTRACT INCLUDES (required on every protected page) ─
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
-
+require_once '../includes/citizen_helpers.php';
 
 $user_id = intval($_SESSION['user_id']);
 $search_id = isset($_GET['complaint_id']) ? intval($_GET['complaint_id']) : null;
@@ -79,25 +79,7 @@ if ($search_id && $search_id > 0) {
 
 $conn->close();
 
-function tc_status_badge(string $status): string {
-    $map = [
-        'pending'     => 'badge-status-pending',
-        'assigned'    => 'badge-status-assigned',
-        'in_progress' => 'badge-status-inprogress',
-        'resolved'    => 'badge-status-resolved',
-    ];
-    return $map[$status] ?? 'badge-status-default';
-}
-
-function tc_status_label(string $status): string {
-    $map = [
-        'pending'     => 'Pending',
-        'assigned'    => 'Assigned',
-        'in_progress' => 'In Progress',
-        'resolved'    => 'Resolved',
-    ];
-    return $map[$status] ?? ucfirst(str_replace('_', ' ', $status));
-}
+// Helpers moved to includes/citizen_helpers.php per Handbook §12
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -120,7 +102,7 @@ function tc_status_label(string $status): string {
     <?php require_once '../includes/sidebar.php'; ?>
 
     <div class="citizen-main-content">
-        <?php require_once '../includes/topheader.php'; ?>
+        <?php require_once '../includes/header.php'; ?>
 
         <main class="citizen-page-wrapper">
     <div class="container-fluid px-3 px-lg-4 py-4">
@@ -170,9 +152,9 @@ function tc_status_label(string $status): string {
                 <div class="citizen-card mb-4">
                     <div class="citizen-card-header d-flex justify-content-between align-items-center">
                         <h2 class="citizen-card-title mb-0">Complaint #<?php echo intval($complaint['complaint_id']); ?> Details</h2>
-                        <span class="citizen-status-badge <?php echo tc_status_badge($complaint['status']); ?>">
-                            <?php echo tc_status_label($complaint['status']); ?>
-                        </span>
+                        <div class="citizen-badge <?php echo status_badge_class($complaint['status']); ?>">
+                            <?php echo status_label($complaint['status']); ?>
+                        </div>
                     </div>
                     <div class="citizen-card-body">
                         <h4 class="mb-3 fw-bold text-dark"><?php echo htmlspecialchars($complaint['complaint_title']); ?></h4>
@@ -237,6 +219,9 @@ function tc_status_label(string $status): string {
                         <?php else: ?>
                             <p class="text-muted mb-3">This complaint has been resolved. Please provide your feedback.</p>
                             <form action="../save_feedback.php" method="POST">
+                                <!-- CSRF token — Handbook §10 -->
+                                <input type="hidden" name="csrf_token"
+                                       value="<?php echo htmlspecialchars($_SESSION['csrf_token']); ?>">
                                 <input type="hidden" name="complaint_id" value="<?php echo $complaint['complaint_id']; ?>">
                                 <div class="mb-3">
                                     <label class="form-label fw-semibold">Rating <span class="text-danger">*</span></label>
@@ -272,7 +257,7 @@ function tc_status_label(string $status): string {
                             <?php foreach ($history as $h): ?>
                             <li class="mb-4 position-relative">
                                 <span class="position-absolute translate-middle bg-primary rounded-circle" style="left: -21px; top: 8px; width: 12px; height: 12px;"></span>
-                                <div class="fw-bold text-dark"><?php echo tc_status_label($h['status']); ?></div>
+                                <div class="fw-bold text-dark"><?php echo status_label($h['status']); ?></div>
                                 <div class="citizen-small text-muted mb-1"><?php echo date('d M Y, h:i A', strtotime($h['updated_at'])); ?></div>
                                 <?php if (!empty($h['note'])): ?>
                                 <div class="citizen-small bg-light p-2 rounded border mt-1 text-secondary"><?php echo htmlspecialchars($h['note']); ?></div>
@@ -291,20 +276,5 @@ function tc_status_label(string $status): string {
     </div>
 </main>
 
-<footer class="citizen-footer">
-    <div class="container-fluid px-3 px-lg-4">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2">
-            <div><strong>Gram Panchayat Complaint Management System</strong></div>
-            <div class="citizen-footer-meta"><span>v3.1</span></div>
-        </div>
-    </div>
-</footer>
+<?php require_once '../includes/footer.php'; ?>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="../js/citizen.js"></script>
-
-    </div><!-- /.citizen-main-content -->
-</div><!-- /.citizen-layout -->
-
-</body>
-</html>
