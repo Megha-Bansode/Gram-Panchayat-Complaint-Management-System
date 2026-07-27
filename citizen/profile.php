@@ -10,6 +10,7 @@
 // ── CONTRACT INCLUDES (required on every protected page) ─
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
+require_once 'citizen_helpers.php';
 
 $user_id = intval($_SESSION['user_id']);
 
@@ -90,7 +91,7 @@ $conn->close();
 <body class="citizen-body">
 
 <div class="citizen-layout">
-    <?php require_once '../includes/sidebar.php'; ?>
+    <?php require_once 'sidebar.php'; ?>
 
     <div class="citizen-main-content">
         <?php require_once '../includes/header.php'; ?>
@@ -273,7 +274,7 @@ $conn->close();
                             <a href="track_complaint.php" class="btn citizen-btn-secondary" id="btn-profile-track">
                                 <i class="bi bi-search me-2"></i>Track a Complaint
                             </a>
-                            <a href="../logout.php" class="btn btn-outline-danger" id="btn-profile-logout">
+                            <a href="../includes/logout.php" class="btn btn-outline-danger" id="btn-profile-logout">
                                 <i class="bi bi-box-arrow-right me-2"></i>Logout
                             </a>
                         </div>

@@ -11,7 +11,7 @@
 // ── CONTRACT INCLUDES (required on every protected page) ─
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
-require_once '../includes/citizen_helpers.php';
+require_once 'citizen_helpers.php';
 
 $user_id = intval($_SESSION['user_id']);
 
@@ -82,7 +82,7 @@ $conn->close();
 $total_count = count($complaints);
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-// Helpers moved to includes/citizen_helpers.php per Handbook §12
+// Helpers moved to citizen/citizen_helpers.php per Handbook §12
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -106,7 +106,7 @@ $total_count = count($complaints);
 <body class="citizen-body">
 
 <div class="citizen-layout">
-    <?php require_once '../includes/sidebar.php'; ?>
+    <?php require_once 'sidebar.php'; ?>
 
     <div class="citizen-main-content">
         <?php require_once '../includes/header.php'; ?>

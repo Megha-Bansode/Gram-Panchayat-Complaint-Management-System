@@ -1,11 +1,11 @@
 ﻿<?php
 /**
- * FILE: includes/citizen_helpers.php
+ * FILE: citizen/citizen_helpers.php
  * MODULE: Citizen Module - Shared Helpers
  * PURPOSE: Centralised status label and badge class functions
  *          to avoid code duplication across citizen pages.
  *          Handbook §12 - No duplicated code.
- * USAGE:   require_once '../includes/citizen_helpers.php';
+ * USAGE:   require_once 'citizen_helpers.php';
  */
 
 function status_label(string $status): string

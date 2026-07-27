@@ -38,7 +38,7 @@ $user_initial = mb_strtoupper(mb_substr($full_name, 0, 1, 'UTF-8'));
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                    <a class="dropdown-item text-danger" href="../logout.php">
+                    <a class="dropdown-item text-danger" href="../includes/logout.php">
                         <i class="bi bi-box-arrow-right me-2"></i>Logout
                     </a>
                 </li>

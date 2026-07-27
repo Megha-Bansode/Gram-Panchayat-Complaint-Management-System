@@ -16,7 +16,7 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 
 // ── Redirect path (relative from citizen/ pages) ─────────
-$_auth_login_url = '../login.php';
+$_auth_login_url = '../includes/login.php';
 
 // ── Check 1: Must be logged in ────────────────────────────
 if (!isset($_SESSION['is_logged_in']) || $_SESSION['is_logged_in'] !== true) {

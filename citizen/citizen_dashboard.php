@@ -11,7 +11,7 @@
 // ── CONTRACT INCLUDES (required on every protected page) ─
 require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
-require_once '../includes/citizen_helpers.php';
+require_once 'citizen_helpers.php';
 
 $user_id = intval($_SESSION['user_id']);
 
@@ -98,7 +98,7 @@ $recent_stmt->close();
 $conn->close();
 
 // ── HELPERS ───────────────────────────────────────────────────────────────────
-// (Moved to includes/citizen_helpers.php to avoid duplication per Handbook §12)
+// (Moved to citizen/citizen_helpers.php to avoid duplication per Handbook §12)
 
 ?>
 <!DOCTYPE html>
@@ -119,7 +119,7 @@ $conn->close();
 <body class="citizen-body">
 
 <div class="citizen-layout">
-    <?php require_once '../includes/sidebar.php'; ?>
+    <?php require_once 'sidebar.php'; ?>
 
     <div class="citizen-main-content">
         <?php require_once '../includes/header.php'; ?>

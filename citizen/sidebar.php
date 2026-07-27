@@ -1,6 +1,6 @@
 <?php
 /**
- * FILE: includes/sidebar.php
+ * FILE: citizen/sidebar.php
  * PURPOSE: Reusable Vertical Sidebar Component
  */
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -53,7 +53,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </a>
 
         <div class="mt-auto pt-3">
-            <a href="../logout.php" class="citizen-sidebar-link text-danger">
+            <a href="../includes/logout.php" class="citizen-sidebar-link text-danger">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </a>

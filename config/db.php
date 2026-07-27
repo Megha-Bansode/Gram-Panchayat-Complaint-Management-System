@@ -1,6 +1,6 @@
 <?php
 /**
- * FILE: includes/db.php
+ * FILE: config/db.php
  * PURPOSE: Database connection for GPCMS.
  *          Exposes $conn (mysqli) to all including pages.
  * HANDBOOK: GPCMS Engineering Handbook V3.1
