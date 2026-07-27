@@ -51,6 +51,11 @@ function auth_require_auth(): array
         auth_redirect('login.php', 'Please sign in to continue.');
     }
 
+    // Generate CSRF token if not present (Handbook §10)
+    if (empty($_SESSION['csrf_token'])) {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    }
+
     return [
         'user_id' => (int) $_SESSION['user_id'],
         'full_name' => (string) $_SESSION['full_name'],

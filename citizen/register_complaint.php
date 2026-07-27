@@ -212,7 +212,7 @@ function is_selected(int $id, array $data): string
                                            class="citizen-form-control"
                                            id="complainant_name"
                                            name="complainant_name"
-                                           value="<?php echo old('complainant_name', $form_data) ?: htmlspecialchars($_SESSION['full_name']); ?>"
+                                           value="<?php echo old('complainant_name', $form_data) ?: htmlspecialchars($user['full_name']); ?>"
                                            placeholder="Enter full name"
                                            maxlength="150"
                                            required
