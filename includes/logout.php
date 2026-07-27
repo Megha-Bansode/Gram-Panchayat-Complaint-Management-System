@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-require_once __DIR__ . '/auth_functions.php';
+require_once __DIR__ . '/auth_check.php';
 
 auth_logout();
 auth_redirect('login.php', 'You have been logged out successfully.', 'success');
