@@ -13,6 +13,17 @@ require_once 'officer_sidebar.php';
 $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 ?>
 
+<!-- Breadcrumb Bar Matching Reference UI -->
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 py-2" style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E2D9CD; font-size: 0.82rem;">
+  <div class="text-muted d-flex align-items-center gap-2">
+    <a href="field_dashboard.php" class="text-muted text-decoration-none fw-semibold">Home</a>
+    <span>/</span>
+    <a href="assigned_complaints.php" class="text-muted text-decoration-none fw-semibold">Assigned Complaints</a>
+    <span>/</span>
+    <span class="fw-bold text-dark">Details</span>
+  </div>
+</div>
+
 <!-- Header Navigation & Action Bar -->
 <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2 animate-fade-in-up delay-1">
   <div>

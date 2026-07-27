@@ -11,17 +11,22 @@ require_once 'officer_header.php';
 require_once 'officer_sidebar.php';
 ?>
 
-<!-- Hero Section Header Matching Reference Image 1 -->
-<div class="assigned-hero-card mb-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #FBF8F2 0%, #F4ECE0 100%); border-radius: 20px; padding: 1.6rem 2.25rem; border: 1px solid rgba(220, 201, 167, 0.4); box-shadow: 0 4px 20px -4px rgba(80, 60, 30, 0.05);">
+<!-- Breadcrumb Bar Matching Reference UI -->
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 py-2" style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E2D9CD; font-size: 0.82rem;">
+  <div class="text-muted d-flex align-items-center gap-2">
+    <a href="field_dashboard.php" class="text-muted text-decoration-none fw-semibold">Home</a>
+    <span>/</span>
+    <span class="text-muted">Field Officer</span>
+    <span>/</span>
+    <span class="fw-bold text-dark">Assigned Complaints</span>
+  </div>
+</div>
+
+<!-- Hero Banner Matching Reference UI -->
+<div class="hero-welcome-card mb-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #876E47 0%, #A0855A 100%); border-radius: 18px; padding: 1.75rem 2.25rem; color: #FFFFFF; box-shadow: 0 6px 20px rgba(135, 110, 71, 0.15);">
   <div class="position-relative z-2">
-    <nav aria-label="breadcrumb" class="mb-2">
-      <ol class="breadcrumb mb-0" style="font-size: 0.85rem;">
-        <li class="breadcrumb-item"><a href="field_dashboard.php" class="text-decoration-none" style="color: #8C7B65;">Dashboard</a></li>
-        <li class="breadcrumb-item active fw-semibold" aria-current="page" style="color: #4A3E31;">Assigned Complaints</li>
-      </ol>
-    </nav>
-    <h2 class="fw-extrabold text-dark mb-1" style="font-size: 2.1rem; font-weight: 800; letter-spacing: -0.5px;">Assigned Complaints</h2>
-    <p class="mb-0" style="color: #6E6255; font-size: 0.9rem;">View all complaints assigned to you. Update status and track progress.</p>
+    <h2 class="fw-extrabold text-white mb-1" style="font-size: 1.85rem; letter-spacing: -0.01em;">Assigned Complaints</h2>
+    <p class="mb-0 text-white-50" style="font-size: 0.9rem;">View all complaints assigned to you. Update status and track field progress.</p>
   </div>
 </div>
 

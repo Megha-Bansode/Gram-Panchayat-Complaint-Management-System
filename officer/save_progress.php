@@ -13,20 +13,22 @@ require_once 'officer_sidebar.php';
 $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 ?>
 
-<!-- Header & Breadcrumbs -->
+<!-- Breadcrumb Bar Matching Reference UI -->
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 py-2" style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E2D9CD; font-size: 0.82rem;">
+  <div class="text-muted d-flex align-items-center gap-2">
+    <a href="field_dashboard.php" class="text-muted text-decoration-none fw-semibold">Home</a>
+    <span>/</span>
+    <a href="assigned_complaints.php" class="text-muted text-decoration-none fw-semibold">Assigned Complaints</a>
+    <span>/</span>
+    <span class="fw-bold text-dark">Save Progress</span>
+  </div>
+</div>
+
+<!-- Header -->
 <div class="row align-items-center mb-4 animate-fade-in-up delay-1">
-  <div class="col-md-8">
+  <div class="col-md-12">
     <h2 class="fw-bold mb-1" style="color: var(--text-dark);">Field Inspection Workspace</h2>
     <p class="text-muted mb-0">Record inspection updates, update status, add work notes, and upload photo evidence.</p>
-  </div>
-  <div class="col-md-4 text-md-end mt-2 mt-md-0">
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb justify-content-md-end mb-0">
-        <li class="breadcrumb-item"><a href="field_dashboard.php" class="text-decoration-none" style="color: var(--primary-color);">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="assigned_complaints.php" class="text-decoration-none" style="color: var(--primary-color);">Assigned Complaints</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Save Progress</li>
-      </ol>
-    </nav>
   </div>
 </div>
 

@@ -184,6 +184,37 @@ function escapeHtml(str) {
 document.addEventListener('DOMContentLoaded', () => {
   MOCK_COMPLAINTS = getComplaintsData();
 
+  // Live Date & Time Clock Updater
+  function updateLiveClock() {
+    const dateEl = document.getElementById('liveDateStr');
+    const timeEl = document.getElementById('liveTimeStr');
+    if (!dateEl && !timeEl) return;
+
+    const now = new Date();
+    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const dayName = days[now.getDay()];
+    const dateNum = now.getDate();
+    const monthName = months[now.getMonth()];
+    const year = now.getFullYear();
+
+    let hours = now.getHours();
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    const hoursStr = String(hours).padStart(2, '0');
+
+    if (dateEl) dateEl.textContent = `${dayName}, ${dateNum} ${monthName}, ${year}`;
+    if (timeEl) timeEl.textContent = `${hoursStr}:${minutes}:${seconds} ${ampm}`;
+  }
+
+  updateLiveClock();
+  setInterval(updateLiveClock, 1000);
+
   // 1. Responsive Sidebar Navigation Drawer Toggler
   const sidebar = document.querySelector('.app-sidebar');
   const sidebarToggle = document.getElementById('sidebarToggle');

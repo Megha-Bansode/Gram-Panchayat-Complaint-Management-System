@@ -11,124 +11,89 @@ require_once 'officer_header.php';
 require_once 'officer_sidebar.php';
 ?>
 
-<!-- Hero Banner Matching Reference Screenshot Pixel-for-Pixel -->
-<div class="hero-welcome-card animate-fade-in-up delay-1">
-  <!-- Village Landscape Line-Art Background SVG Watermark (NOT the logo) -->
-  <svg class="hero-landscape-bg" viewBox="0 0 600 240" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Winding Rural Road -->
-    <path d="M260 240 C340 210, 420 180, 460 170 C500 160, 540 165, 600 170" stroke="#8A724C" stroke-width="1.5" stroke-dasharray="5 4" opacity="0.35"/>
-    <path d="M300 240 C370 218, 435 195, 470 185 C505 175, 540 180, 600 185" stroke="#8A724C" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.25"/>
-    <!-- Water Tower / Windmill -->
-    <path d="M510 170 L520 85 L530 170 M513 140 H527 M516 115 H524" stroke="#8A724C" stroke-width="1.5" opacity="0.3"/>
-    <ellipse cx="520" cy="75" rx="14" ry="10" stroke="#8A724C" stroke-width="1.5" opacity="0.3"/>
-    <path d="M520 65 V55 M513 60 H527" stroke="#8A724C" stroke-width="1.5" opacity="0.3"/>
-    <!-- Houses and Barns -->
-    <path d="M430 170 V130 L455 110 L480 130 V170 H430 Z" stroke="#8A724C" stroke-width="1.5" opacity="0.3"/>
-    <path d="M445 170 V145 H465 V170" stroke="#8A724C" stroke-width="1.2" opacity="0.3"/>
-    <path d="M360 175 V145 L380 130 L400 145 V175 H360 Z" stroke="#8A724C" stroke-width="1.5" opacity="0.25"/>
-    <!-- Deciduous & Pine Trees -->
-    <path d="M340 175 C330 155 330 135 345 125 C360 115 375 130 370 145 C380 145 385 160 375 175 Z" stroke="#8A724C" stroke-width="1.5" opacity="0.3"/>
-    <path d="M350 175 V140" stroke="#8A724C" stroke-width="1.5" opacity="0.3"/>
-    <path d="M410 172 C402 155 405 140 418 132 C430 125 440 138 435 152 Z" stroke="#8A724C" stroke-width="1.2" opacity="0.25"/>
-    <!-- Sun and Birds in Sky -->
-    <circle cx="470" cy="60" r="18" stroke="#8A724C" stroke-width="1.5" stroke-dasharray="3 3" opacity="0.2"/>
-    <path d="M390 70 Q395 62 400 70 Q405 62 410 70" stroke="#8A724C" stroke-width="1.2" opacity="0.3"/>
-    <path d="M420 58 Q424 52 428 58 Q432 52 436 58" stroke="#8A724C" stroke-width="1.2" opacity="0.25"/>
-  </svg>
-  
+<!-- Breadcrumb Bar Matching Reference Image -->
+<div class="d-flex align-items-center justify-content-between mb-3 px-3 py-2" style="background: #FFFFFF; border-radius: 12px; border: 1px solid #E2D9CD; font-size: 0.82rem;">
+  <div class="text-muted d-flex align-items-center gap-2">
+    <a href="field_dashboard.php" class="text-muted text-decoration-none fw-semibold">Home</a>
+    <span>/</span>
+    <span class="text-muted">Field Officer</span>
+    <span>/</span>
+    <span class="fw-bold text-dark">Dashboard</span>
+  </div>
+</div>
+
+<!-- Hero Welcome Banner Matching Reference UI -->
+<div class="hero-welcome-card mb-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #876E47 0%, #A0855A 100%); border-radius: 18px; padding: 2rem 2.25rem; color: #FFFFFF; box-shadow: 0 6px 20px rgba(135, 110, 71, 0.15);">
   <div class="row align-items-center position-relative z-2">
-    <div class="col-lg-8">
-      <div class="hero-welcome-greeting">
-        <span>👋</span> Welcome back,
-      </div>
-      <h1 class="hero-welcome-title">Field Officer</h1>
-      <p class="hero-welcome-subtitle">
-        Overview of assigned complaints, field progress updates, and activity logs.
+    <div class="col-lg-9">
+      <h2 class="fw-extrabold mb-2 text-white" style="font-size: 1.85rem; letter-spacing: -0.01em;">Welcome Back, Sunita Deshmukh</h2>
+      <p class="mb-0 text-white-50" style="font-size: 0.92rem; max-width: 620px; line-height: 1.45;">
+        Monitor public grievances, record inspection progress, and review field completions for Pimpalgaon Gram Panchayat.
       </p>
     </div>
-    <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
-      <a href="assigned_complaints.php" class="btn-hero-manage">
-        <i class="bi bi-box-seam me-1"></i> Manage Queue
-      </a>
+    <div class="col-lg-3 text-end d-none d-lg-block">
+      <i class="bi bi-shield-check display-3 text-white opacity-25"></i>
     </div>
   </div>
 </div>
 
-<!-- Four Summary Metric Cards Side-by-Side (Assigned, In Progress, Resolved, Overdue) -->
+<!-- 6 KPI Metric Cards Grid Matching Reference UI -->
 <div class="row g-3 mb-4">
   
+  <!-- Total Cases Card -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #876E47 !important; border: 1px solid #E2D9CD;">
+      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">TOTAL CASES</span>
+      <div class="display-6 fw-extrabold text-dark mt-1" style="font-size: 1.9rem;">5</div>
+    </div>
+  </div>
+  
+  <!-- Pending Card -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #F1C40F !important; border: 1px solid #E2D9CD;">
+      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">PENDING</span>
+      <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #F39C12;">0</div>
+    </div>
+  </div>
+  
   <!-- Assigned Card -->
-  <div class="col-12 col-sm-6 col-xl-3 animate-fade-in-up delay-1">
+  <div class="col-6 col-md-4 col-xl-2">
     <a href="assigned_complaints.php?status=assigned" class="text-decoration-none">
-      <div class="metric-card accent-blue">
-        <div class="d-flex justify-content-between align-items-start w-100">
-          <div>
-            <span class="metric-label">ASSIGNED COMPLAINTS</span>
-            <div class="metric-value counter-metric" data-target="2">0</div>
-            <span class="metric-subtext">4 active in queue</span>
-          </div>
-          <div class="metric-icon icon-assigned">
-            <i class="bi bi-clipboard-check"></i>
-          </div>
-        </div>
+      <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #3498DB !important; border: 1px solid #E2D9CD;">
+        <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">ASSIGNED</span>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #3498DB;">4</div>
       </div>
     </a>
   </div>
   
   <!-- In Progress Card -->
-  <div class="col-12 col-sm-6 col-xl-3 animate-fade-in-up delay-2">
+  <div class="col-6 col-md-4 col-xl-2">
     <a href="assigned_complaints.php?status=in_progress" class="text-decoration-none">
-      <div class="metric-card accent-orange">
-        <div class="d-flex justify-content-between align-items-start w-100">
-          <div>
-            <span class="metric-label">IN PROGRESS</span>
-            <div class="metric-value counter-metric" data-target="1">0</div>
-            <span class="metric-subtext">2 under repair</span>
-          </div>
-          <div class="metric-icon icon-progress">
-            <i class="bi bi-clock-history"></i>
-          </div>
-        </div>
+      <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #8E6E45 !important; border: 1px solid #E2D9CD;">
+        <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">IN PROGRESS</span>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #8E6E45;">2</div>
       </div>
     </a>
   </div>
   
   <!-- Resolved Card -->
-  <div class="col-12 col-sm-6 col-xl-3 animate-fade-in-up delay-3">
+  <div class="col-6 col-md-4 col-xl-2">
     <a href="assigned_complaints.php?status=resolved" class="text-decoration-none">
-      <div class="metric-card accent-green">
-        <div class="d-flex justify-content-between align-items-start w-100">
-          <div>
-            <span class="metric-label">RESOLVED</span>
-            <div class="metric-value counter-metric" data-target="13">0</div>
-            <span class="metric-subtext">12 resolved this month</span>
-          </div>
-          <div class="metric-icon icon-completed">
-            <i class="bi bi-check-circle"></i>
-          </div>
-        </div>
+      <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #2ECC71 !important; border: 1px solid #E2D9CD;">
+        <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">RESOLVED</span>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #2ECC71;">1</div>
       </div>
     </a>
   </div>
   
-  <!-- Overdue Card -->
-  <div class="col-12 col-sm-6 col-xl-3 animate-fade-in-up delay-4">
-    <a href="assigned_complaints.php" class="text-decoration-none">
-      <div class="metric-card accent-red">
-        <div class="d-flex justify-content-between align-items-start w-100">
-          <div>
-            <span class="metric-label">OVERDUE</span>
-            <div class="metric-value counter-metric" data-target="1">0</div>
-            <span class="metric-subtext">1 pending action</span>
-          </div>
-          <div class="metric-icon icon-overdue">
-            <i class="bi bi-exclamation-triangle"></i>
-          </div>
-        </div>
-      </div>
-    </a>
+  <!-- Rejected Card -->
+  <div class="col-6 col-md-4 col-xl-2">
+    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #E74C3C !important; border: 1px solid #E2D9CD;">
+      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">REJECTED</span>
+      <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #E74C3C;">0</div>
+    </div>
   </div>
-
+  
 </div>
 
 <!-- Main Dashboard Grid -->
@@ -217,45 +182,23 @@ require_once 'officer_sidebar.php';
     </div>
   </div>
   
-  <!-- Right Column: Field Command Center & Recent Activity -->
+  <!-- Right Column: Quick Field Officer Actions & Activity Timeline -->
   <div class="col-lg-4 d-flex flex-column gap-4">
     
-    <!-- Field Command Center Section -->
-    <div class="card-panel animate-fade-in-up delay-3">
-      <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2" style="font-size: 1.05rem;">
-        <i class="bi bi-lightning-charge-fill" style="color: #8A724C;"></i> Field Command Center
-      </h5>
-      <div class="d-flex flex-column">
-        <a href="assigned_complaints.php" class="command-card blue-card" style="display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 1rem 1.25rem !important; border-radius: 16px !important; background-color: #ECF3FC !important; text-decoration: none !important; color: #1E1B18 !important; margin-bottom: 0.85rem !important; border: none !important;">
-          <div class="d-flex align-items-center gap-3">
-            <div class="command-card-icon" style="width: 52px !important; height: 52px !important; border-radius: 16px !important; background-color: #D6E6F9 !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
-                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                <line x1="9" y1="12" x2="15" y2="12"></line>
-                <line x1="9" y1="16" x2="13" y2="16"></line>
-              </svg>
-            </div>
-            <div>
-              <div class="command-card-title" style="font-weight: 700 !important; font-size: 0.95rem !important; color: #1E1B18 !important; text-decoration: none !important;">View Assigned Complaints</div>
-              <div class="command-card-desc" style="font-size: 0.82rem !important; color: #6E6255 !important; font-weight: 500 !important; line-height: 1.35 !important; text-decoration: none !important; margin-top: 2px !important;">Review all complaints<br>assigned to you</div>
-            </div>
-          </div>
-          <i class="bi bi-chevron-right command-card-chevron" style="font-size: 1.15rem !important; color: #3D3328 !important; font-weight: 700 !important;"></i>
+    <!-- Quick Field Officer Actions Card Matching Reference UI -->
+    <div class="card border-0 shadow-sm p-3.5" style="background: #FFFFFF; border-radius: 16px; border: 1px solid #E2D9CD;">
+      <h6 class="fw-bold text-dark mb-3 d-flex align-items-center gap-2" style="font-size: 0.95rem;">
+        <i class="bi bi-lightning-charge-fill text-warning"></i> Quick Field Officer Actions
+      </h6>
+      <div class="d-flex flex-column gap-2.5">
+        <a href="assigned_complaints.php" class="btn text-white fw-bold py-2.5 px-3 text-center d-flex align-items-center justify-content-center gap-2 shadow-sm" style="background-color: #876E47; border-radius: 10px; font-size: 0.88rem; border: none;">
+          <i class="bi bi-clipboard-check"></i> View Assigned Complaints
         </a>
-        <a href="save_progress.php?id=CMP-0012" class="command-card orange-card" style="display: flex !important; align-items: center !important; justify-content: space-between !important; padding: 1rem 1.25rem !important; border-radius: 16px !important; background-color: #FDF5E8 !important; text-decoration: none !important; color: #1E1B18 !important; border: none !important;">
-          <div class="d-flex align-items-center gap-3">
-            <div class="command-card-icon" style="width: 52px !important; height: 52px !important; border-radius: 16px !important; background-color: #FCE6CE !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important;">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
-              </svg>
-            </div>
-            <div>
-              <div class="command-card-title" style="font-weight: 700 !important; font-size: 0.95rem !important; color: #1E1B18 !important; text-decoration: none !important;">Update Complaint Progress</div>
-              <div class="command-card-desc" style="font-size: 0.82rem !important; color: #6E6255 !important; font-weight: 500 !important; line-height: 1.35 !important; text-decoration: none !important; margin-top: 2px !important;">Log progress updates &amp;<br>upload photos</div>
-            </div>
-          </div>
-          <i class="bi bi-chevron-right command-card-chevron" style="font-size: 1.15rem !important; color: #3D3328 !important; font-weight: 700 !important;"></i>
+        <a href="save_progress.php" class="btn bg-white fw-bold py-2.5 px-3 text-center d-flex align-items-center justify-content-center gap-2 border" style="border-color: #DCC9A7 !important; border-radius: 10px; font-size: 0.88rem; color: #4A3C28 !important;">
+          <i class="bi bi-pencil-square text-success"></i> Log Inspection Progress
+        </a>
+        <a href="assigned_complaints.php" class="btn bg-white fw-bold py-2.5 px-3 text-center d-flex align-items-center justify-content-center gap-2 border" style="border-color: #DCC9A7 !important; border-radius: 10px; font-size: 0.88rem; color: #4A3C28 !important;">
+          <i class="bi bi-file-earmark-bar-graph-fill text-danger"></i> View Field Activity Logs
         </a>
       </div>
     </div>
