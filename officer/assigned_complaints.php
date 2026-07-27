@@ -49,11 +49,18 @@ require_once 'officer_sidebar.php';
         </button>
         <ul class="dropdown-menu custom-dropdown-menu w-100 shadow-sm" style="border-radius: 12px; font-size: 0.85rem;">
           <li><button type="button" class="dropdown-item custom-dropdown-item active" data-value="" data-filter="category">All Categories</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="roads" data-filter="category">Roads & Infrastructure</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="electricity" data-filter="category">Electricity Supply</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="water" data-filter="category">Water & Sanitation</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="drainage" data-filter="category">Sanitation & Drainage</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="Roads & Infrastructure" data-filter="category">Roads & Infrastructure</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="Electricity Supply" data-filter="category">Electricity Supply</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="Water & Sanitation" data-filter="category">Water & Sanitation</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="Sanitation & Drainage" data-filter="category">Sanitation & Drainage</button></li>
         </ul>
+        <select id="filterCategory" class="d-none">
+          <option value="">All Categories</option>
+          <option value="Roads & Infrastructure">Roads & Infrastructure</option>
+          <option value="Electricity Supply">Electricity Supply</option>
+          <option value="Water & Sanitation">Water & Sanitation</option>
+          <option value="Sanitation & Drainage">Sanitation & Drainage</option>
+        </select>
       </div>
       
       <!-- All Status Dropdown -->
@@ -83,11 +90,17 @@ require_once 'officer_sidebar.php';
           <i class="bi bi-chevron-down ms-2 small text-muted"></i>
         </button>
         <ul class="dropdown-menu custom-dropdown-menu w-100 shadow-sm" style="border-radius: 12px; font-size: 0.85rem;">
-          <li><button type="button" class="dropdown-item custom-dropdown-item active" data-value="">All Dates</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="today">Today</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="this_week">This Week</button></li>
-          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="this_month">This Month</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item active" data-value="" data-filter="date">All Dates</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="today" data-filter="date">Today</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="this_week" data-filter="date">This Week</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item" data-value="this_month" data-filter="date">This Month</button></li>
         </ul>
+        <select id="filterDate" class="d-none">
+          <option value="">Select Date Range</option>
+          <option value="today">Today</option>
+          <option value="this_week">This Week</option>
+          <option value="this_month">This Month</option>
+        </select>
       </div>
       
       <!-- Reset Filters Button -->

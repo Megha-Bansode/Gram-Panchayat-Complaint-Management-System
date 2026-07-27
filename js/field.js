@@ -350,10 +350,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // 6. Assigned Complaints Search & Custom Dropdown Controller
   const searchInput = document.getElementById('searchComplaint');
   const btnClearSearch = document.getElementById('btnClearSearch');
+  const categorySelect = document.getElementById('filterCategory');
   const statusSelect = document.getElementById('filterStatus');
-  const prioritySelect = document.getElementById('filterPriority');
+  const dateSelect = document.getElementById('filterDate');
+
+  const categoryDropdownTrigger = document.getElementById('categoryDropdownTrigger');
   const statusDropdownTrigger = document.getElementById('statusDropdownTrigger');
-  const priorityDropdownTrigger = document.getElementById('priorityDropdownTrigger');
+  const dateDropdownTrigger = document.getElementById('dateDropdownTrigger');
+  const btnResetFilter = document.getElementById('btnResetFilter');
   const filterForm = document.getElementById('filterForm');
   const tableBody = document.getElementById('assignedTableBody');
   const emptyState = document.getElementById('emptyState');
@@ -365,7 +369,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const filterType = item.getAttribute('data-filter');
       const targetInput = item.getAttribute('data-target-input');
       const val = item.getAttribute('data-value');
-      const innerHTMLContent = item.querySelector('.d-flex').innerHTML;
+      const flexChild = item.querySelector('.d-flex');
+      const innerHTMLContent = flexChild ? flexChild.innerHTML : item.innerHTML;
 
       const parentMenu = item.closest('.custom-dropdown-menu');
       if (parentMenu) {
@@ -373,27 +378,27 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       item.classList.add('active');
 
-      if (filterType === 'status') {
+      if (filterType === 'category') {
+        if (categorySelect) categorySelect.value = val;
+        if (categoryDropdownTrigger) {
+          const label = categoryDropdownTrigger.querySelector('.selected-label');
+          if (label) label.textContent = val || 'All Categories';
+        }
+        renderAssignedTable();
+      } else if (filterType === 'status') {
         if (statusSelect) statusSelect.value = val;
         if (statusDropdownTrigger) {
           const label = statusDropdownTrigger.querySelector('.selected-label');
-          if (label) label.innerHTML = innerHTMLContent;
-          if (val) {
-            statusDropdownTrigger.classList.add('filter-active');
-          } else {
-            statusDropdownTrigger.classList.remove('filter-active');
-          }
+          if (label) label.innerHTML = val ? innerHTMLContent : 'All Status';
         }
         renderAssignedTable();
-      } else if (filterType === 'priority') {
-        if (prioritySelect) prioritySelect.value = val;
-        if (priorityDropdownTrigger) {
-          const label = priorityDropdownTrigger.querySelector('.selected-label');
-          if (label) label.innerHTML = innerHTMLContent;
-          if (val) {
-            priorityDropdownTrigger.classList.add('filter-active');
-          } else {
-            priorityDropdownTrigger.classList.remove('filter-active');
+      } else if (filterType === 'date') {
+        if (dateSelect) dateSelect.value = val;
+        if (dateDropdownTrigger) {
+          const label = dateDropdownTrigger.querySelector('.selected-label');
+          if (label) {
+            const displayNames = { '': 'Select Date Range', 'today': 'Today', 'this_week': 'This Week', 'this_month': 'This Month' };
+            label.textContent = displayNames[val] || 'Select Date Range';
           }
         }
         renderAssignedTable();
@@ -424,8 +429,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const liveComplaints = getComplaintsData();
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+    const categoryVal = categorySelect ? categorySelect.value : '';
     const statusVal = statusSelect ? statusSelect.value : '';
-    const priorityVal = prioritySelect ? prioritySelect.value.toLowerCase() : '';
+    const dateVal = dateSelect ? dateSelect.value : '';
 
     if (btnClearSearch) {
       if (searchTerm.length > 0) {
@@ -439,12 +445,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const matchSearch = !searchTerm || 
         item.id.toLowerCase().includes(searchTerm) || 
         item.citizen.toLowerCase().includes(searchTerm) || 
+        item.location.toLowerCase().includes(searchTerm) ||
         item.title.toLowerCase().includes(searchTerm);
 
+      const matchCategory = !categoryVal || item.category.toLowerCase() === categoryVal.toLowerCase();
       const matchStatus = !statusVal || item.status === statusVal;
-      const matchPriority = !priorityVal || item.priority.toLowerCase() === priorityVal;
 
-      return matchSearch && matchStatus && matchPriority;
+      let matchDate = true;
+      if (dateVal === 'today') {
+        matchDate = item.date.includes('23 May');
+      } else if (dateVal === 'this_week') {
+        matchDate = item.date.includes('May 2026');
+      } else if (dateVal === 'this_month') {
+        matchDate = item.date.includes('May 2026');
+      }
+
+      return matchSearch && matchCategory && matchStatus && matchDate;
     });
 
     if (filtered.length === 0) {
@@ -495,26 +511,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  function resetAllFilters() {
+    if (searchInput) searchInput.value = '';
+    if (categorySelect) categorySelect.value = '';
+    if (statusSelect) statusSelect.value = '';
+    if (dateSelect) dateSelect.value = '';
+
+    if (categoryDropdownTrigger) {
+      const label = categoryDropdownTrigger.querySelector('.selected-label');
+      if (label) label.textContent = 'All Categories';
+    }
+    if (statusDropdownTrigger) {
+      const label = statusDropdownTrigger.querySelector('.selected-label');
+      if (label) label.textContent = 'All Status';
+    }
+    if (dateDropdownTrigger) {
+      const label = dateDropdownTrigger.querySelector('.selected-label');
+      if (label) label.textContent = 'Select Date Range';
+    }
+
+    document.querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.custom-dropdown-item[data-value=""]').forEach(i => i.classList.add('active'));
+
+    renderAssignedTable();
+  }
+
+  if (btnResetFilter) {
+    btnResetFilter.addEventListener('click', (e) => {
+      e.preventDefault();
+      resetAllFilters();
+    });
+  }
+
   if (filterForm) {
     filterForm.addEventListener('reset', () => {
-      setTimeout(() => {
-        if (statusSelect) statusSelect.value = '';
-        if (prioritySelect) prioritySelect.value = '';
-
-        if (statusDropdownTrigger) {
-          statusDropdownTrigger.querySelector('.selected-label').innerText = 'All Statuses';
-          statusDropdownTrigger.classList.remove('filter-active');
-        }
-        if (priorityDropdownTrigger) {
-          priorityDropdownTrigger.querySelector('.selected-label').innerText = 'All Priorities';
-          priorityDropdownTrigger.classList.remove('filter-active');
-        }
-
-        document.querySelectorAll('.custom-dropdown-item').forEach(i => i.classList.remove('active'));
-        document.querySelectorAll('.custom-dropdown-item[data-value=""]').forEach(i => i.classList.add('active'));
-
-        renderAssignedTable();
-      }, 50);
+      setTimeout(resetAllFilters, 50);
     });
   }
 
