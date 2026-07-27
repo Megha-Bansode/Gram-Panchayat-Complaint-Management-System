@@ -7,8 +7,8 @@
  */
 
 $page_title = "Complaint Details - GPCMS";
-require_once '../includes/officer_header.php';
-require_once '../includes/officer_sidebar.php';
+require_once 'officer_header.php';
+require_once 'officer_sidebar.php';
 
 $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 ?>
@@ -20,7 +20,7 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
     <div class="d-flex align-items-center gap-2 flex-wrap">
       <span class="fw-bold text-dark fs-6" id="detailId"><?php echo $complaint_id; ?></span>
       <span class="text-muted">&bull;</span>
-      <span class="status-badge in-progress" id="detailStatusBadge"><i class="bi bi-clock"></i> In Progress</span>
+      <span class="status-badge in-progress" id="detailStatusBadge" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-orange" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #D35400 !important; display: inline-block !important;"></span> In Progress</span>
       <span class="text-muted">&bull;</span>
       <span class="priority-badge high" id="detailPriorityBadge">High Priority</span>
     </div>
@@ -154,5 +154,5 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 </div>
 
 <?php
-require_once '../includes/officer_footer.php';
+require_once 'officer_footer.php';
 ?>

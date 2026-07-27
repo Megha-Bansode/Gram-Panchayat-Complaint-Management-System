@@ -24,7 +24,7 @@ if (!isset($page_title)) {
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
   
   <!-- Field Officer Shared CSS -->
-  <link href="../css/field.css" rel="stylesheet">
+  <link href="../css/field.css?v=<?php echo time(); ?>" rel="stylesheet">
 </head>
 <body>
 

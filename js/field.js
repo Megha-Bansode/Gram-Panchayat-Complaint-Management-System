@@ -6,8 +6,8 @@
  */
 
 // Central Mock Complaints Dataset with LocalStorage State Persistence
-const STORAGE_KEY = 'gpcms_field_complaints_data_v2';
-const ACTIVITY_STORAGE_KEY = 'gpcms_field_activity_logs_v2';
+const STORAGE_KEY = 'gpcms_field_complaints_data_v4';
+const ACTIVITY_STORAGE_KEY = 'gpcms_field_activity_logs_v4';
 
 const DEFAULT_MOCK_COMPLAINTS = [
   { 
@@ -17,9 +17,9 @@ const DEFAULT_MOCK_COMPLAINTS = [
     title: 'Road Potholes Repair near Primary School', 
     category: 'Roads & Infrastructure', 
     priority: 'High', 
-    status: 'in_progress', 
+    status: 'resolved', 
     location: 'Shivapur Ward 2, Near Primary School Gate', 
-    date: '18 Jul 2026', 
+    date: '23 May 2026', 
     desc: 'The main road leading to the Gram Panchayat Primary School has developed multiple deep potholes following recent rainfall.' 
   },
   { 
@@ -31,7 +31,7 @@ const DEFAULT_MOCK_COMPLAINTS = [
     priority: 'Medium', 
     status: 'assigned', 
     location: 'Shivapur Ward 1, Main Bazaar', 
-    date: '20 Jul 2026', 
+    date: '22 May 2026', 
     desc: 'Street light out for 3 consecutive days in front of the Gram Panchayat office causing evening visibility issues.' 
   },
   { 
@@ -43,7 +43,7 @@ const DEFAULT_MOCK_COMPLAINTS = [
     priority: 'High', 
     status: 'in_progress', 
     location: 'Shivapur Ward 3, Temple Road', 
-    date: '21 Jul 2026', 
+    date: '21 May 2026', 
     desc: 'Main water distribution pipe leaking heavily near temple crossroad, leading to water wastage and road waterlogging.' 
   },
   { 
@@ -55,8 +55,20 @@ const DEFAULT_MOCK_COMPLAINTS = [
     priority: 'Low', 
     status: 'assigned', 
     location: 'Shivapur Ward 1, Naka No 2', 
-    date: '21 Jul 2026', 
+    date: '20 May 2026', 
     desc: 'Open drainage overflowing after heavy rain causing unpleasant odor and blockage near local market shops.' 
+  },
+  { 
+    id: 'CMP-0045', 
+    citizen: 'Prakash Shinde', 
+    phone: '+91 94321 09876', 
+    title: 'Garbage Collection Delayed', 
+    category: 'Sanitation & Drainage', 
+    priority: 'Medium', 
+    status: 'in_progress', 
+    location: 'Shivapur Ward 4, Market Area', 
+    date: '19 May 2026', 
+    desc: 'Garbage collection truck did not arrive for two days causing waste accumulation near local market shops.' 
   }
 ];
 
@@ -65,22 +77,22 @@ const DEFAULT_ACTIVITIES = [
     id: 1,
     type: 'photo',
     title: 'Progress Photo Uploaded',
-    desc: 'Added before photo for <a href="save_progress.php?id=CMP-0012" class="cmp-link">CMP-0012</a>',
-    time: '2 hours ago'
+    desc: 'Uploaded work evidence photo for <a href="save_progress.php?id=CMP-0012" class="cmp-link">CMP-0012</a>',
+    time: 'Just now'
   },
   {
     id: 2,
-    type: 'status',
-    title: 'Status Updated',
-    desc: '<a href="save_progress.php?id=CMP-0035" class="cmp-link">CMP-0035</a> changed to <span class="badge-status-subtle">IN PROGRESS</span>',
-    time: 'Yesterday at 4:30 PM'
+    type: 'resolved',
+    title: 'Complaint Resolved',
+    desc: '<a href="complaint_details.php?id=CMP-0012" class="cmp-link">CMP-0012</a> marked as Resolved',
+    time: 'Just now'
   },
   {
     id: 3,
-    type: 'resolved',
-    title: 'Complaint Resolved',
-    desc: '<a href="complaint_details.php?id=CMP-0008" class="cmp-link">CMP-0008</a> marked as Resolved',
-    time: '20 July 2026'
+    type: 'status',
+    title: 'Status Updated',
+    desc: 'CMP-0012 status changed to <span class="badge-status-subtle">IN PROGRESS</span>',
+    time: 'Just now'
   }
 ];
 
@@ -241,13 +253,16 @@ document.addEventListener('DOMContentLoaded', () => {
           <td>${escapeHtml(item.location)}</td>
           <td>
             ${item.status === 'assigned' 
-              ? '<span class="status-badge assigned"><i class="bi bi-circle-fill" style="font-size: 0.4rem;"></i> Assigned</span>'
+              ? '<span class="status-badge assigned" style="background-color: #E3F2FD !important; color: #1565C0 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-blue" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #1565C0 !important; display: inline-block !important;"></span> Assigned</span>'
               : item.status === 'in_progress'
-              ? '<span class="status-badge in-progress"><i class="bi bi-clock"></i> In Progress</span>'
-              : '<span class="status-badge resolved"><i class="bi bi-check-circle-fill"></i> Resolved</span>'}
+              ? '<span class="status-badge in-progress" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-orange" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #D35400 !important; display: inline-block !important;"></span> In Progress</span>'
+              : '<span class="status-badge resolved" style="background-color: #E8F5E9 !important; color: #2E7D32 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-green" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #2E7D32 !important; display: inline-block !important;"></span> Resolved</span>'}
           </td>
           <td class="text-end">
-            <a href="save_progress.php?id=${item.id}" class="btn btn-sm text-white" style="background-color: var(--primary-color); border-radius: 6px;">Update</a>
+            <div class="d-inline-flex align-items-center gap-2">
+              <a href="save_progress.php?id=${item.id}" class="btn-table-update" style="background-color: #6E5A3B !important; color: #FFFFFF !important; font-weight: 700 !important; padding: 0.38rem 1rem !important; border-radius: 10px !important; font-size: 0.82rem !important; text-decoration: none !important;">Update</a>
+              <i class="bi bi-three-dots-vertical table-three-dots" style="color: #8C7B6B; cursor: pointer;"></i>
+            </div>
           </td>
         </tr>
       `).join('');
@@ -266,26 +281,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     container.innerHTML = activities.slice(0, 5).map((act, index) => {
-      let nodeClass = 'node-blue';
+      let nodeStyle = 'width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #1E88E5 !important; color: #FFFFFF !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 0.95rem !important; flex-shrink: 0 !important; box-shadow: 0 3px 10px rgba(30, 136, 229, 0.25) !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;';
       let iconClass = 'bi-camera-fill';
+      let iconStyle = 'color: #FFFFFF !important;';
 
       if (act.type === 'status') {
-        nodeClass = 'node-orange';
-        iconClass = 'bi-arrow-repeat';
+        nodeStyle = 'width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #FFF3E0 !important; border: 1.5px solid #FFCC80 !important; color: #E65100 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 0.95rem !important; flex-shrink: 0 !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;';
+        iconClass = 'bi-pencil-square';
+        iconStyle = 'color: #E65100 !important;';
       } else if (act.type === 'resolved') {
-        nodeClass = 'node-green';
-        iconClass = 'bi-check-circle-fill';
+        nodeStyle = 'width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #E8F5E9 !important; border: 1.5px solid #A5D6A7 !important; color: #2E7D32 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 1rem !important; flex-shrink: 0 !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;';
+        iconClass = 'bi-check-lg';
+        iconStyle = 'color: #2E7D32 !important;';
       }
 
       return `
-        <div class="timeline-item animate-fade-in-up delay-${Math.min(index + 1, 4)}">
-          <div class="timeline-badge-node ${nodeClass}" title="${escapeHtml(act.title)}">
-            <i class="bi ${iconClass}"></i>
+        <div class="timeline-item animate-fade-in-up delay-${Math.min(index + 1, 4)}" style="position: relative !important; margin-bottom: 1.25rem !important;">
+          <div class="timeline-badge-node" style="${nodeStyle}" title="${escapeHtml(act.title)}">
+            <i class="bi ${iconClass}" style="${iconStyle}"></i>
           </div>
-          <div class="timeline-body">
-            <div class="timeline-title">${escapeHtml(act.title)}</div>
-            <div class="timeline-desc">${act.desc}</div>
-            <div class="timeline-time"><i class="bi bi-clock me-1"></i>${escapeHtml(act.time)}</div>
+          <div class="timeline-body" style="margin-left: 50px !important;">
+            <div class="timeline-title" style="font-weight: 800 !important; color: #241D15 !important; font-size: 0.88rem !important; line-height: 1.2 !important;">${escapeHtml(act.title)}</div>
+            <div class="timeline-desc" style="color: #6E6255 !important; font-size: 0.82rem !important; margin-top: 3px !important; line-height: 1.4 !important;">${act.desc}</div>
+            <div class="timeline-time" style="font-size: 0.75rem !important; color: #8C7B6B !important; margin-top: 3px !important; display: flex !important; align-items: center !important; gap: 0.25rem !important;"><i class="bi bi-clock me-1"></i>${escapeHtml(act.time)}</div>
           </div>
         </div>
       `;
@@ -440,24 +458,27 @@ document.addEventListener('DOMContentLoaded', () => {
       tableBody.innerHTML = filtered.map(item => `
         <tr>
           <td class="fw-bold text-dark">${item.id}</td>
-          <td>${escapeHtml(item.citizen)}</td>
+          <td class="fw-semibold text-dark" style="max-width: 220px;">${escapeHtml(item.title)}</td>
           <td>${escapeHtml(item.category)}</td>
-          <td><span class="priority-badge ${item.priority.toLowerCase()}">${item.priority}</span></td>
+          <td><span class="d-inline-flex align-items-center gap-1 text-secondary" style="font-size: 0.85rem;"><i class="bi bi-geo-alt"></i> ${escapeHtml(item.location)}</span></td>
+          <td><span class="d-inline-flex align-items-center gap-1 text-secondary" style="font-size: 0.84rem;"><i class="bi bi-calendar-event"></i> ${item.date}</span></td>
           <td>
             ${item.status === 'assigned' 
-              ? '<span class="status-badge assigned"><i class="bi bi-circle-fill" style="font-size: 0.4rem;"></i> Assigned</span>'
+              ? '<span class="status-badge assigned" style="background-color: #E3F2FD !important; color: #1565C0 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #1565C0; display: inline-block;"></span> Assigned</span>'
               : item.status === 'in_progress'
-              ? '<span class="status-badge in-progress"><i class="bi bi-clock"></i> In Progress</span>'
-              : '<span class="status-badge resolved"><i class="bi bi-check-circle-fill"></i> Resolved</span>'}
+              ? '<span class="status-badge in-progress" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #D35400; display: inline-block;"></span> In Progress</span>'
+              : '<span class="status-badge resolved" style="background-color: #E8F5E9 !important; color: #2E7D32 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #2E7D32; display: inline-block;"></span> Resolved</span>'}
           </td>
-          <td>${item.date}</td>
           <td class="text-end">
-            <a href="complaint_details.php?id=${item.id}" class="btn btn-sm btn-outline-secondary me-1">
-              <i class="bi bi-eye"></i> View
-            </a>
-            <a href="save_progress.php?id=${item.id}" class="btn btn-sm text-white" style="background-color: var(--primary-color);">
-              <i class="bi bi-pencil-square"></i> Update Progress
-            </a>
+            <div class="d-inline-flex align-items-center gap-2">
+              <a href="complaint_details.php?id=${item.id}" class="btn btn-sm text-white" style="background-color: #5E4D34; border-radius: 8px; font-weight: 700; padding: 0.35rem 0.85rem; font-size: 0.78rem;">
+                <i class="bi bi-eye me-1"></i> View
+              </a>
+              <a href="save_progress.php?id=${item.id}" class="btn btn-sm text-white" style="background-color: #5E4D34; border-radius: 8px; font-weight: 700; padding: 0.35rem 0.85rem; font-size: 0.78rem;">
+                <i class="bi bi-pencil-square me-1"></i> Update Progress
+              </a>
+              <i class="bi bi-three-dots-vertical text-muted cursor-pointer fs-6 ms-1"></i>
+            </div>
           </td>
         </tr>
       `).join('');
@@ -548,6 +569,15 @@ document.addEventListener('DOMContentLoaded', () => {
   if (saveLocation) saveLocation.textContent = activeComplaint.location;
   if (saveDesc) saveDesc.textContent = activeComplaint.desc;
   if (hiddenIdInput) hiddenIdInput.value = activeComplaint.id;
+
+  const noteInputElem = document.getElementById('note');
+  const charCountElem = document.getElementById('charCount');
+  if (noteInputElem && charCountElem) {
+    charCountElem.textContent = noteInputElem.value.length;
+    noteInputElem.addEventListener('input', () => {
+      charCountElem.textContent = noteInputElem.value.length;
+    });
+  }
 
   if (document.getElementById('statusSaveDropdownTrigger') && activeComplaint) {
     const hiddenStatus = document.getElementById('status');

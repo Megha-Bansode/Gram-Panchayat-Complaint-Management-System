@@ -13,7 +13,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 <!-- Responsive Sidebar Navigation -->
 <aside class="app-sidebar" aria-label="Sidebar Navigation">
   <div class="sidebar-logo">
-    <i class="bi bi-bank"></i>
+    <img src="../assets/field/gpcms_official_logo.png?v=<?php echo time(); ?>" alt="GPCMS Official Logo" class="sidebar-logo-img" style="width: 56px !important; height: 56px !important; max-width: 56px !important; max-height: 56px !important; object-fit: cover !important; border-radius: 50% !important; flex-shrink: 0 !important;">
     <div class="sidebar-logo-text">
       <h5>GPCMS</h5>
       <span>Gram Panchayat System</span>
@@ -23,13 +23,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
   <ul class="sidebar-menu">
     <li class="<?php echo ($current_page === 'field_dashboard.php') ? 'active' : ''; ?>">
       <a href="field_dashboard.php">
-        <i class="bi bi-grid-fill"></i>
+        <i class="bi bi-house-door"></i>
         <span>Dashboard</span>
       </a>
     </li>
     <li class="<?php echo ($current_page === 'assigned_complaints.php' || $current_page === 'complaint_details.php') ? 'active' : ''; ?>">
       <a href="assigned_complaints.php">
-        <i class="bi bi-clipboard-check-fill"></i>
+        <i class="bi bi-clipboard-check"></i>
         <span>Assigned Complaints</span>
       </a>
     </li>
@@ -47,8 +47,23 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </li>
   </ul>
   
+
+
+
+
   <div class="sidebar-footer">
-    <span>GPCMS Officer Panel v3.1</span>
+    <div class="sidebar-avatar-card">
+      <div class="sidebar-avatar-circle">
+        <i class="bi bi-person-fill"></i>
+      </div>
+      <div>
+        <div class="sidebar-user-name"><?php echo htmlspecialchars($_SESSION['full_name'] ?? 'Field Officer'); ?></div>
+        <div class="sidebar-user-role"><?php echo htmlspecialchars($_SESSION['role_name'] ?? 'Field Officer'); ?></div>
+        <div class="sidebar-status-online">
+          <span class="online-dot"></span> Online
+        </div>
+      </div>
+    </div>
   </div>
 </aside>
 
@@ -61,6 +76,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
       <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle Navigation Sidebar">
         <i class="bi bi-list"></i>
       </button>
+      <img src="../assets/field/gpcms_official_logo.png?v=<?php echo time(); ?>" alt="GPCMS Emblem" class="navbar-logo-icon me-2" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;">
       <span class="app-title d-none d-md-inline">Gram Panchayat Complaint Management System</span>
     </div>
     

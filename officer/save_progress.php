@@ -7,8 +7,8 @@
  */
 
 $page_title = "Save Progress - GPCMS";
-require_once '../includes/officer_header.php';
-require_once '../includes/officer_sidebar.php';
+require_once 'officer_header.php';
+require_once 'officer_sidebar.php';
 
 $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 ?>
@@ -16,7 +16,7 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 <!-- Header & Breadcrumbs -->
 <div class="row align-items-center mb-4 animate-fade-in-up delay-1">
   <div class="col-md-8">
-    <h2 class="fw-bold mb-1" style="color: var(--text-dark);">Update Complaint Progress</h2>
+    <h2 class="fw-bold mb-1" style="color: var(--text-dark);">Field Inspection Workspace</h2>
     <p class="text-muted mb-0">Record inspection updates, update status, add work notes, and upload photo evidence.</p>
   </div>
   <div class="col-md-4 text-md-end mt-2 mt-md-0">
@@ -30,7 +30,7 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
   </div>
 </div>
 
-<!-- Main Form Wrapper -->
+<!-- 8. Main Inspection Workspace Form Wrapper -->
 <form id="saveProgressForm" action="save_progress.php" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
   
   <input type="hidden" name="complaint_id" id="hiddenComplaintId" value="<?php echo $complaint_id; ?>">
@@ -43,7 +43,7 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
       <!-- Summary Info Box -->
       <div class="card-panel">
         <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2 pb-2 border-bottom" style="border-color: var(--accent-color) !important;">
-          <i class="bi bi-file-earmark-text" style="color: var(--primary-color);"></i> Selected Complaint Details
+          <i class="bi bi-file-earmark-text" style="color: var(--primary-color);"></i> Selected Complaint Inspection Summary
         </h5>
         
         <div class="row g-3 mb-3" style="font-size: 0.88rem;">
@@ -53,7 +53,7 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
           </div>
           <div class="col-6">
             <span class="text-muted d-block small">Current Status</span>
-            <span class="status-badge in-progress"><i class="bi bi-clock"></i> In Progress</span>
+            <span class="status-badge in-progress" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-orange" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #D35400 !important; display: inline-block !important;"></span> In Progress</span>
           </div>
           <div class="col-6">
             <span class="text-muted d-block small">Category</span>
@@ -81,7 +81,7 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
       <!-- Existing / Current Photos Card -->
       <div class="card-panel">
         <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2 pb-2 border-bottom" style="border-color: var(--accent-color) !important;">
-          <i class="bi bi-images" style="color: var(--primary-color);"></i> Current Work Evidence
+          <i class="bi bi-images" style="color: var(--primary-color);"></i> Current Work Evidence Photos
         </h5>
         <div class="row g-3 text-center">
           <div class="col-6">
@@ -103,43 +103,54 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 
     </div>
 
-    <!-- Right Column: Update Progress Form Controls -->
+    <!-- Right Column: Upgraded Attractive Log Inspection Update & Upload Evidence Form Controls -->
     <div class="col-lg-6 animate-fade-in-up delay-3">
-      <div class="card-panel h-100 d-flex flex-column justify-content-between">
+      <div class="card border-0 shadow-sm h-100 d-flex flex-column justify-content-between" style="background: #FFFFFF; border-radius: 20px; border: 1px solid rgba(220, 201, 167, 0.5) !important; padding: 1.6rem;">
         <div>
-          <h5 class="fw-bold mb-3 text-dark d-flex align-items-center gap-2 pb-2 border-bottom" style="border-color: var(--accent-color) !important;">
-            <i class="bi bi-pencil-square" style="color: var(--primary-color);"></i> Update Status & Evidence
-          </h5>
+          <!-- Header Banner -->
+          <div class="d-flex align-items-center justify-content-between p-3 mb-4" style="background: linear-gradient(135deg, #FBF8F2 0%, #F4ECE0 100%); border-radius: 14px; border: 1px solid rgba(220, 201, 167, 0.5);">
+            <h5 class="fw-extrabold mb-0 text-dark d-flex align-items-center gap-2" style="font-size: 1.05rem;">
+              <span class="d-flex align-items-center justify-content-center" style="width: 34px; height: 34px; border-radius: 10px; background-color: #5E4D34; color: #FFFFFF;">
+                <i class="bi bi-pencil-square fs-6"></i>
+              </span>
+              Log Inspection Update & Evidence
+            </h5>
+            <span class="badge bg-warning-subtle text-dark border border-warning px-2.5 py-1" style="border-radius: 50px; font-size: 0.75rem; font-weight: 700;">
+              <i class="bi bi-shield-check me-1 text-warning"></i> Contract Verified
+            </span>
+          </div>
           
-          <!-- Custom Status Save Dropdown (Bootstrap 5 + JS) -->
-          <div class="mb-3">
-            <label for="statusSaveDropdownTrigger" class="form-label fw-semibold text-dark">Complaint Status <span class="text-danger">*</span></label>
+          <!-- Custom Status Save Dropdown -->
+          <div class="mb-4">
+            <label for="statusSaveDropdownTrigger" class="form-label fw-bold text-dark mb-1" style="font-size: 0.9rem;">
+              Complaint Status <span class="text-danger">*</span>
+            </label>
             <div class="dropdown custom-filter-dropdown">
-              <button type="button" id="statusSaveDropdownTrigger" class="btn custom-dropdown-toggle w-100" data-bs-toggle="dropdown" aria-expanded="false">
-                <span class="selected-label"><span class="status-badge in-progress"><i class="bi bi-clock"></i> In Progress</span></span>
-                <i class="bi bi-chevron-down dropdown-chevron"></i>
+              <button type="button" id="statusSaveDropdownTrigger" class="btn bg-white w-100 d-flex align-items-center justify-content-between py-2.5 px-3" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 12px; border: 1.5px solid rgba(220, 201, 167, 0.6); font-size: 0.9rem;">
+                <span class="selected-label"><span class="status-badge in-progress" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #D35400; display: inline-block;"></span> In Progress</span></span>
+                <i class="bi bi-chevron-down text-muted"></i>
               </button>
-              <ul class="dropdown-menu custom-dropdown-menu w-100" aria-labelledby="statusSaveDropdownTrigger">
+              <ul class="dropdown-menu custom-dropdown-menu w-100 shadow-sm" aria-labelledby="statusSaveDropdownTrigger" style="border-radius: 12px;">
                 <li>
-                  <button type="button" class="dropdown-item custom-dropdown-item" data-value="assigned" data-target-input="status">
+                  <button type="button" class="dropdown-item custom-dropdown-item py-2" data-value="assigned" data-target-input="status">
                     <span class="d-flex align-items-center gap-2">
-                      <span class="status-badge assigned"><i class="bi bi-circle-fill" style="font-size: 0.4rem;"></i> Assigned</span>
+                      <span class="status-badge assigned" style="background-color: #E3F2FD !important; color: #1565C0 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #1565C0; display: inline-block;"></span> Assigned</span>
                     </span>
                     <i class="bi bi-check2 check-icon"></i>
                   </button>
                 </li>
                 <li>
-                  <button type="button" class="dropdown-item custom-dropdown-item active" data-value="in_progress" data-target-input="status">
+                  <button type="button" class="dropdown-item custom-dropdown-item active py-2" data-value="in_progress" data-target-input="status">
                     <span class="d-flex align-items-center gap-2">
-                      <span class="status-badge in-progress"><i class="bi bi-clock"></i> In Progress</span>
+                      <span class="status-badge in-progress" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #D35400; display: inline-block;"></span> In Progress</span>
                     </span>
                     <i class="bi bi-check2 check-icon"></i>
                   </button>
                 </li>
                 <li>
-                  <button type="button" class="dropdown-item custom-dropdown-item" data-value="resolved" data-target-input="status">
+                  <button type="button" class="dropdown-item custom-dropdown-item py-2" data-value="resolved" data-target-input="status">
                     <span class="d-flex align-items-center gap-2">
-                      <span class="status-badge resolved"><i class="bi bi-check-circle-fill"></i> Resolved</span>
+                      <span class="status-badge resolved" style="background-color: #E8F5E9 !important; color: #2E7D32 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 4px 11px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.4rem !important;"><span style="width: 7px; height: 7px; border-radius: 50%; background-color: #2E7D32; display: inline-block;"></span> Resolved</span>
                     </span>
                     <i class="bi bi-check2 check-icon"></i>
                   </button>
@@ -153,38 +164,68 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
               </select>
             </div>
             <div class="invalid-feedback">Please select a valid complaint status.</div>
-            <div class="form-text small text-muted">Allowed statuses per handbook contract: Assigned, In Progress, Resolved.</div>
+            <div class="form-text extra-small text-muted mt-1">Allowed statuses per handbook contract: Assigned, In Progress, Resolved.</div>
           </div>
           
           <!-- Status Notes / Remarks Textarea -->
-          <div class="mb-3">
-            <label for="note" class="form-label fw-semibold text-dark">Inspection Notes / Remarks <span class="text-danger">*</span></label>
-            <textarea name="note" id="note" class="form-control" rows="4" maxlength="500" placeholder="Provide work details, materials used, or resolution notes..." required>Compaction and asphalt patching started. Ground repair in progress.</textarea>
+          <div class="mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <label for="note" class="form-label fw-bold text-dark mb-0" style="font-size: 0.9rem;">
+                Inspection Notes / Remarks <span class="text-danger">*</span>
+              </label>
+              <span class="badge bg-light text-dark border px-2.5 py-1" style="border-radius: 6px; font-size: 0.75rem; font-weight: 600;"><span id="charCount">68</span> / 500 characters</span>
+            </div>
+            <textarea name="note" id="note" class="form-control p-3" rows="4" maxlength="500" placeholder="Provide work details, materials used, or resolution notes..." style="border-radius: 14px; border: 1.5px solid rgba(220, 201, 167, 0.6); font-size: 0.9rem; background-color: #FCFBF8;" required>Compaction and asphalt patching started. Ground repair in progress.</textarea>
             <div class="invalid-feedback">Please enter progress notes or inspection remarks.</div>
-            <div class="char-counter"><span id="charCount">68</span> / 500 characters</div>
           </div>
           
-          <!-- Photo Upload Section -->
-          <div class="row g-3 mb-3">
-            <!-- Before Photo Upload Zone -->
-            <div class="col-sm-6">
-              <label class="form-label fw-semibold text-dark small">Before Work Photo</label>
-              <div class="upload-zone" id="beforeUploadZone" style="cursor: pointer;">
-                <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                <div class="small fw-semibold text-dark">Upload Before Photo</div>
-                <div class="text-muted extra-small">Click to browse gallery (JPG, PNG)</div>
-                <input type="file" name="before_photo" id="before_photo" accept="image/jpeg,image/png" class="d-none">
-              </div>
-            </div>
+          <!-- Separate Side-by-Side Dedicated Photo Upload Cards (Before & After Work) -->
+          <div class="mb-4">
+            <label class="form-label fw-bold text-dark mb-2" style="font-size: 0.9rem;">
+              Photo Evidence Uploads <span class="text-muted fw-normal small">(Before & After Work)</span>
+            </label>
             
-            <!-- After Photo Upload Zone -->
-            <div class="col-sm-6">
-              <label class="form-label fw-semibold text-dark small">After Work Photo</label>
-              <div class="upload-zone" id="afterUploadZone" style="cursor: pointer;">
-                <i class="bi bi-cloud-arrow-up upload-icon"></i>
-                <div class="small fw-semibold text-dark">Upload After Photo</div>
-                <div class="text-muted extra-small">Click to browse gallery (JPG, PNG)</div>
-                <input type="file" name="after_photo" id="after_photo" accept="image/jpeg,image/png" class="d-none">
+            <div class="row g-3">
+              <!-- Card 1: Before Work Photo -->
+              <div class="col-sm-6">
+                <div class="p-3 h-100 d-flex flex-column justify-content-between" style="background: #FAF7F2; border: 1.5px dashed #DCC9A7; border-radius: 16px; text-align: center; transition: all 0.3s ease;">
+                  <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom" style="border-color: rgba(220, 201, 167, 0.5) !important;">
+                    <span class="fw-bold extra-small d-flex align-items-center gap-1" style="color: #5E4D34 !important; font-size: 0.78rem;">
+                      <i class="bi bi-clock-history text-warning fs-6"></i> BEFORE WORK
+                    </span>
+                    <span class="badge bg-warning-subtle text-dark border border-warning px-2" style="font-size: 0.65rem; border-radius: 50px;">Required</span>
+                  </div>
+                  
+                  <div id="beforeUploadZone" style="cursor: pointer;" class="py-2">
+                    <div class="d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px; background: #FFF; color: #5E4D34; border-radius: 50%; font-size: 1.3rem; border: 1.5px solid rgba(220, 201, 167, 0.8); box-shadow: 0 4px 10px rgba(94, 77, 52, 0.08);">
+                      <i class="bi bi-cloud-arrow-up-fill"></i>
+                    </div>
+                    <div class="fw-bold text-dark" style="font-size: 0.88rem;">Upload Before Photo</div>
+                    <div class="text-secondary extra-small mt-1">Click to browse gallery (JPG, PNG)</div>
+                    <input type="file" name="before_photo" id="before_photo" accept="image/jpeg,image/png" class="d-none">
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Card 2: After Work Photo -->
+              <div class="col-sm-6">
+                <div class="p-3 h-100 d-flex flex-column justify-content-between" style="background: #F4FBF5; border: 1.5px dashed #A5D6A7; border-radius: 16px; text-align: center; transition: all 0.3s ease;">
+                  <div class="d-flex align-items-center justify-content-between pb-2 mb-3 border-bottom" style="border-color: rgba(165, 214, 167, 0.5) !important;">
+                    <span class="fw-bold extra-small d-flex align-items-center gap-1" style="color: #2E7D32 !important; font-size: 0.78rem;">
+                      <i class="bi bi-check-circle-fill text-success fs-6"></i> AFTER WORK
+                    </span>
+                    <span class="badge bg-success-subtle text-success border border-success px-2" style="font-size: 0.65rem; border-radius: 50px;">Resolution</span>
+                  </div>
+                  
+                  <div id="afterUploadZone" style="cursor: pointer;" class="py-2">
+                    <div class="d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; font-size: 1.3rem; border: 1.5px solid #A5D6A7; box-shadow: 0 4px 10px rgba(46, 125, 50, 0.12);">
+                      <i class="bi bi-cloud-arrow-up-fill"></i>
+                    </div>
+                    <div class="fw-bold text-dark" style="font-size: 0.88rem;">Upload After Photo</div>
+                    <div class="text-secondary extra-small mt-1">Click to browse gallery (JPG, PNG)</div>
+                    <input type="file" name="after_photo" id="after_photo" accept="image/jpeg,image/png" class="d-none">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -192,11 +233,11 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
         </div>
         
         <!-- Form Action Buttons -->
-        <div class="d-flex align-items-center gap-3 pt-3 mt-3 border-top" style="border-color: var(--accent-color) !important;">
-          <button type="submit" id="btnSaveSubmit" class="btn-primary-action py-2 flex-grow-1 justify-content-center">
-            <i class="bi bi-save me-1"></i> Save Progress
+        <div class="d-flex align-items-center gap-3 pt-3 border-top" style="border-color: rgba(220, 201, 167, 0.4) !important;">
+          <button type="submit" id="btnSaveSubmit" class="btn text-white fw-bold py-2.5 px-4 flex-grow-1 shadow-sm" style="background-color: #5E4D34; border-radius: 12px; font-size: 0.92rem; border: none; box-shadow: 0 6px 18px rgba(94, 77, 52, 0.25);">
+            <i class="bi bi-cloud-check-fill me-2"></i> Save Inspection Progress
           </button>
-          <a href="assigned_complaints.php" class="btn-secondary-action py-2 flex-grow-1 justify-content-center">
+          <a href="assigned_complaints.php" class="btn btn-light text-secondary border py-2.5 px-4 fw-bold" style="border-radius: 12px; font-size: 0.88rem;">
             Cancel
           </a>
         </div>
@@ -209,5 +250,5 @@ $complaint_id = isset($_GET['id']) ? htmlspecialchars($_GET['id']) : 'CMP-0012';
 </form>
 
 <?php
-require_once '../includes/officer_footer.php';
+require_once 'officer_footer.php';
 ?>
