@@ -1,4 +1,5 @@
 <?php
+
 // config/db_connect.php
 declare(strict_types=1);
 

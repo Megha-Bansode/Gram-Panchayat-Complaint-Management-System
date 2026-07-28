@@ -12,7 +12,7 @@ function get_db_connection(): mysqli
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
-    $connection = new mysqli('localhost', 'root', '', 'gpcms', 3306);
+    $connection = new mysqli('localhost', 'root', '', 'gpcms_db', 3306);
 
     if ($connection->connect_error) {
         error_log('Database connection failed: ' . $connection->connect_error);
