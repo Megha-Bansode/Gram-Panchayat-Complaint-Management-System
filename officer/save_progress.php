@@ -59,7 +59,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             $uStmt->execute();
             $uStmt->close();
 
-            // Insert into complaint_history
+            // Insert into complaint_history (canonical schema: status_from, status_to, remarks, user_id)
             if (!empty($note_input)) {
                 $hStmt = $conn->prepare("
                     INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks)
@@ -76,7 +76,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 mkdir($upload_dir, 0777, true);
             }
 
-            // Before Photo Upload
+            // Before Photo Upload (photo_type = 'inspection' per canonical schema)
             if (!empty($_FILES['before_photo']['name']) && $_FILES['before_photo']['error'] === UPLOAD_ERR_OK) {
                 $ext = pathinfo($_FILES['before_photo']['name'], PATHINFO_EXTENSION);
                 $file_name = 'before_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
@@ -84,7 +84,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 if (move_uploaded_file($_FILES['before_photo']['tmp_name'], $target)) {
                     $pStmt = $conn->prepare("
                         INSERT INTO complaint_photos (complaint_id, photo_path, uploaded_by, photo_type)
-                        VALUES (?, ?, ?, 'initial')
+                        VALUES (?, ?, ?, 'inspection')
                     ");
                     $pPath = 'uploads/' . $file_name;
                     $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
@@ -93,7 +93,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 }
             }
 
-            // After Photo Upload
+            // After Photo Upload (photo_type = 'resolution' per canonical schema)
             if (!empty($_FILES['after_photo']['name']) && $_FILES['after_photo']['error'] === UPLOAD_ERR_OK) {
                 $ext = pathinfo($_FILES['after_photo']['name'], PATHINFO_EXTENSION);
                 $file_name = 'after_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
