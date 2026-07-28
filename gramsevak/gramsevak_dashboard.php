@@ -6,7 +6,7 @@ require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
 $user = auth_require_auth();
-if ((string) $user['role_name'] !== 'Gram Sevak', 'Gram Panchayat Admin') {
+if ((string) $user['role_name'] !== 'Gram Sevak' && (string) $user['role_name'] !== 'Gram Panchayat Admin') {
     auth_redirect('../includes/official_login.php', 'Unauthorized access.');
 }
 
