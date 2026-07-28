@@ -1,7 +1,14 @@
-<?php
+﻿<?php
 // GPCMS Gram Sevak Dashboard - Handbook Contract Aligned
-require_once __DIR__ . '/../includes/auth_check.php';
+declare(strict_types=1);
+
 require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '../includes/auth_check.php';
+
+$user = auth_require_auth();
+if ((string) $user['role_name'] !== 'Gram Sevak') {
+    auth_redirect('../includes/official_login.php', 'Unauthorized access.');
+}
 
 check_role([2, 'Gram Sevak']);
 

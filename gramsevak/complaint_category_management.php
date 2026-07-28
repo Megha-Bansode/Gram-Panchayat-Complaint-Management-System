@@ -1,6 +1,13 @@
 ﻿<?php
 // Session check & Backend Placeholders
-require_once __DIR__ . '/../includes/auth_check.php';
+declare(strict_types=1);
+
+require_once __DIR__ . '../includes/auth_check.php';
+
+$user = auth_require_auth();
+if ((string) $user['role_name'] !== 'Gram Sevak') {
+    auth_redirect('../includes/official_login.php', 'Unauthorized access.');
+}
 
 // Integration Placeholders for Gram Sevak Module
 $_SESSION['user_id'] = $_SESSION['user_id'] ?? 101;
