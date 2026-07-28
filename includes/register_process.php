@@ -63,7 +63,7 @@ if (auth_get_user_by_login_id($loginId) !== null) {
 $passwordHash = password_hash($password, PASSWORD_BCRYPT);
 $status = 'active';
 $stmt = $conn->prepare(
-    'INSERT INTO users (full_name, username, password_hash, role_id, mobile_number, status, created_at)
+    'INSERT INTO users (full_name, login_id, password_hash, role_id, mobile_number, status, created_at)
      VALUES (?, ?, ?, ?, ?, ?, NOW())'
 );
 $stmt->bind_param('sssiss', $fullName, $loginId, $passwordHash, $citizenRoleId, $mobileNumber, $status);

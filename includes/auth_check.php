@@ -73,7 +73,7 @@ function auth_get_post_login_path(string $roleName): string
         return '../admin/admin_dashboard.php';
     }
 
-    if (str_contains($role, 'gram') || str_contains($role, 'sevak') || str_contains($role, 'panchayat')) {
+    if (str_contains($role, 'gram') || str_contains($role, 'panchayat')) {
         return '../gramsevak/gramsevak_dashboard.php';
     }
 
@@ -142,10 +142,10 @@ function auth_get_user_by_login_id(string $loginId): ?array
 {
     $conn = get_db_connection();
     $stmt = $conn->prepare(
-        'SELECT u.user_id, u.full_name, u.username AS login_id, u.password_hash, u.role_id, u.mobile_number, u.status, r.role_name
+        'SELECT u.user_id, u.full_name, u.login_id, u.password_hash, u.role_id, u.mobile_number, u.status, r.role_name
          FROM users u
          INNER JOIN roles r ON r.role_id = u.role_id
-         WHERE u.username = ? LIMIT 1'
+         WHERE u.login_id = ? LIMIT 1'
     );
     $stmt->bind_param('s', $loginId);
     $stmt->execute();
