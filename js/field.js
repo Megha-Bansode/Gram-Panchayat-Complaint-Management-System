@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    if (dashboardTableBody) {
+    if (dashboardTableBody && dashboardTableBody.children.length === 0) {
       dashboardTableBody.innerHTML = liveData.map(item => `
         <tr>
           <td class="fw-bold text-dark">${item.id}</td>
@@ -415,14 +415,14 @@ document.addEventListener('DOMContentLoaded', () => {
           const label = categoryDropdownTrigger.querySelector('.selected-label');
           if (label) label.textContent = val || 'All Categories';
         }
-        renderAssignedTable();
+        if (filterForm) filterForm.submit();
       } else if (filterType === 'status') {
         if (statusSelect) statusSelect.value = val;
         if (statusDropdownTrigger) {
           const label = statusDropdownTrigger.querySelector('.selected-label');
           if (label) label.innerHTML = val ? innerHTMLContent : 'All Status';
         }
-        renderAssignedTable();
+        if (filterForm) filterForm.submit();
       } else if (filterType === 'date') {
         if (dateSelect) dateSelect.value = val;
         if (dateDropdownTrigger) {
@@ -432,7 +432,7 @@ document.addEventListener('DOMContentLoaded', () => {
             label.textContent = displayNames[val] || 'Select Date Range';
           }
         }
-        renderAssignedTable();
+        if (filterForm) filterForm.submit();
       } else if (targetInput === 'status') {
         const hiddenStatus = document.getElementById('status');
         const trigger = document.getElementById('statusSaveDropdownTrigger');
@@ -444,16 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialStatusParam = urlParams.get('status');
-  if (initialStatusParam && statusSelect) {
-    statusSelect.value = initialStatusParam;
-    const matchingItem = document.querySelector(`.custom-dropdown-item[data-value="${initialStatusParam}"]`);
-    if (matchingItem) {
-      matchingItem.click();
-    }
-  }
 
   function renderAssignedTable() {
     if (!tableBody) return;

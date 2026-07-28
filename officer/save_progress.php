@@ -22,7 +22,7 @@ $success_message = '';
 $error_message   = '';
 
 // Handle POST Form Submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
     $complaint_code_input = filter_input(INPUT_POST, 'complaint_id', FILTER_SANITIZE_SPECIAL_CHARS);
     $status_input         = filter_input(INPUT_POST, 'status', FILTER_SANITIZE_SPECIAL_CHARS);
     $note_input           = filter_input(INPUT_POST, 'note', FILTER_SANITIZE_SPECIAL_CHARS);
@@ -35,9 +35,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Fetch current complaint
-        $cStmt = $conn->prepare("SELECT complaint_id, complaint_code, status FROM complaints WHERE complaint_code = :code OR complaint_id = :id LIMIT 1");
-        $cStmt->execute([':code' => $complaint_code_input, ':id' => $complaint_code_input]);
-        $currentComplaint = $cStmt->fetch();
+        $cStmt = $conn->prepare("SELECT complaint_id, complaint_code, status FROM complaints WHERE complaint_code = ? OR complaint_id = ? LIMIT 1");
+        $cStmt->bind_param('ss', $complaint_code_input, $complaint_code_input);
+        $cStmt->execute();
+        $cRes = $cStmt->get_result();
+        $currentComplaint = $cRes ? $cRes->fetch_assoc() : null;
+        $cStmt->close();
 
         if ($currentComplaint) {
             $real_complaint_id   = $currentComplaint['complaint_id'];
@@ -45,28 +48,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $old_status          = $currentComplaint['status'];
 
             // Update Complaints Status
-            $updateSql = "UPDATE complaints SET status = :status, updated_at = NOW()";
+            $updateSql = "UPDATE complaints SET status = ?, updated_at = NOW()";
             if ($status_input === 'resolved') {
                 $updateSql .= ", resolved_at = NOW()";
             }
-            $updateSql .= " WHERE complaint_id = :cid";
+            $updateSql .= " WHERE complaint_id = ?";
 
             $uStmt = $conn->prepare($updateSql);
-            $uStmt->execute([':status' => $status_input, ':cid' => $real_complaint_id]);
+            $uStmt->bind_param('si', $status_input, $real_complaint_id);
+            $uStmt->execute();
+            $uStmt->close();
 
             // Insert into complaint_history
             if (!empty($note_input)) {
                 $hStmt = $conn->prepare("
                     INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks)
-                    VALUES (:cid, :uid, :sfrom, :sto, :remarks)
+                    VALUES (?, ?, ?, ?, ?)
                 ");
-                $hStmt->execute([
-                    ':cid'     => $real_complaint_id,
-                    ':uid'     => $officer_id,
-                    ':sfrom'   => $old_status,
-                    ':sto'     => $status_input,
-                    ':remarks' => $note_input
-                ]);
+                $hStmt->bind_param('iisss', $real_complaint_id, $officer_id, $old_status, $status_input, $note_input);
+                $hStmt->execute();
+                $hStmt->close();
             }
 
             // Handle Photo Uploads
@@ -83,9 +84,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (move_uploaded_file($_FILES['before_photo']['tmp_name'], $target)) {
                     $pStmt = $conn->prepare("
                         INSERT INTO complaint_photos (complaint_id, photo_path, uploaded_by, photo_type)
-                        VALUES (:cid, :ppath, :uby, 'initial')
+                        VALUES (?, ?, ?, 'initial')
                     ");
-                    $pStmt->execute([':cid' => $real_complaint_id, ':ppath' => 'uploads/' . $file_name, ':uby' => $officer_id]);
+                    $pPath = 'uploads/' . $file_name;
+                    $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
+                    $pStmt->execute();
+                    $pStmt->close();
                 }
             }
 
@@ -97,9 +101,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (move_uploaded_file($_FILES['after_photo']['tmp_name'], $target)) {
                     $pStmt = $conn->prepare("
                         INSERT INTO complaint_photos (complaint_id, photo_path, uploaded_by, photo_type)
-                        VALUES (:cid, :ppath, :uby, 'resolution')
+                        VALUES (?, ?, ?, 'resolution')
                     ");
-                    $pStmt->execute([':cid' => $real_complaint_id, ':ppath' => 'uploads/' . $file_name, ':uby' => $officer_id]);
+                    $pPath = 'uploads/' . $file_name;
+                    $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
+                    $pStmt->execute();
+                    $pStmt->close();
                 }
             }
 
@@ -107,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error_message = "Complaint not found in database.";
         }
-    } catch (PDOException $e) {
+    } catch (Throwable $e) {
         error_log("Save progress error: " . $e->getMessage());
         $error_message = "Database error while saving progress updates: " . $e->getMessage();
     }
@@ -116,43 +123,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // GET Request Data Loading
 $complaint_code = $_GET['id'] ?? 'CMP-0012';
 
+$complaint = [
+    'complaint_id'   => 1,
+    'complaint_code' => $complaint_code,
+    'title'          => 'Road Potholes Repair near Primary School',
+    'description'    => 'The main road near the primary school is heavily damaged with multiple deep potholes.',
+    'category_name'  => 'Roads & Infrastructure',
+    'ward_no'        => 'Ward 04',
+    'status'         => 'in_progress',
+];
+$currentPhotos = [];
+
 try {
     $stmt = $conn->prepare("
         SELECT c.*, cat.category_name, u.full_name AS citizen_name
         FROM complaints c
         JOIN categories cat ON c.category_id = cat.category_id
         JOIN users u ON c.citizen_id = u.user_id
-        WHERE c.complaint_code = :code OR c.complaint_id = :id
+        WHERE c.complaint_code = ? OR c.complaint_id = ?
         LIMIT 1
     ");
-    $stmt->execute([':code' => $complaint_code, ':id' => $complaint_code]);
-    $complaint = $stmt->fetch();
+    $stmt->bind_param('ss', $complaint_code, $complaint_code);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $dbComplaint = $res ? $res->fetch_assoc() : null;
+    $stmt->close();
 
-    if (!$complaint) {
-        $complaint = [
-            'complaint_id'   => 1,
-            'complaint_code' => $complaint_code,
-            'title'          => 'Road Potholes Repair near Primary School',
-            'description'    => 'The main road near the primary school is heavily damaged with multiple deep potholes.',
-            'category_name'  => 'Roads & Infrastructure',
-            'ward_no'        => 'Ward 04',
-            'status'         => 'in_progress',
-        ];
+    if ($dbComplaint) {
+        $complaint = $dbComplaint;
     }
 
     // Fetch existing uploaded photos for current complaint
     $photoStmt = $conn->prepare("
         SELECT photo_path, photo_type, uploaded_at 
         FROM complaint_photos 
-        WHERE complaint_id = :cid 
+        WHERE complaint_id = ? 
         ORDER BY uploaded_at DESC
     ");
-    $photoStmt->execute([':cid' => $complaint['complaint_id']]);
-    $currentPhotos = $photoStmt->fetchAll();
+    $cid = (int)$complaint['complaint_id'];
+    $photoStmt->bind_param('i', $cid);
+    $photoStmt->execute();
+    $pRes = $photoStmt->get_result();
+    $currentPhotos = $pRes ? $pRes->fetch_all(MYSQLI_ASSOC) : [];
+    $photoStmt->close();
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
     error_log("Load complaint error: " . $e->getMessage());
-    $currentPhotos = [];
 }
 
 $page_title = "Save Progress - GPCMS";

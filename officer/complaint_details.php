@@ -27,11 +27,14 @@ try {
         JOIN categories cat ON c.category_id = cat.category_id
         JOIN users u ON c.citizen_id = u.user_id
         LEFT JOIN users off ON c.assigned_officer_id = off.user_id
-        WHERE c.complaint_code = :code OR c.complaint_id = :id
+        WHERE c.complaint_code = ? OR c.complaint_id = ?
         LIMIT 1
     ");
-    $stmt->execute([':code' => $complaint_code, ':id' => $complaint_code]);
-    $complaint = $stmt->fetch();
+    $stmt->bind_param('ss', $complaint_code, $complaint_code);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $complaint = $res ? $res->fetch_assoc() : null;
+    $stmt->close();
 
     if (!$complaint) {
         $complaint = [
@@ -58,24 +61,31 @@ try {
     $photoStmt = $conn->prepare("
         SELECT photo_path, photo_type, uploaded_at 
         FROM complaint_photos 
-        WHERE complaint_id = :cid 
+        WHERE complaint_id = ? 
         ORDER BY uploaded_at DESC
     ");
-    $photoStmt->execute([':cid' => $complaint['complaint_id']]);
-    $photos = $photoStmt->fetchAll();
+    $cid = (int)$complaint['complaint_id'];
+    $photoStmt->bind_param('i', $cid);
+    $photoStmt->execute();
+    $pRes = $photoStmt->get_result();
+    $photos = $pRes ? $pRes->fetch_all(MYSQLI_ASSOC) : [];
+    $photoStmt->close();
 
     // Fetch history timeline
     $historyStmt = $conn->prepare("
         SELECT h.*, u.full_name 
         FROM complaint_history h
         JOIN users u ON h.user_id = u.user_id
-        WHERE h.complaint_id = :cid 
+        WHERE h.complaint_id = ? 
         ORDER BY h.created_at DESC
     ");
-    $historyStmt->execute([':cid' => $complaint['complaint_id']]);
-    $historyLogs = $historyStmt->fetchAll();
+    $historyStmt->bind_param('i', $cid);
+    $historyStmt->execute();
+    $hRes = $historyStmt->get_result();
+    $historyLogs = $hRes ? $hRes->fetch_all(MYSQLI_ASSOC) : [];
+    $historyStmt->close();
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
     error_log("Complaint details error: " . $e->getMessage());
     $photos = [];
     $historyLogs = [];

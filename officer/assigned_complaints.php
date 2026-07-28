@@ -29,38 +29,55 @@ $sql = "
     SELECT c.complaint_id, c.complaint_code, c.title, c.ward_no, c.location_address, c.status, c.created_at, c.assigned_at, cat.category_name
     FROM complaints c
     JOIN categories cat ON c.category_id = cat.category_id
-    WHERE (c.assigned_officer_id = :officer_id OR c.assigned_officer_id IS NULL)
+    WHERE (c.assigned_officer_id = ? OR c.assigned_officer_id IS NULL)
 ";
 
-$params = [':officer_id' => $officer_id];
+$types = 'i';
+$bindParams = [$officer_id];
 
 if (!empty($filter_status)) {
-    $sql .= " AND c.status = :status";
-    $params[':status'] = $filter_status;
+    $sql .= " AND c.status = ?";
+    $types .= 's';
+    $bindParams[] = $filter_status;
 }
 
 if (!empty($filter_category)) {
-    $sql .= " AND cat.category_name = :category";
-    $params[':category'] = $filter_category;
+    $sql .= " AND cat.category_name = ?";
+    $types .= 's';
+    $bindParams[] = $filter_category;
 }
 
 if (!empty($search_query)) {
-    $sql .= " AND (c.complaint_code LIKE :search OR c.title LIKE :search OR c.location_address LIKE :search)";
-    $params[':search'] = '%' . $search_query . '%';
+    $sql .= " AND (c.complaint_code LIKE ? OR c.title LIKE ? OR c.location_address LIKE ?)";
+    $types .= 'sss';
+    $search_pattern = '%' . $search_query . '%';
+    $bindParams[] = $search_pattern;
+    $bindParams[] = $search_pattern;
+    $bindParams[] = $search_pattern;
 }
 
 $sql .= " ORDER BY c.created_at DESC";
 
 try {
     $stmt = $conn->prepare($sql);
-    $stmt->execute($params);
-    $assignedComplaints = $stmt->fetchAll();
+    if ($bindParams !== []) {
+        $stmt->bind_param($types, ...$bindParams);
+    }
+    $stmt->execute();
+    $res = $stmt->get_result();
+    $assignedComplaints = $res ? $res->fetch_all(MYSQLI_ASSOC) : [];
+    $stmt->close();
 
     // Fetch all categories for filter dropdown
-    $catStmt = $conn->query("SELECT category_name FROM categories ORDER BY category_name ASC");
-    $categoriesList = $catStmt->fetchAll(PDO::FETCH_COLUMN);
+    $catRes = $conn->query("SELECT category_name FROM categories ORDER BY category_name ASC");
+    $categoriesList = [];
+    if ($catRes) {
+        while ($row = $catRes->fetch_assoc()) {
+            $categoriesList[] = $row['category_name'];
+        }
+    }
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
     error_log("Assigned complaints query error: " . $e->getMessage());
     $assignedComplaints = [];
     $categoriesList = [];
@@ -136,12 +153,14 @@ require_once 'officer_sidebar.php';
         </button>
         <ul class="dropdown-menu custom-dropdown-menu w-100 shadow-sm" style="border-radius: 12px; font-size: 0.85rem;">
           <li><button type="button" class="dropdown-item custom-dropdown-item <?= empty($filter_status) ? 'active' : '' ?>" data-value="" data-filter="status">All Status</button></li>
+          <li><button type="button" class="dropdown-item custom-dropdown-item <?= $filter_status === 'pending' ? 'active' : '' ?>" data-value="pending" data-filter="status">Pending</button></li>
           <li><button type="button" class="dropdown-item custom-dropdown-item <?= $filter_status === 'assigned' ? 'active' : '' ?>" data-value="assigned" data-filter="status">Assigned</button></li>
           <li><button type="button" class="dropdown-item custom-dropdown-item <?= $filter_status === 'in_progress' ? 'active' : '' ?>" data-value="in_progress" data-filter="status">In Progress</button></li>
           <li><button type="button" class="dropdown-item custom-dropdown-item <?= $filter_status === 'resolved' ? 'active' : '' ?>" data-value="resolved" data-filter="status">Resolved</button></li>
         </ul>
         <select name="status" id="filterStatus" class="d-none">
           <option value="">All Status</option>
+          <option value="pending" <?= $filter_status === 'pending' ? 'selected' : '' ?>>Pending</option>
           <option value="assigned" <?= $filter_status === 'assigned' ? 'selected' : '' ?>>Assigned</option>
           <option value="in_progress" <?= $filter_status === 'in_progress' ? 'selected' : '' ?>>In Progress</option>
           <option value="resolved" <?= $filter_status === 'resolved' ? 'selected' : '' ?>>Resolved</option>

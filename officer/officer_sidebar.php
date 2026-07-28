@@ -58,7 +58,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
   
   <!-- Footer Logout & Portal Metadata -->
   <div class="sidebar-footer mt-auto pt-4">
-    <a href="../logout.php" class="sidebar-logout-btn">
+    <a href="../includes/logout.php" class="sidebar-logout-btn">
       <i class="bi bi-box-arrow-right me-2"></i> Log out
     </a>
     

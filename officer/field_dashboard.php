@@ -34,11 +34,14 @@ try {
     $kpiStmt = $conn->prepare("
         SELECT status, COUNT(*) AS total_count 
         FROM complaints 
-        WHERE assigned_officer_id = :officer_id 
+        WHERE assigned_officer_id = ? OR assigned_officer_id IS NULL
         GROUP BY status
     ");
-    $kpiStmt->execute([':officer_id' => $officer_id]);
-    $kpiRows = $kpiStmt->fetchAll();
+    $kpiStmt->bind_param('i', $officer_id);
+    $kpiStmt->execute();
+    $kpiRes = $kpiStmt->get_result();
+    $kpiRows = $kpiRes ? $kpiRes->fetch_all(MYSQLI_ASSOC) : [];
+    $kpiStmt->close();
     
     foreach ($kpiRows as $row) {
         $st = strtolower($row['status']);
@@ -53,26 +56,32 @@ try {
         SELECT c.complaint_id, c.complaint_code, c.title, c.ward_no, c.location_address, c.status, cat.category_name
         FROM complaints c
         JOIN categories cat ON c.category_id = cat.category_id
-        WHERE c.assigned_officer_id = :officer_id
+        WHERE c.assigned_officer_id = ? OR c.assigned_officer_id IS NULL
         ORDER BY c.created_at DESC
         LIMIT 5
     ");
-    $recentStmt->execute([':officer_id' => $officer_id]);
-    $recentComplaints = $recentStmt->fetchAll();
+    $recentStmt->bind_param('i', $officer_id);
+    $recentStmt->execute();
+    $recentRes = $recentStmt->get_result();
+    $recentComplaints = $recentRes ? $recentRes->fetch_all(MYSQLI_ASSOC) : [];
+    $recentStmt->close();
 
     // Fetch recent activity history
     $historyStmt = $conn->prepare("
         SELECT h.history_id, h.complaint_id, h.status_from, h.status_to, h.remarks, h.created_at, c.complaint_code
         FROM complaint_history h
         JOIN complaints c ON h.complaint_id = c.complaint_id
-        WHERE h.user_id = :officer_id
+        WHERE h.user_id = ? OR c.assigned_officer_id = ?
         ORDER BY h.created_at DESC
         LIMIT 5
     ");
-    $historyStmt->execute([':officer_id' => $officer_id]);
-    $activities = $historyStmt->fetchAll();
+    $historyStmt->bind_param('ii', $officer_id, $officer_id);
+    $historyStmt->execute();
+    $historyRes = $historyStmt->get_result();
+    $activities = $historyRes ? $historyRes->fetch_all(MYSQLI_ASSOC) : [];
+    $historyStmt->close();
 
-} catch (PDOException $e) {
+} catch (Throwable $e) {
     error_log("Dashboard query error: " . $e->getMessage());
     $recentComplaints = [];
     $activities = [];
@@ -109,27 +118,31 @@ require_once 'officer_sidebar.php';
   </div>
 </div>
 
-<!-- KPI Metric Cards Grid Matching Reference UI -->
+<!-- KPI Metric Cards Grid (5 Equal Columns - Active Cases Removed) -->
 <div class="row g-3 mb-4">
   
   <!-- Total Cases Card -->
-  <div class="col-6 col-md-4 col-xl-2">
-    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #876E47 !important; border: 1px solid #E2D9CD;">
-      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">TOTAL CASES</span>
-      <div class="display-6 fw-extrabold text-dark mt-1" style="font-size: 1.9rem;"><?= $kpis['total'] ?></div>
-    </div>
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
+    <a href="assigned_complaints.php" class="text-decoration-none">
+      <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #876E47 !important; border: 1px solid #E2D9CD;">
+        <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">TOTAL CASES</span>
+        <div class="display-6 fw-extrabold text-dark mt-1" style="font-size: 1.9rem;"><?= $kpis['total'] ?></div>
+      </div>
+    </a>
   </div>
   
   <!-- Pending Card -->
-  <div class="col-6 col-md-4 col-xl-2">
-    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #F1C40F !important; border: 1px solid #E2D9CD;">
-      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">PENDING</span>
-      <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #F39C12;"><?= $kpis['pending'] ?></div>
-    </div>
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
+    <a href="assigned_complaints.php?status=pending" class="text-decoration-none">
+      <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #F1C40F !important; border: 1px solid #E2D9CD;">
+        <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">PENDING</span>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #F39C12;"><?= $kpis['pending'] ?></div>
+      </div>
+    </a>
   </div>
   
   <!-- Assigned Card -->
-  <div class="col-6 col-md-4 col-xl-2">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <a href="assigned_complaints.php?status=assigned" class="text-decoration-none">
       <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #3498DB !important; border: 1px solid #E2D9CD;">
         <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">ASSIGNED</span>
@@ -139,7 +152,7 @@ require_once 'officer_sidebar.php';
   </div>
   
   <!-- In Progress Card -->
-  <div class="col-6 col-md-4 col-xl-2">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <a href="assigned_complaints.php?status=in_progress" class="text-decoration-none">
       <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #8E6E45 !important; border: 1px solid #E2D9CD;">
         <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">IN PROGRESS</span>
@@ -149,21 +162,13 @@ require_once 'officer_sidebar.php';
   </div>
   
   <!-- Resolved Card -->
-  <div class="col-6 col-md-4 col-xl-2">
+  <div class="col-12 col-sm-6 col-md-4 col-xl">
     <a href="assigned_complaints.php?status=resolved" class="text-decoration-none">
       <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #2ECC71 !important; border: 1px solid #E2D9CD;">
         <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">RESOLVED</span>
         <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #2ECC71;"><?= $kpis['resolved'] ?></div>
       </div>
     </a>
-  </div>
-  
-  <!-- Total Handled Card -->
-  <div class="col-6 col-md-4 col-xl-2">
-    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #6C757D !important; border: 1px solid #E2D9CD;">
-      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">ACTIVE CASES</span>
-      <div class="display-6 fw-extrabold text-secondary mt-1" style="font-size: 1.9rem;"><?= ($kpis['assigned'] + $kpis['in_progress']) ?></div>
-    </div>
   </div>
   
 </div>
