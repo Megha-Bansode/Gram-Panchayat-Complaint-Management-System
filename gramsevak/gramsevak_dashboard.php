@@ -6,11 +6,11 @@ require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
 $user = auth_require_auth();
-if ((string) $user['role_name'] !== 'Gram Sevak' && (string) $user['role_name'] !== 'Gram Panchayat Admin') {
+// Database roles: 'admin' (role_id=1), 'officer' (role_id=2), 'citizen' (role_id=3)
+// Gram Sevak maps to 'admin' role, Gram Panchayat Admin maps to 'admin' role
+if (!check_role([1, 'admin', 'Gram Sevak', 'Gram Panchayat Admin'])) {
     auth_redirect('../includes/official_login.php', 'Unauthorized access.');
 }
-
-// check_role([2, 'Gram Sevak', 'Gram Panchayat Admin']);
 
 $page_title = "Gram Sevak Dashboard";
 $active_page = "dashboard";
@@ -37,16 +37,21 @@ if (isset($pdo) && $pdo !== null) {
         $count_resolved = $status_data['resolved'] ?? 0;
         $count_total = array_sum($status_data);
 
-        // Fetch recent complaints
-        $sql = "SELECT c.*, cat.category_name, u.full_name as officer_name 
+        // Fetch recent complaints - use correct column names from schema
+        // complaints table: complaint_id (PK), complaint_code (unique), citizen_id, category_id, title, description, ward_no, landmark, location_address, priority, status, assigned_officer_id, assigned_at, resolved_at, created_at, updated_at
+        // categories table: category_id, category_name
+        // users table: user_id, full_name
+        $sql = "SELECT c.complaint_id, c.complaint_code, c.title, c.description, c.ward_no, c.landmark, c.location_address, c.priority, c.status, c.assigned_officer_id, c.assigned_at, c.resolved_at, c.created_at, c.updated_at,
+                       cat.category_name, u.full_name as officer_name
                 FROM complaints c
                 LEFT JOIN categories cat ON c.category_id = cat.category_id
-                LEFT JOIN users u ON c.assigned_to = u.user_id
+                LEFT JOIN users u ON c.assigned_officer_id = u.user_id
                 ORDER BY c.created_at DESC LIMIT 10";
         $recent_stmt = $pdo->query($sql);
         $recent_complaints = $recent_stmt->fetchAll();
     } catch (Exception $e) {
         // Fallback for initial UI rendering if tables empty
+        error_log('Dashboard query error: ' . $e->getMessage());
     }
 }
 
@@ -254,11 +259,11 @@ require_once __DIR__ . '/header.php';
                                             <?php if (!empty($recent_complaints)): ?>
                                                 <?php foreach ($recent_complaints as $row): ?>
                                                     <tr>
-                                                        <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['complaint_id']); ?></span></td>
-                                                        <td><?php echo htmlspecialchars($row['complainant_name']); ?></td>
-                                                        <td><?php echo htmlspecialchars($row['village_ward']); ?></td>
+                                                        <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['complaint_code'] ?? $row['complaint_id']); ?></span></td>
+                                                        <td><?php echo htmlspecialchars($row['title']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['ward_no'] ?? $row['location_address'] ?? 'N/A'); ?></td>
                                                         <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category_name'] ?? 'General'); ?></span></td>
-                                                        <td><?php echo htmlspecialchars($row['complaint_title']); ?></td>
+                                                        <td><?php echo htmlspecialchars($row['title']); ?></td>
                                                         <td>
                                                             <?php
                                                             $st = strtolower($row['status']);

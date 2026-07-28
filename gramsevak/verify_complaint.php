@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '../includes/auth_check.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $user = auth_require_auth();
-if ((string) $user['role_name'] !== ''Gram Sevak', 'Gram Panchayat Admin'') {
+// Database roles: 'admin' (role_id=1), 'officer' (role_id=2), 'citizen' (role_id=3)
+// Gram Sevak maps to 'admin' role
+if (!check_role([1, 'admin', 'Gram Sevak', 'Gram Panchayat Admin'])) {
     auth_redirect('../includes/official_login.php', 'Unauthorized access.');
 }
-
-check_role([2, 'Gram Sevak']);
 
 $page_title = "Verify Complaint & Work Progress";
 $active_page = "verify_complaint";
@@ -40,9 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $stmt = $pdo->prepare("UPDATE complaints SET status = ?, updated_at = NOW() WHERE complaint_id = ?");
                 $stmt->execute([$status_update, $cid]);
 
-                // 2. Write to complaint_history table
-                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, remarks, updated_by) VALUES (?, ?, ?, ?)");
-                $stmt_hist->execute([$cid, $status_update, $remarks, $_SESSION['user_id']]);
+                // 2. Write to complaint_history table - use correct schema
+                // complaint_history: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
+                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks) VALUES (?, ?, 'in_progress', ?, ?)");
+                $stmt_hist->execute([$cid, $_SESSION['user_id'], $status_update, $remarks]);
 
                 $pdo->commit();
                 $success_msg = "Complaint " . htmlspecialchars($cid) . " verified and set to canonical status '" . htmlspecialchars($status_update) . "'!";
@@ -66,30 +67,34 @@ $history = [];
 
 if (!empty($complaint_id) && isset($pdo) && $pdo !== null) {
     try {
-        // Main complaint details query
-        $stmt = $pdo->prepare("SELECT c.*, cat.category_name, u.full_name as officer_name, u.mobile_number as officer_mobile
+        // Main complaint details query - use correct column names
+        $stmt = $pdo->prepare("SELECT c.complaint_id, c.complaint_code, c.title, c.description, c.ward_no, c.landmark, c.location_address, c.priority, c.status, c.assigned_officer_id, c.assigned_at, c.resolved_at, c.created_at, c.updated_at,
+                                      cat.category_name, u.full_name as officer_name, u.phone as officer_mobile
                                FROM complaints c
                                LEFT JOIN categories cat ON c.category_id = cat.category_id
-                               LEFT JOIN users u ON c.assigned_to = u.user_id
+                               LEFT JOIN users u ON c.assigned_officer_id = u.user_id
                                WHERE c.complaint_id = ?");
         $stmt->execute([$complaint_id]);
         $complaint = $stmt->fetch();
 
-        // Photos query from complaint_photos
-        $stmt_p = $pdo->prepare("SELECT * FROM complaint_photos WHERE complaint_id = ? ORDER BY photo_id DESC LIMIT 1");
+        // Photos query from complaint_photos - use correct schema
+        // complaint_photos: photo_id, complaint_id, photo_type (enum: 'before', 'after', 'progress'), file_path, uploaded_by, uploaded_at
+        $stmt_p = $pdo->prepare("SELECT * FROM complaint_photos WHERE complaint_id = ? ORDER BY photo_id DESC");
         $stmt_p->execute([$complaint_id]);
-        $photos = $stmt_p->fetch();
+        $photos = $stmt_p->fetchAll();
 
-        // History query from complaint_history
-        $stmt_h = $pdo->prepare("SELECT h.*, u.full_name as updater_name 
+        // History query from complaint_history - use correct schema
+        // complaint_history: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
+        $stmt_h = $pdo->prepare("SELECT h.*, u.full_name as updater_name
                                  FROM complaint_history h
-                                 LEFT JOIN users u ON h.updated_by = u.user_id
+                                 LEFT JOIN users u ON h.user_id = u.user_id
                                  WHERE h.complaint_id = ?
-                                 ORDER BY h.updated_at ASC");
+                                 ORDER BY h.created_at ASC");
         $stmt_h->execute([$complaint_id]);
         $history = $stmt_h->fetchAll();
     } catch (Exception $e) {
         // Fallback demo data handled in template if DB is empty
+        error_log('Verify complaint query error: ' . $e->getMessage());
     }
 }
 
@@ -147,18 +152,36 @@ require_once __DIR__ . '/header.php';
 
     <?php
     // Fallback data if DB query had no row
-    $c_title = $complaint['complaint_title'] ?? 'Water Pipeline Burst near Ward 3 Community Hall';
+    // Use correct database column names: title, description, ward_no, landmark, location_address, priority, status, assigned_officer_id
+    $c_title = $complaint['title'] ?? 'Water Pipeline Burst near Ward 3 Community Hall';
     $c_id = $complaint['complaint_id'] ?? ($complaint_id ?: 'CMP-2024-001');
     $c_cat = $complaint['category_name'] ?? 'Water Supply';
-    $c_desc = $complaint['complaint_description'] ?? 'Main supply pipeline damaged resulting in drinking water wastage and low pressure in Ward 3.';
+    $c_desc = $complaint['description'] ?? 'Main supply pipeline damaged resulting in drinking water wastage and low pressure in Ward 3.';
     $c_status = strtolower($complaint['status'] ?? 'in_progress');
-    $c_complainant = $complaint['complainant_name'] ?? 'Sunil Deshmukh';
-    $c_mobile = $complaint['mobile_number'] ?? '9890112233';
-    $c_village = $complaint['village_ward'] ?? 'Shivaji Nagar';
+    $c_complainant = $complaint['complainant_name'] ?? 'Sunil Deshmukh';  // This might not exist in complaints table
+    $c_mobile = $complaint['mobile_number'] ?? '9890112233';  // This might not exist in complaints table
+    $c_village = $complaint['ward_no'] ?? ($complaint['location_address'] ?? 'Shivaji Nagar');
     $c_officer = $complaint['officer_name'] ?? 'Ramesh Shinde (Field Officer)';
 
-    $before_photo = $photos['before_photo'] ?? $complaint['complaint_image'] ?? 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=500&auto=format&fit=crop&q=60';
-    $after_photo = $photos['after_photo'] ?? 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&auto=format&fit=crop&q=60';
+    // Photos from complaint_photos table - photo_type enum: 'before', 'after', 'progress'
+    $before_photo = '';
+    $after_photo = '';
+    if (!empty($photos)) {
+        foreach ($photos as $photo) {
+            if (($photo['photo_type'] ?? '') === 'before') {
+                $before_photo = $photo['file_path'] ?? '';
+            } elseif (($photo['photo_type'] ?? '') === 'after') {
+                $after_photo = $photo['file_path'] ?? '';
+            }
+        }
+    }
+    // Fallback to complaint image or placeholder
+    if (empty($before_photo)) {
+        $before_photo = $complaint['complaint_image'] ?? 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=500&auto=format&fit=crop&q=60';
+    }
+    if (empty($after_photo)) {
+        $after_photo = 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&auto=format&fit=crop&q=60';
+    }
     ?>
 
     <!-- Complaint Overview Details -->
@@ -302,10 +325,10 @@ require_once __DIR__ . '/header.php';
                             <?php if (!empty($history)): ?>
                                 <?php foreach ($history as $h): ?>
                                     <tr>
-                                        <td><span class="badge bg-secondary"><?php echo htmlspecialchars($h['status']); ?></span></td>
+                                        <td><span class="badge bg-secondary"><?php echo htmlspecialchars($h['status_to'] ?? $h['status'] ?? 'pending'); ?></span></td>
                                         <td><?php echo htmlspecialchars($h['remarks']); ?></td>
                                         <td><?php echo htmlspecialchars($h['updater_name'] ?? 'System'); ?></td>
-                                        <td><?php echo date('d M Y, h:i A', strtotime($h['updated_at'])); ?></td>
+                                        <td><?php echo date('d M Y, h:i A', strtotime($h['created_at'])); ?></td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>

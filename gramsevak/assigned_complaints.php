@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '../includes/auth_check.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $user = auth_require_auth();
-if ((string) $user['role_name'] !== ''Gram Sevak', 'Gram Panchayat Admin'') {
+// Database roles: 'admin' (role_id=1), 'officer' (role_id=2), 'citizen' (role_id=3)
+// Gram Sevak maps to 'admin' role
+if (!check_role([1, 'admin', 'Gram Sevak', 'Gram Panchayat Admin'])) {
     auth_redirect('../includes/official_login.php', 'Unauthorized access.');
 }
-
-check_role([2, ''Gram Sevak', 'Gram Panchayat Admin'']);
 
 $page_title = "Assigned Complaints - Gram Sevak";
 $active_page = "assigned_complaints";
@@ -30,12 +30,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
                 $pdo->beginTransaction();
 
                 // Update complaints table: status set to canonical 'assigned'
-                $stmt = $pdo->prepare("UPDATE complaints SET assigned_to = ?, status = 'assigned', updated_at = NOW() WHERE complaint_id = ?");
+                // Use correct column name: assigned_officer_id (not assigned_to)
+                $stmt = $pdo->prepare("UPDATE complaints SET assigned_officer_id = ?, status = 'assigned', assigned_at = NOW(), updated_at = NOW() WHERE complaint_id = ?");
                 $stmt->execute([$officer_id, $complaint_id]);
 
-                // Record in complaint_history table
-                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, remarks, updated_by) VALUES (?, 'assigned', ?, ?)");
-                $stmt_hist->execute([$complaint_id, $remarks, $_SESSION['user_id']]);
+                // Record in complaint_history table - use correct schema
+                // complaint_history: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
+                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks) VALUES (?, ?, 'pending', 'assigned', ?)");
+                $stmt_hist->execute([$complaint_id, $_SESSION['user_id'], $remarks]);
 
                 $pdo->commit();
                 $success_msg = "Complaint " . htmlspecialchars($complaint_id) . " successfully assigned!";
@@ -53,31 +55,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     }
 }
 
-// Fetch Field Officers (role_id = 3 or role_name = 'Field Officer')
+// Fetch Field Officers (role_id = 2 for 'officer' role in database)
 $field_officers = [];
 // Fetch Complaints
 $complaints_list = [];
 
 if (isset($pdo) && $pdo !== null) {
     try {
-        // Fetch field officers
-        $officer_stmt = $pdo->query("SELECT u.user_id, u.full_name, u.mobile_number 
-                                    FROM users u 
-                                    LEFT JOIN roles r ON u.role_id = r.role_id 
-                                    WHERE u.role_id = 3 OR r.role_name = 'Field Officer'");
+        // Fetch field officers - database uses role_id=2 for 'officer' role
+        $officer_stmt = $pdo->query("SELECT u.user_id, u.full_name, u.phone as mobile_number
+                                    FROM users u
+                                    LEFT JOIN roles r ON u.role_id = r.role_id
+                                    WHERE u.role_id = 2 OR r.role_name = 'officer'");
         $field_officers = $officer_stmt->fetchAll();
 
-        // Fetch assigned & pending complaints
-        $sql = "SELECT c.*, cat.category_name, u.full_name as officer_name 
+        // Fetch assigned & pending complaints - use correct column names
+        $sql = "SELECT c.complaint_id, c.complaint_code, c.title, c.description, c.ward_no, c.landmark, c.location_address, c.priority, c.status, c.assigned_officer_id, c.assigned_at, c.resolved_at, c.created_at, c.updated_at,
+                       cat.category_name, u.full_name as officer_name
                 FROM complaints c
                 LEFT JOIN categories cat ON c.category_id = cat.category_id
-                LEFT JOIN users u ON c.assigned_to = u.user_id
+                LEFT JOIN users u ON c.assigned_officer_id = u.user_id
                 WHERE c.status IN ('pending', 'assigned', 'in_progress', 'resolved')
                 ORDER BY c.created_at DESC";
         $comp_stmt = $pdo->query($sql);
         $complaints_list = $comp_stmt->fetchAll();
     } catch (Exception $e) {
         // Fallback for UI if DB tables are empty
+        error_log('Assigned complaints query error: ' . $e->getMessage());
     }
 }
 
@@ -128,12 +132,12 @@ require_once __DIR__ . '/header.php';
                             <?php if (!empty($complaints_list)): ?>
                                 <?php foreach ($complaints_list as $cmp): ?>
                                     <option value="<?php echo htmlspecialchars($cmp['complaint_id']); ?>">
-                                        <?php echo htmlspecialchars($cmp['complaint_id'] . ' - ' . $cmp['complaint_title'] . ' (' . $cmp['status'] . ')'); ?>
+                                        <?php echo htmlspecialchars(($cmp['complaint_code'] ?? $cmp['complaint_id']) . ' - ' . $cmp['title'] . ' (' . $cmp['status'] . ')'); ?>
                                     </option>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <option value="CMP-2024-001">CMP-2024-001 - Water Pipeline Burst near Ward 3</option>
-                                <option value="CMP-2024-003">CMP-2024-003 - Hazardous Potholes on Main Approach Road</option>
+                                <option value="1">CMP-0012 - Major Water Pipeline Burst Near Primary School (in_progress)</option>
+                                <option value="3">CMP-0035 - Non-functional Street Lights in Residential Area (assigned)</option>
                             <?php endif; ?>
                         </select>
                     </div>
@@ -145,13 +149,12 @@ require_once __DIR__ . '/header.php';
                             <?php if (!empty($field_officers)): ?>
                                 <?php foreach ($field_officers as $officer): ?>
                                     <option value="<?php echo htmlspecialchars($officer['user_id']); ?>">
-                                        <?php echo htmlspecialchars($officer['full_name'] . ' (' . $officer['mobile_number'] . ')'); ?>
+                                        <?php echo htmlspecialchars($officer['full_name'] . ' (' . ($officer['mobile_number'] ?? $officer['phone'] ?? 'N/A') . ')'); ?>
                                     </option>
                                 <?php endforeach; ?>
                             <?php else: ?>
-                                <option value="201">Ramesh Shinde (Field Officer)</option>
-                                <option value="202">Suresh Patil (Field Officer)</option>
-                                <option value="203">Anil Kadam (Field Officer)</option>
+                                <option value="2">Smit Ahirrao (Field Officer)</option>
+                                <option value="3">Mukund Thorat (Sanitation Inspector)</option>
                             <?php endif; ?>
                         </select>
                     </div>
@@ -200,10 +203,10 @@ require_once __DIR__ . '/header.php';
                                 <?php if (!empty($complaints_list)): ?>
                                     <?php foreach ($complaints_list as $row): ?>
                                         <tr>
-                                            <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['complaint_id']); ?></span></td>
-                                            <td><strong><?php echo htmlspecialchars($row['complaint_title']); ?></strong></td>
+                                            <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['complaint_code'] ?? $row['complaint_id']); ?></span></td>
+                                            <td><strong><?php echo htmlspecialchars($row['title']); ?></strong></td>
                                             <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category_name'] ?? 'General'); ?></span></td>
-                                            <td><?php echo htmlspecialchars($row['village_ward']); ?></td>
+                                            <td><?php echo htmlspecialchars($row['ward_no'] ?? $row['location_address'] ?? 'N/A'); ?></td>
                                             <td><?php echo htmlspecialchars($row['officer_name'] ?? 'Unassigned'); ?></td>
                                             <td>
                                                 <?php
@@ -225,15 +228,15 @@ require_once __DIR__ . '/header.php';
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td><span class="badge bg-light text-dark border">CMP-2024-001</span></td>
-                                        <td><strong>Water Pipeline Burst near Ward 3</strong></td>
+                                        <td><span class="badge bg-light text-dark border">CMP-0012</span></td>
+                                        <td><strong>Major Water Pipeline Burst Near Primary School</strong></td>
                                         <td><span class="badge bg-secondary">Water Supply</span></td>
-                                        <td>Shivaji Nagar</td>
-                                        <td>Ramesh Shinde</td>
-                                        <td><span class="badge bg-warning">pending</span></td>
+                                        <td>Ward 04</td>
+                                        <td>Smit Ahirrao</td>
+                                        <td><span class="badge bg-primary">in_progress</span></td>
                                         <td>25 Jul 2026</td>
                                         <td class="text-end">
-                                            <a href="verify_complaint.php?id=CMP-2024-001" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Details</a>
+                                            <a href="verify_complaint.php?id=1" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> Details</a>
                                         </td>
                                     </tr>
                                 <?php endif; ?>
