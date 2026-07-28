@@ -67,7 +67,7 @@ try {
 }
 
 $page_title = "Assigned Complaints - GPCMS";
-require_once 'officer_header.php';
+require_once 'header.php';
 require_once 'officer_sidebar.php';
 ?>
 
@@ -239,5 +239,5 @@ require_once 'officer_sidebar.php';
 </div>
 
 <?php
-require_once 'officer_footer.php';
+require_once 'footer.php';
 ?>

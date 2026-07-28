@@ -156,7 +156,7 @@ try {
 }
 
 $page_title = "Save Progress - GPCMS";
-require_once 'officer_header.php';
+require_once 'header.php';
 require_once 'officer_sidebar.php';
 ?>
 
@@ -398,5 +398,5 @@ require_once 'officer_sidebar.php';
 </form>
 
 <?php
-require_once 'officer_footer.php';
+require_once 'footer.php';
 ?>
