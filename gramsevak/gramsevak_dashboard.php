@@ -43,7 +43,7 @@ if (isset($pdo) && $pdo !== null) {
     }
 }
 
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/header.php';
 ?>
 
             <!-- Page Body -->
@@ -297,4 +297,4 @@ require_once __DIR__ . '/../includes/header.php';
                 </div>
             </div>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/footer.php'; ?>

@@ -74,7 +74,7 @@ if (isset($pdo) && $pdo !== null) {
     }
 }
 
-require_once __DIR__ . '/../includes/header.php';
+require_once __DIR__ . '/header.php';
 ?>
 
 <main class="gpcms-body container-fluid">
@@ -239,4 +239,4 @@ require_once __DIR__ . '/../includes/header.php';
     </div>
 </main>
 
-<?php require_once __DIR__ . '/../includes/footer.php'; ?>
+<?php require_once __DIR__ . '/footer.php'; ?>
