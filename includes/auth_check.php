@@ -69,19 +69,25 @@ function auth_get_post_login_path(string $roleName): string
     $role = strtolower(trim($roleName));
 
     // Map known role name patterns to dashboard paths (relative to the includes/ folder)
-    if (str_contains($role, 'super') || str_contains($role, 'admin')) {
+    // Supports both pattern matching (field-officer module) and exact database role names (gram-officer module)
+    
+    // Admin roles
+    if (str_contains($role, 'super') || str_contains($role, 'admin') || $role === 'admin' || $role === 'gram panchayat admin') {
         return '../admin/admin_dashboard.php';
     }
 
-    if (str_contains($role, 'gram') || str_contains($role, 'panchayat')) {
+    // Gram sevak / panchayat roles
+    if (str_contains($role, 'gram') || str_contains($role, 'panchayat') || $role === 'gram sevak') {
         return '../gramsevak/gramsevak_dashboard.php';
     }
 
-    if (str_contains($role, 'field') || str_contains($role, 'officer')) {
+    // Field officer roles
+    if (str_contains($role, 'field') || str_contains($role, 'officer') || $role === 'officer' || $role === 'field officer') {
         return '../officer/field_dashboard.php';
     }
 
-    if (str_contains($role, 'citizen')) {
+    // Citizen roles
+    if (str_contains($role, 'citizen') || $role === 'citizen') {
         return '../citizen/citizen_dashboard.php';
     }
 
@@ -138,20 +144,76 @@ function auth_get_role_id_by_name(string $roleName): ?int
     return $row !== null ? (int) $row['role_id'] : null;
 }
 
+/**
+ * Get user by login identifier (supports both email and login_id for compatibility)
+ * @param string $loginId - Can be email (field-officer module) or login_id (gram-officer module)
+ * @return array|null
+ */
 function auth_get_user_by_login_id(string $loginId): ?array
 {
     $conn = get_db_connection();
+    
+    // Try login_id first (gram-officer module), then fall back to email (field-officer module)
     $stmt = $conn->prepare(
-        'SELECT u.user_id, u.full_name, u.login_id, u.password_hash, u.role_id, u.mobile_number, u.status, r.role_name
+        'SELECT u.user_id, u.full_name, u.email, u.login_id, u.password, u.password_hash, u.role_id, u.phone, u.mobile_number, u.status, r.role_name
          FROM users u
          INNER JOIN roles r ON r.role_id = u.role_id
-         WHERE u.login_id = ? LIMIT 1'
+         WHERE u.login_id = ? OR u.email = ? LIMIT 1'
     );
-    $stmt->bind_param('s', $loginId);
+    $stmt->bind_param('ss', $loginId, $loginId);
     $stmt->execute();
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
     $stmt->close();
 
     return $user ?: null;
+}
+
+/**
+ * Check if current user has one of the allowed roles
+ * @param array|int|string $allowedRoles - Array of allowed role_ids or role_names, or single value
+ * @return bool
+ */
+function check_role(array|int|string $allowedRoles): bool
+{
+    auth_start_session();
+    
+    if (empty($_SESSION['is_logged_in']) || empty($_SESSION['role_id'])) {
+        return false;
+    }
+    
+    $userRoleId = (int) $_SESSION['role_id'];
+    $userRoleName = strtolower((string) $_SESSION['role_name']);
+    
+    // Normalize allowed roles to array
+    $allowed = is_array($allowedRoles) ? $allowedRoles : [$allowedRoles];
+    
+    foreach ($allowed as $role) {
+        if (is_int($role)) {
+            // Check by role_id
+            if ($userRoleId === $role) {
+                return true;
+            }
+        } else {
+            // Check by role_name (case-insensitive)
+            if (strtolower((string) $role) === $userRoleName) {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+
+/**
+ * Require specific role, redirect if not authorized
+ * @param array|int|string $allowedRoles
+ * @param string $redirectPath
+ * @param string $message
+ */
+function require_role(array|int|string $allowedRoles, string $redirectPath = '../includes/official_login.php', string $message = 'Unauthorized access.'): void
+{
+    if (!check_role($allowedRoles)) {
+        auth_redirect($redirectPath, $message);
+    }
 }
