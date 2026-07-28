@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 // GPCMS Gram Sevak Dashboard - Handbook Contract Aligned
 declare(strict_types=1);
 
@@ -10,7 +10,7 @@ if ((string) $user['role_name'] !== 'Gram Sevak' && (string) $user['role_name'] 
     auth_redirect('../includes/official_login.php', 'Unauthorized access.');
 }
 
-check_role([2, 'Gram Sevak', 'Gram Panchayat Admin']);
+// check_role([2, 'Gram Sevak', 'Gram Panchayat Admin']);
 
 $page_title = "Gram Sevak Dashboard";
 $active_page = "dashboard";
