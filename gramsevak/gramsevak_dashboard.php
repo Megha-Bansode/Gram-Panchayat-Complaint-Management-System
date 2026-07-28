@@ -3,14 +3,14 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db_connect.php';
-require_once __DIR__ . '../includes/auth_check.php';
+require_once __DIR__ . '/../includes/auth_check.php';
 
 $user = auth_require_auth();
-if ((string) $user['role_name'] !== ''Gram Sevak', 'Gram Panchayat Admin'') {
+if ((string) $user['role_name'] !== 'Gram Sevak', 'Gram Panchayat Admin') {
     auth_redirect('../includes/official_login.php', 'Unauthorized access.');
 }
 
-check_role([2, ''Gram Sevak', 'Gram Panchayat Admin'']);
+check_role([2, 'Gram Sevak', 'Gram Panchayat Admin']);
 
 $page_title = "Gram Sevak Dashboard";
 $active_page = "dashboard";
