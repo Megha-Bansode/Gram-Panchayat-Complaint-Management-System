@@ -25,7 +25,7 @@ if ($user === null) {
     auth_redirect($redirectPage, 'Invalid login credentials.');
 }
 
-$allowedRoleNames = $portal === 'official' ? ['Super Admin', 'Gram Sevak', 'Field Officer'] : ['Citizen'];
+$allowedRoleNames = $portal === 'official' ? ['Super Admin', 'Gram Sevak', 'Gram Panchayat Admin', 'Field Officer'] : ['Citizen'];
 $roleName = (string) $user['role_name'];
 
 if ($portal === 'official' && $roleName === 'Citizen') {
