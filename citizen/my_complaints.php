@@ -115,7 +115,7 @@ $total_count = count($complaints);
     <?php require_once 'sidebar.php'; ?>
 
     <div class="citizen-main-content">
-        <?php require_once '../includes/header.php'; ?>
+        <?php require_once 'header.php'; ?>
 
         <!-- ═══════════════════════════════════════════════════════
              PAGE WRAPPER
@@ -553,5 +553,5 @@ $total_count = count($complaints);
 <!-- ═══════════════════════════════════════════════════════
      FOOTER
      ═══════════════════════════════════════════════════════ -->
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once 'footer.php'; ?>
 
