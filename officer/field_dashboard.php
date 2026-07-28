@@ -6,6 +6,78 @@
  * Purpose: Primary dashboard interface for Field Officers displaying workload metrics, recent assigned complaints, quick actions, and activity logs.
  */
 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/../config/db_connect.php';
+require_once __DIR__ . '/../includes/auth_check.php';
+
+// Require officer role (or fallback for local standalone preview)
+if (isset($_SESSION['is_logged_in'])) {
+    requireRole(['officer', 'admin']);
+}
+
+$officer_id = $_SESSION['user_id'] ?? 2; // Default to demo officer ID 2
+$officer_name = $_SESSION['full_name'] ?? 'Smit Ahirrao';
+
+// Fetch dynamic KPI metrics from database
+$kpis = [
+    'total'       => 0,
+    'pending'     => 0,
+    'assigned'    => 0,
+    'in_progress' => 0,
+    'resolved'    => 0,
+];
+
+try {
+    $kpiStmt = $conn->prepare("
+        SELECT status, COUNT(*) AS total_count 
+        FROM complaints 
+        WHERE assigned_officer_id = :officer_id 
+        GROUP BY status
+    ");
+    $kpiStmt->execute([':officer_id' => $officer_id]);
+    $kpiRows = $kpiStmt->fetchAll();
+    
+    foreach ($kpiRows as $row) {
+        $st = strtolower($row['status']);
+        if (isset($kpis[$st])) {
+            $kpis[$st] = (int)$row['total_count'];
+        }
+        $kpis['total'] += (int)$row['total_count'];
+    }
+
+    // Fetch recent assigned complaints
+    $recentStmt = $conn->prepare("
+        SELECT c.complaint_id, c.complaint_code, c.title, c.ward_no, c.location_address, c.status, cat.category_name
+        FROM complaints c
+        JOIN categories cat ON c.category_id = cat.category_id
+        WHERE c.assigned_officer_id = :officer_id
+        ORDER BY c.created_at DESC
+        LIMIT 5
+    ");
+    $recentStmt->execute([':officer_id' => $officer_id]);
+    $recentComplaints = $recentStmt->fetchAll();
+
+    // Fetch recent activity history
+    $historyStmt = $conn->prepare("
+        SELECT h.history_id, h.complaint_id, h.status_from, h.status_to, h.remarks, h.created_at, c.complaint_code
+        FROM complaint_history h
+        JOIN complaints c ON h.complaint_id = c.complaint_id
+        WHERE h.user_id = :officer_id
+        ORDER BY h.created_at DESC
+        LIMIT 5
+    ");
+    $historyStmt->execute([':officer_id' => $officer_id]);
+    $activities = $historyStmt->fetchAll();
+
+} catch (PDOException $e) {
+    error_log("Dashboard query error: " . $e->getMessage());
+    $recentComplaints = [];
+    $activities = [];
+}
+
 $page_title = "Field Officer Dashboard - GPCMS";
 require_once 'officer_header.php';
 require_once 'officer_sidebar.php';
@@ -26,9 +98,9 @@ require_once 'officer_sidebar.php';
 <div class="hero-welcome-card mb-4 position-relative overflow-hidden" style="background: linear-gradient(135deg, #876E47 0%, #A0855A 100%); border-radius: 18px; padding: 2rem 2.25rem; color: #FFFFFF; box-shadow: 0 6px 20px rgba(135, 110, 71, 0.15);">
   <div class="row align-items-center position-relative z-2">
     <div class="col-lg-9">
-      <h2 class="fw-extrabold mb-2 text-white" style="font-size: 1.85rem; letter-spacing: -0.01em;">Welcome Back, Sunita Deshmukh</h2>
+      <h2 class="fw-extrabold mb-2 text-white" style="font-size: 1.85rem; letter-spacing: -0.01em;">Welcome Back, <?= htmlspecialchars($officer_name) ?></h2>
       <p class="mb-0 text-white-50" style="font-size: 0.92rem; max-width: 620px; line-height: 1.45;">
-        Monitor public grievances, record inspection progress, and review field completions for Pimpalgaon Gram Panchayat.
+        Monitor public grievances, record inspection progress, and review field completions for Gram Panchayat.
       </p>
     </div>
     <div class="col-lg-3 text-end d-none d-lg-block">
@@ -37,14 +109,14 @@ require_once 'officer_sidebar.php';
   </div>
 </div>
 
-<!-- 6 KPI Metric Cards Grid Matching Reference UI -->
+<!-- KPI Metric Cards Grid Matching Reference UI -->
 <div class="row g-3 mb-4">
   
   <!-- Total Cases Card -->
   <div class="col-6 col-md-4 col-xl-2">
     <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #876E47 !important; border: 1px solid #E2D9CD;">
       <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">TOTAL CASES</span>
-      <div class="display-6 fw-extrabold text-dark mt-1" style="font-size: 1.9rem;">5</div>
+      <div class="display-6 fw-extrabold text-dark mt-1" style="font-size: 1.9rem;"><?= $kpis['total'] ?></div>
     </div>
   </div>
   
@@ -52,7 +124,7 @@ require_once 'officer_sidebar.php';
   <div class="col-6 col-md-4 col-xl-2">
     <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #F1C40F !important; border: 1px solid #E2D9CD;">
       <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">PENDING</span>
-      <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #F39C12;">0</div>
+      <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #F39C12;"><?= $kpis['pending'] ?></div>
     </div>
   </div>
   
@@ -61,7 +133,7 @@ require_once 'officer_sidebar.php';
     <a href="assigned_complaints.php?status=assigned" class="text-decoration-none">
       <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #3498DB !important; border: 1px solid #E2D9CD;">
         <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">ASSIGNED</span>
-        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #3498DB;">4</div>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #3498DB;"><?= $kpis['assigned'] ?></div>
       </div>
     </a>
   </div>
@@ -71,7 +143,7 @@ require_once 'officer_sidebar.php';
     <a href="assigned_complaints.php?status=in_progress" class="text-decoration-none">
       <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #8E6E45 !important; border: 1px solid #E2D9CD;">
         <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">IN PROGRESS</span>
-        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #8E6E45;">2</div>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #8E6E45;"><?= $kpis['in_progress'] ?></div>
       </div>
     </a>
   </div>
@@ -81,16 +153,16 @@ require_once 'officer_sidebar.php';
     <a href="assigned_complaints.php?status=resolved" class="text-decoration-none">
       <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #2ECC71 !important; border: 1px solid #E2D9CD;">
         <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">RESOLVED</span>
-        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #2ECC71;">1</div>
+        <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #2ECC71;"><?= $kpis['resolved'] ?></div>
       </div>
     </a>
   </div>
   
-  <!-- Rejected Card -->
+  <!-- Total Handled Card -->
   <div class="col-6 col-md-4 col-xl-2">
-    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #E74C3C !important; border: 1px solid #E2D9CD;">
-      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">REJECTED</span>
-      <div class="display-6 fw-extrabold mt-1" style="font-size: 1.9rem; color: #E74C3C;">0</div>
+    <div class="card border-0 text-center py-3 px-2 shadow-sm h-100" style="background: #FFFFFF; border-radius: 14px; border-top: 4px solid #6C757D !important; border: 1px solid #E2D9CD;">
+      <span class="text-muted fw-bold extra-small" style="font-size: 0.72rem; letter-spacing: 0.04em;">ACTIVE CASES</span>
+      <div class="display-6 fw-extrabold text-secondary mt-1" style="font-size: 1.9rem;"><?= ($kpis['assigned'] + $kpis['in_progress']) ?></div>
     </div>
   </div>
   
@@ -124,58 +196,48 @@ require_once 'officer_sidebar.php';
             </tr>
           </thead>
           <tbody id="dashboardTableBody">
-            <tr>
-              <td class="fw-bold">CMP-0012</td>
-              <td>Road Potholes Repair near Primary School</td>
-              <td>Roads & Infrastructure</td>
-              <td>Shivapur Ward 2, Near Primary School Gate</td>
-              <td><span class="status-badge resolved" style="background-color: #E8F5E9 !important; color: #2E7D32 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-green" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #2E7D32 !important; display: inline-block !important;"></span> Resolved</span></td>
-              <td class="text-end">
-                <div class="d-inline-flex align-items-center gap-2">
-                  <a href="save_progress.php?id=CMP-0012" class="btn-table-update">Update</a>
-                  <i class="bi bi-three-dots-vertical table-three-dots"></i>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="fw-bold">CMP-0024</td>
-              <td>Street Light Outage on Main Bazaar</td>
-              <td>Electricity Supply</td>
-              <td>Shivapur Ward 1, Main Bazaar</td>
-              <td><span class="status-badge assigned" style="background-color: #E3F2FD !important; color: #1565C0 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-blue" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #1565C0 !important; display: inline-block !important;"></span> Assigned</span></td>
-              <td class="text-end">
-                <div class="d-inline-flex align-items-center gap-2">
-                  <a href="save_progress.php?id=CMP-0024" class="btn-table-update">Update</a>
-                  <i class="bi bi-three-dots-vertical table-three-dots"></i>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="fw-bold">CMP-0035</td>
-              <td>Water Pipeline Leakage at Temple Road</td>
-              <td>Water & Sanitation</td>
-              <td>Shivapur Ward 3, Temple Road</td>
-              <td><span class="status-badge in-progress" style="background-color: #FFF8E7 !important; color: #D35400 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-orange" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #D35400 !important; display: inline-block !important;"></span> In Progress</span></td>
-              <td class="text-end">
-                <div class="d-inline-flex align-items-center gap-2">
-                  <a href="save_progress.php?id=CMP-0035" class="btn-table-update">Update</a>
-                  <i class="bi bi-three-dots-vertical table-three-dots"></i>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td class="fw-bold">CMP-0041</td>
-              <td>Drainage Overflow at Naka No 2</td>
-              <td>Sanitation & Drainage</td>
-              <td>Shivapur Ward 1, Naka No 2</td>
-              <td><span class="status-badge assigned" style="background-color: #E3F2FD !important; color: #1565C0 !important; font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;"><span class="status-badge-dot-blue" style="width: 7px !important; height: 7px !important; border-radius: 50% !important; background-color: #1565C0 !important; display: inline-block !important;"></span> Assigned</span></td>
-              <td class="text-end">
-                <div class="d-inline-flex align-items-center gap-2">
-                  <a href="save_progress.php?id=CMP-0041" class="btn-table-update">Update</a>
-                  <i class="bi bi-three-dots-vertical table-three-dots"></i>
-                </div>
-              </td>
-            </tr>
+            <?php if (empty($recentComplaints)): ?>
+              <tr>
+                <td colspan="6" class="text-center py-4 text-muted">No assigned complaints found in database.</td>
+              </tr>
+            <?php else: ?>
+              <?php foreach ($recentComplaints as $c): ?>
+                <?php
+                  $st = strtolower($c['status']);
+                  $badge_class = 'assigned';
+                  $badge_style = 'background-color: #E3F2FD !important; color: #1565C0 !important;';
+                  $dot_style = 'background-color: #1565C0 !important;';
+
+                  if ($st === 'in_progress') {
+                      $badge_class = 'in-progress';
+                      $badge_style = 'background-color: #FFF8E7 !important; color: #D35400 !important;';
+                      $dot_style = 'background-color: #D35400 !important;';
+                  } elseif ($st === 'resolved') {
+                      $badge_class = 'resolved';
+                      $badge_style = 'background-color: #E8F5E9 !important; color: #2E7D32 !important;';
+                      $dot_style = 'background-color: #2E7D32 !important;';
+                  }
+                ?>
+                <tr>
+                  <td class="fw-bold"><?= htmlspecialchars($c['complaint_code']) ?></td>
+                  <td><?= htmlspecialchars($c['title']) ?></td>
+                  <td><?= htmlspecialchars($c['category_name']) ?></td>
+                  <td><?= htmlspecialchars($c['ward_no'] . ', ' . $c['location_address']) ?></td>
+                  <td>
+                    <span class="status-badge <?= $badge_class ?>" style="<?= $badge_style ?> font-size: 0.78rem !important; font-weight: 700 !important; padding: 5px 13px !important; border-radius: 50px !important; display: inline-flex !important; align-items: center !important; gap: 0.45rem !important;">
+                      <span style="width: 7px !important; height: 7px !important; border-radius: 50% !important; <?= $dot_style ?> display: inline-block !important;"></span>
+                      <?= ucfirst(str_replace('_', ' ', $st)) ?>
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex align-items-center gap-2">
+                      <a href="save_progress.php?id=<?= urlencode($c['complaint_code']) ?>" class="btn-table-update">Update</a>
+                      <i class="bi bi-three-dots-vertical table-three-dots"></i>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </tbody>
         </table>
       </div>
@@ -215,49 +277,24 @@ require_once 'officer_sidebar.php';
       </div>
       
       <div class="activity-timeline" id="activityTimelineContainer">
-        
-        <!-- Activity Item 1: Photo Uploaded -->
-        <div class="timeline-item animate-fade-in-up delay-1" style="position: relative !important; margin-bottom: 1.25rem !important;">
-          <div class="timeline-badge-node" style="width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #1E88E5 !important; color: #FFFFFF !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 0.95rem !important; flex-shrink: 0 !important; box-shadow: 0 3px 10px rgba(30, 136, 229, 0.25) !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;" title="Photo Uploaded">
-            <i class="bi bi-camera-fill" style="color: #FFFFFF !important;"></i>
-          </div>
-          <div class="timeline-body" style="margin-left: 50px !important;">
-            <div class="timeline-title" style="font-weight: 800 !important; color: #241D15 !important; font-size: 0.88rem !important; line-height: 1.2 !important;">Progress Photo Uploaded</div>
-            <div class="timeline-desc" style="color: #6E6255 !important; font-size: 0.82rem !important; margin-top: 3px !important; line-height: 1.4 !important;">
-              Uploaded work evidence photo for <a href="save_progress.php?id=CMP-0012" class="cmp-link" style="color: #6E5A3B !important; font-weight: 700 !important; text-decoration: none !important;">CMP-0012</a>
+        <?php if (empty($activities)): ?>
+          <div class="text-muted small text-center py-3">No recent activities logged.</div>
+        <?php else: ?>
+          <?php foreach ($activities as $act): ?>
+            <div class="timeline-item animate-fade-in-up delay-1" style="position: relative !important; margin-bottom: 1.25rem !important;">
+              <div class="timeline-badge-node" style="width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #FFF3E0 !important; border: 1.5px solid #FFCC80 !important; color: #E65100 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 0.95rem !important; flex-shrink: 0 !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;" title="Status Updated">
+                <i class="bi bi-pencil-square" style="color: #E65100 !important;"></i>
+              </div>
+              <div class="timeline-body" style="margin-left: 50px !important;">
+                <div class="timeline-title" style="font-weight: 800 !important; color: #241D15 !important; font-size: 0.88rem !important; line-height: 1.2 !important;">Status Updated</div>
+                <div class="timeline-desc" style="color: #6E6255 !important; font-size: 0.82rem !important; margin-top: 3px !important; line-height: 1.4 !important;">
+                  <a href="save_progress.php?id=<?= urlencode($act['complaint_code']) ?>" class="cmp-link" style="color: #6E5A3B !important; font-weight: 700 !important; text-decoration: none !important;"><?= htmlspecialchars($act['complaint_code']) ?></a> status changed to <span class="badge-status-subtle" style="font-size: 0.74rem !important; font-weight: 800 !important; color: #D35400 !important; background-color: #FFF3E0 !important; padding: 2px 6px !important; border-radius: 4px !important;"><?= strtoupper(str_replace('_', ' ', $act['status_to'])) ?></span>
+                </div>
+                <div class="timeline-time" style="font-size: 0.75rem !important; color: #8C7B6B !important; margin-top: 3px !important; display: flex !important; align-items: center !important; gap: 0.25rem !important;"><i class="bi bi-clock me-1"></i><?= date('M d, g:i a', strtotime($act['created_at'])) ?></div>
+              </div>
             </div>
-            <div class="timeline-time" style="font-size: 0.75rem !important; color: #8C7B6B !important; margin-top: 3px !important; display: flex !important; align-items: center !important; gap: 0.25rem !important;"><i class="bi bi-clock me-1"></i>Just now</div>
-          </div>
-        </div>
-
-        <!-- Activity Item 2: Complaint Resolved -->
-        <div class="timeline-item animate-fade-in-up delay-2" style="position: relative !important; margin-bottom: 1.25rem !important;">
-          <div class="timeline-badge-node" style="width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #E8F5E9 !important; border: 1.5px solid #A5D6A7 !important; color: #2E7D32 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 1rem !important; flex-shrink: 0 !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;" title="Complaint Resolved">
-            <i class="bi bi-check-lg" style="color: #2E7D32 !important;"></i>
-          </div>
-          <div class="timeline-body" style="margin-left: 50px !important;">
-            <div class="timeline-title" style="font-weight: 800 !important; color: #241D15 !important; font-size: 0.88rem !important; line-height: 1.2 !important;">Complaint Resolved</div>
-            <div class="timeline-desc" style="color: #6E6255 !important; font-size: 0.82rem !important; margin-top: 3px !important; line-height: 1.4 !important;">
-              <a href="complaint_details.php?id=CMP-0012" class="cmp-link" style="color: #6E5A3B !important; font-weight: 700 !important; text-decoration: none !important;">CMP-0012</a> marked as Resolved
-            </div>
-            <div class="timeline-time" style="font-size: 0.75rem !important; color: #8C7B6B !important; margin-top: 3px !important; display: flex !important; align-items: center !important; gap: 0.25rem !important;"><i class="bi bi-clock me-1"></i>Just now</div>
-          </div>
-        </div>
-
-        <!-- Activity Item 3: Status Updated -->
-        <div class="timeline-item animate-fade-in-up delay-3" style="position: relative !important; margin-bottom: 1.25rem !important;">
-          <div class="timeline-badge-node" style="width: 36px !important; height: 36px !important; border-radius: 50% !important; background-color: #FFF3E0 !important; border: 1.5px solid #FFCC80 !important; color: #E65100 !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 0.95rem !important; flex-shrink: 0 !important; position: absolute !important; left: 0 !important; top: 2px !important; z-index: 2 !important;" title="Status Updated">
-            <i class="bi bi-pencil-square" style="color: #E65100 !important;"></i>
-          </div>
-          <div class="timeline-body" style="margin-left: 50px !important;">
-            <div class="timeline-title" style="font-weight: 800 !important; color: #241D15 !important; font-size: 0.88rem !important; line-height: 1.2 !important;">Status Updated</div>
-            <div class="timeline-desc" style="color: #6E6255 !important; font-size: 0.82rem !important; margin-top: 3px !important; line-height: 1.4 !important;">
-              CMP-0012 status changed to <span class="badge-status-subtle" style="font-size: 0.74rem !important; font-weight: 800 !important; color: #D35400 !important; background-color: #FFF3E0 !important; padding: 2px 6px !important; border-radius: 4px !important;">IN PROGRESS</span>
-            </div>
-            <div class="timeline-time" style="font-size: 0.75rem !important; color: #8C7B6B !important; margin-top: 3px !important; display: flex !important; align-items: center !important; gap: 0.25rem !important;"><i class="bi bi-clock me-1"></i>Just now</div>
-          </div>
-        </div>
-
+          <?php endforeach; ?>
+        <?php endif; ?>
       </div>
     </div>
     

@@ -691,80 +691,24 @@ document.addEventListener('DOMContentLoaded', () => {
   bindFilePreview('before_photo', 'beforeUploadZone');
   bindFilePreview('after_photo', 'afterUploadZone');
 
-  // 9. Save Progress Form Submission & Dynamic Activity Log Logging
+  // 9. Save Progress Form Standard HTML Validation
   const saveForm = document.getElementById('saveProgressForm');
-  const btnSaveSubmit = document.getElementById('btnSaveSubmit');
 
   if (saveForm) {
     saveForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-
-      const hiddenIdInput = document.getElementById('hiddenComplaintId');
-      const hiddenStatus = document.getElementById('status');
       const noteInput = document.getElementById('note');
-      const beforePhotoInput = document.getElementById('before_photo');
-      const afterPhotoInput = document.getElementById('after_photo');
 
-      if (!saveForm.checkValidity() || !noteInput.value.trim()) {
+      if (!saveForm.checkValidity() || (noteInput && !noteInput.value.trim())) {
+        e.preventDefault();
         e.stopPropagation();
         saveForm.classList.add('was-validated');
-        FieldToast.show('Please complete all required form fields.', 'bi-exclamation-circle-fill');
-        return;
-      }
-
-      const complaintIdToUpdate = hiddenIdInput ? hiddenIdInput.value : 'CMP-0012';
-      const newStatus = hiddenStatus ? hiddenStatus.value : 'in_progress';
-
-      // Update complaint status in LocalStorage
-      const allComplaints = getComplaintsData();
-      const targetIndex = allComplaints.findIndex(c => c.id === complaintIdToUpdate);
-      if (targetIndex !== -1) {
-        allComplaints[targetIndex].status = newStatus;
-        if (noteInput && noteInput.value.trim()) {
-          allComplaints[targetIndex].lastNote = noteInput.value.trim();
+        if (typeof FieldToast !== 'undefined') {
+          FieldToast.show('Please complete all required form fields.', 'bi-exclamation-circle-fill');
         }
-        saveComplaintsData(allComplaints);
-        MOCK_COMPLAINTS = allComplaints;
+        return false;
       }
-
-      // Automatically Log Activity Entry into Recent Activity Timeline
-      const readableStatus = newStatus.replace('_', ' ').toUpperCase();
-
-      if (newStatus === 'resolved') {
-        addActivityLog(
-          'resolved',
-          'Complaint Resolved',
-          `<a href="complaint_details.php?id=${complaintIdToUpdate}" class="cmp-link">${complaintIdToUpdate}</a> marked as Resolved`
-        );
-      } else {
-        addActivityLog(
-          'status',
-          'Status Updated',
-          `<a href="save_progress.php?id=${complaintIdToUpdate}" class="cmp-link">${complaintIdToUpdate}</a> status changed to <span class="badge-status-subtle">${readableStatus}</span>`
-        );
-      }
-
-      const hasBefore = beforePhotoInput && beforePhotoInput.files && beforePhotoInput.files.length > 0;
-      const hasAfter = afterPhotoInput && afterPhotoInput.files && afterPhotoInput.files.length > 0;
-
-      if (hasBefore || hasAfter) {
-        addActivityLog(
-          'photo',
-          'Progress Photo Uploaded',
-          `Uploaded work evidence photo for <a href="save_progress.php?id=${complaintIdToUpdate}" class="cmp-link">${complaintIdToUpdate}</a>`
-        );
-      }
-
-      if (btnSaveSubmit) {
-        btnSaveSubmit.disabled = true;
-        btnSaveSubmit.innerHTML = `<i class="bi bi-hourglass-split me-1"></i> Saving Progress...`;
-      }
-
-      FieldToast.show(`Complaint ${complaintIdToUpdate} status updated to ${readableStatus}!`, 'bi-check-circle-fill');
-
-      setTimeout(() => {
-        window.location.href = 'assigned_complaints.php';
-      }, 1400);
+      // Valid form: browser will naturally submit standard HTML POST request to save_progress.php
     });
   }
 });
+
