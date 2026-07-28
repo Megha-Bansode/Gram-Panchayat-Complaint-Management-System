@@ -48,7 +48,8 @@ function auth_require_auth(): array
     auth_start_session();
 
     if (empty($_SESSION['is_logged_in']) || empty($_SESSION['user_id'])) {
-        auth_redirect('../includes/login.php', 'Please sign in to continue.');
+        $loginPath = file_exists('includes/login.php') ? 'includes/login.php' : (file_exists('../includes/login.php') ? '../includes/login.php' : 'login.php');
+        auth_redirect($loginPath, 'Please sign in to continue.');
     }
 
     // Generate CSRF token if not present (Handbook §10)
@@ -58,11 +59,36 @@ function auth_require_auth(): array
 
     return [
         'user_id' => (int) $_SESSION['user_id'],
-        'full_name' => (string) $_SESSION['full_name'],
-        'role_id' => (int) $_SESSION['role_id'],
-        'role_name' => (string) $_SESSION['role_name'],
+        'full_name' => (string) ($_SESSION['full_name'] ?? ''),
+        'role_id' => (int) ($_SESSION['role_id'] ?? 0),
+        'role_name' => (string) ($_SESSION['role_name'] ?? ''),
     ];
 }
+
+function requireRole(array|string $allowedRoles): void
+{
+    $auth = auth_require_auth();
+    $currentRole = strtolower(trim($auth['role_name']));
+
+    if (is_string($allowedRoles)) {
+        $allowedRoles = [$allowedRoles];
+    }
+
+    $isAllowed = false;
+    foreach ($allowedRoles as $role) {
+        $r = strtolower(trim($role));
+        if ($r === $currentRole || str_contains($currentRole, $r) || str_contains($r, $currentRole)) {
+            $isAllowed = true;
+            break;
+        }
+    }
+
+    if (!$isAllowed) {
+        $loginPath = file_exists('includes/login.php') ? 'includes/login.php' : (file_exists('../includes/login.php') ? '../includes/login.php' : 'login.php');
+        auth_redirect($loginPath, 'Unauthorized access to this portal.');
+    }
+}
+
 
 function auth_get_post_login_path(string $roleName): string
 {
