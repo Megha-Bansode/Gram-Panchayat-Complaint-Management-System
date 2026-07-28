@@ -110,7 +110,7 @@ $conn->close();
     <?php require_once 'sidebar.php'; ?>
 
     <div class="citizen-main-content">
-        <?php require_once '../includes/header.php'; ?>
+        <?php require_once 'header.php'; ?>
 
         <main class="citizen-page-wrapper">
     <div class="container-fluid px-3 px-lg-4 py-4">
@@ -284,5 +284,5 @@ $conn->close();
     </div>
 </main>
 
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once 'footer.php'; ?>
 

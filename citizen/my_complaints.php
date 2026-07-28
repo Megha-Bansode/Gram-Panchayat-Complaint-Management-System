@@ -553,5 +553,5 @@ $total_count = count($complaints);
 <!-- ═══════════════════════════════════════════════════════
      FOOTER
      ═══════════════════════════════════════════════════════ -->
-<?php require_once '../includes/footer.php'; ?>
+<?php require_once 'footer.php'; ?>
 
