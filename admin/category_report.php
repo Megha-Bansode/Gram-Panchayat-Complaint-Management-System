@@ -6,7 +6,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/auth_check.php';
-require_once __DIR__ . '/../includes/db_connect.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 $conn = get_db_connection();
 
@@ -42,7 +42,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 <title>Category Analytics — GPCMS Enterprise</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-<link href="../css/analytics.css" rel="stylesheet">
+<link href="../css/analytics.css?v=<?= time() ?>" rel="stylesheet">
 </head>
 <body>
 
@@ -284,6 +284,6 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="../js/analytics.js"></script>
+<script src="../js/analytics.js?v=<?= time() ?>"></script>
 </body>
 </html>

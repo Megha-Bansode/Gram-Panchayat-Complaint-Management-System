@@ -7,7 +7,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../includes/auth_check.php';
-require_once __DIR__ . '/../includes/db_connect.php';
+require_once __DIR__ . '/../config/db_connect.php';
 
 $conn = get_db_connection();
 
@@ -70,11 +70,8 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 <title>Analytics Dashboard — GPCMS Enterprise</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-<link href="../css/analytics.css" rel="stylesheet">
-<style>
-.right-panel-wrap { width: 280px; flex-shrink: 0; }
-@media (max-width:1200px) { .right-panel-wrap { display: none; } }
-</style>
+<link href="../css/analytics.css?v=<?= time() ?>" rel="stylesheet">
+
 </head>
 <body>
 
@@ -678,158 +675,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 
 </div><!-- /content-main -->
 
-<!-- RIGHT PANEL -->
-<aside class="right-panel-wrap" aria-label="Side panel">
-    <div class="right-panel">
 
-        <!-- Citizen Satisfaction Gauge -->
-        <div class="right-card">
-            <div class="right-card-header">
-                <div class="right-card-title"><i class="bi bi-emoji-smile-fill"></i> Satisfaction Meter</div>
-            </div>
-            <div class="right-card-body text-center">
-                <div style="height:130px; position:relative;">
-                    <canvas id="chartSatisfactionGauge" data-score="92"></canvas>
-                    <div style="position:absolute;bottom:4px;left:50%;transform:translateX(-50%);">
-                        <div class="fw-700" style="font-size:1.6rem;color:var(--gp-primary);">92%</div>
-                        <div class="fs-xs text-muted-gp">Positive Feedback</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Top Categories -->
-        <div class="right-card">
-            <div class="right-card-header">
-                <div class="right-card-title"><i class="bi bi-tags-fill"></i> Top Categories</div>
-                <a href="category_report.php" class="fs-xs text-primary-gp">View all</a>
-            </div>
-            <div class="right-card-body">
-                <?php foreach ($topCategories as $i => $cat): ?>
-                <div class="stat-item">
-                    <div class="stat-rank"><?= $i+1 ?></div>
-                    <div class="stat-info">
-                        <div class="stat-name"><?= htmlspecialchars($cat['category_name']) ?></div>
-                        <div class="progress-custom mt-1" style="height:4px;">
-                            <?php $maxC = $topCategories[0]['total'] > 0 ? $topCategories[0]['total'] : 1; $pct = round(($cat['total']/$maxC)*100); ?>
-                            <div class="progress-bar-custom" data-progress="<?= $pct ?>" style="width:0;"></div>
-                        </div>
-                    </div>
-                    <div class="stat-count"><?= (int)$cat['total'] ?></div>
-                </div>
-                <?php endforeach; ?>
-                <?php if (empty($topCategories)): ?>
-                    <p class="text-muted fs-xs text-center py-3">No data yet</p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Top Villages -->
-        <div class="right-card">
-            <div class="right-card-header">
-                <div class="right-card-title"><i class="bi bi-geo-alt-fill"></i> Top Villages</div>
-                <a href="village_report.php" class="fs-xs text-primary-gp">View all</a>
-            </div>
-            <div class="right-card-body">
-                <?php foreach ($topVillages as $i => $v): ?>
-                <div class="stat-item">
-                    <div class="stat-rank"><?= $i+1 ?></div>
-                    <div class="stat-info">
-                        <div class="stat-name"><?= htmlspecialchars($v['village_ward']) ?></div>
-                        <div class="stat-meta">Complaints filed</div>
-                    </div>
-                    <div class="stat-count"><?= (int)$v['total'] ?></div>
-                </div>
-                <?php endforeach; ?>
-                <?php if (empty($topVillages)): ?>
-                    <p class="text-muted fs-xs text-center py-3">No data yet</p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Recent Activity Timeline -->
-        <div class="right-card">
-            <div class="right-card-header">
-                <div class="right-card-title"><i class="bi bi-activity"></i> Recent Activity</div>
-            </div>
-            <div class="right-card-body">
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-dot"><i class="bi bi-plus-lg"></i></div>
-                        <div class="timeline-content">
-                            <div class="timeline-text">New complaint registered in Water Supply</div>
-                            <div class="timeline-time">2 mins ago</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"><i class="bi bi-check-lg"></i></div>
-                        <div class="timeline-content">
-                            <div class="timeline-text">Complaint #0042 resolved by Officer Ramesh</div>
-                            <div class="timeline-time">18 mins ago</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"><i class="bi bi-arrow-right"></i></div>
-                        <div class="timeline-content">
-                            <div class="timeline-text">Road complaint assigned to Ward Officer</div>
-                            <div class="timeline-time">45 mins ago</div>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-dot"><i class="bi bi-bell"></i></div>
-                        <div class="timeline-content">
-                            <div class="timeline-text">System health check completed</div>
-                            <div class="timeline-time">1 hr ago</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Notifications -->
-        <div class="right-card">
-            <div class="right-card-header">
-                <div class="right-card-title"><i class="bi bi-bell-fill"></i> Notifications</div>
-                <span class="badge bg-secondary-subtle text-primary-gp border border-secondary" style="font-size:0.65rem;">3 New</span>
-            </div>
-            <div class="right-card-body">
-                <div class="notif-item">
-                    <div class="notif-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
-                    <div>
-                        <div class="notif-text">5 complaints pending SLA breach</div>
-                        <div class="notif-time">Just now</div>
-                    </div>
-                </div>
-                <div class="notif-item">
-                    <div class="notif-icon"><i class="bi bi-check-circle-fill"></i></div>
-                    <div>
-                        <div class="notif-text">Monthly report auto-generated</div>
-                        <div class="notif-time">1 hr ago</div>
-                    </div>
-                </div>
-                <div class="notif-item">
-                    <div class="notif-icon"><i class="bi bi-person-plus-fill"></i></div>
-                    <div>
-                        <div class="notif-text">New citizen registered from Pimpalgaon</div>
-                        <div class="notif-time">3 hrs ago</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Quick Notes -->
-        <div class="right-card">
-            <div class="right-card-header">
-                <div class="right-card-title"><i class="bi bi-sticky-fill"></i> Quick Notes</div>
-            </div>
-            <div class="right-card-body">
-                <textarea class="quick-note-area form-control" placeholder="Write a quick note…" rows="3"></textarea>
-                <button class="btn btn-sm btn-primary mt-2 w-100 ripple-btn">Save Note</button>
-            </div>
-        </div>
-
-    </div>
-</aside>
 </div><!-- /page-content -->
 
 <!-- FOOTER -->
@@ -866,6 +712,6 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="../js/analytics.js"></script>
+<script src="../js/analytics.js?v=<?= time() ?>"></script>
 </body>
 </html>

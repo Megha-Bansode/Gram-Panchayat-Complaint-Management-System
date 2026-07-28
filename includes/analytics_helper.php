@@ -192,7 +192,7 @@ function render_sidebar(string $active): void
             <?php endforeach; ?>
 
             <div class="sb-item" style="margin-top:auto; padding-top:20px;">
-                <a href="includes/logout.php" class="sb-link" style="color:#ff8a8a;">
+                <a href="../logout.php" class="sb-link" style="color:#ff8a8a;">
                     <span class="sb-icon">🚪</span>
                     <span class="sb-text">Logout</span>
                 </a>
@@ -361,11 +361,11 @@ function page_head(string $title, string $active): void
 <!-- Bootstrap 5 -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <!-- GPCMS Analytics Design System -->
-<link rel="stylesheet" href="css/analytics.css">
+<link rel="stylesheet" href="../css/analytics.css">
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" defer></script>
 <!-- Analytics JS -->
-<script src="js/analytics.js" defer></script>
+<script src="../js/analytics.js" defer></script>
 </head>
 <body>
 <div class="gp-shell">

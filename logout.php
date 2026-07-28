@@ -1,7 +1,7 @@
 <?php
 /**
  * logout.php
- * GPCMS — Logout handler
+ * GPCMS — Logout handler (Handbook §9)
  */
 declare(strict_types=1);
 
@@ -21,6 +21,5 @@ if (ini_get("session.use_cookies")) {
 
 session_destroy();
 
-// Redirect back to analytics dashboard (which auto-initializes a fresh clean session)
 header("Location: analytics_dashboard.php");
 exit;

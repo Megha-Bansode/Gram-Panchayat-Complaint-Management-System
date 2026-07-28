@@ -313,7 +313,8 @@ function chartCategoryDoughnut() {
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: true,
+            aspectRatio: 1,
             cutout: '65%',
             plugins: {
                 legend: { position: 'right', labels: { color: GP.text } }
@@ -381,7 +382,8 @@ function chartPendingResolved() {
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: true,
+            aspectRatio: 1,
             plugins: {
                 legend: { position: 'bottom', labels: { color: GP.text, padding: 16 } }
             }
@@ -556,7 +558,7 @@ function chartSatisfactionGauge() {
             }]
         },
         options: {
-            responsive: true, maintainAspectRatio: false, cutout: '75%',
+            responsive: true, maintainAspectRatio: true, cutout: '75%',
             plugins: { legend: { display: false }, tooltip: { enabled: false } }
         }
     });

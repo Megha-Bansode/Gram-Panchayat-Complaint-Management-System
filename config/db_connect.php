@@ -1,6 +1,6 @@
 <?php
 /**
- * includes/db_connect.php
+ * config/db_connect.php
  * GPCMS — Database Connection
  * Modify host/user/pass/db as per your XAMPP setup.
  */
