@@ -48,7 +48,7 @@ function auth_require_auth(): array
     auth_start_session();
 
     if (empty($_SESSION['is_logged_in']) || empty($_SESSION['user_id'])) {
-        auth_redirect('login.php', 'Please sign in to continue.');
+        auth_redirect('../includes/login.php', 'Please sign in to continue.');
     }
 
     // Generate CSRF token if not present (Handbook §10)
