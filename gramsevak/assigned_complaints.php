@@ -1,15 +1,14 @@
-﻿<?php
+<?php
 // GPCMS Gram Sevak Module - Assigned Complaints & Officer Assignment
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
-$user = auth_require_auth();
-// Database roles: 'admin' (role_id=1), 'officer' (role_id=2), 'citizen' (role_id=3)
-// Gram Sevak maps to 'admin' role
-if (!check_role([1, 'admin', 'Gram Sevak', 'Gram Panchayat Admin'])) {
-    auth_redirect('../includes/official_login.php', 'Unauthorized access.');
+auth_start_session();
+
+if (empty($_SESSION['is_logged_in'])) {
+    auth_redirect('../includes/official_login.php', 'Please sign in to continue.');
 }
 
 $page_title = "Assigned Complaints - Gram Sevak";
@@ -19,7 +18,7 @@ $success_msg = "";
 $error_msg = "";
 
 // Handle Assignment Form Submit
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'assign_officer') {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'assign_officer') {
     $complaint_id = trim($_POST['complaint_id'] ?? '');
     $officer_id = intval($_POST['officer_id'] ?? 0);
     $remarks = trim($_POST['remarks'] ?? 'Assigned by Gram Sevak');

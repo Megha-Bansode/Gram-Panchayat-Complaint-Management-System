@@ -1,15 +1,14 @@
-﻿<?php
+<?php
 // GPCMS Gram Sevak Module - Verify Complaint & Progress Backend
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
-$user = auth_require_auth();
-// Database roles: 'admin' (role_id=1), 'officer' (role_id=2), 'citizen' (role_id=3)
-// Gram Sevak maps to 'admin' role
-if (!check_role([1, 'admin', 'Gram Sevak', 'Gram Panchayat Admin'])) {
-    auth_redirect('../includes/official_login.php', 'Unauthorized access.');
+auth_start_session();
+
+if (empty($_SESSION['is_logged_in'])) {
+    auth_redirect('../includes/official_login.php', 'Please sign in to continue.');
 }
 
 $page_title = "Verify Complaint & Work Progress";
@@ -21,7 +20,7 @@ $error_msg = "";
 $complaint_id = trim($_GET['id'] ?? $_POST['complaint_id'] ?? '');
 
 // Handle Verification / Resolution Action
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'verify_resolution') {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) && $_POST['action'] === 'verify_resolution') {
     $cid = trim($_POST['complaint_id'] ?? '');
     $status_update = trim($_POST['status'] ?? 'resolved');
     $remarks = trim($_POST['remarks'] ?? 'Verified and approved by Gram Sevak');
