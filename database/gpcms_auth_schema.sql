@@ -13,9 +13,9 @@ INSERT INTO `roles` (`role_id`, `role_name`) VALUES
 (1, 'Super Admin'),
 (2, 'Gram Panchayat Admin'),
 (3, 'Field Officer'),
-(4, 'Citizen')
--- ON DUPLICATE KEY UPDATE `role_name` = VALUES(`role_name`);
-ON DUPLICATE KEY UPDATE role_name = role_name;
+(4, 'Citizen'),
+(5, 'Gram Sevak')
+ON DUPLICATE KEY UPDATE `role_name` = VALUES(`role_name`);
 
 -- 2. Users Table
 CREATE TABLE IF NOT EXISTS `users` (
@@ -29,6 +29,27 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`role_id`) REFERENCES `roles`(`role_id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Seed default test users
+INSERT INTO `users` (`full_name`, `login_id`, `password_hash`, `role_id`, `mobile_number`, `status`)
+SELECT 'Gram Sevak User', 'gramsevak', '$2y$10$4sUl14R27ngS6ks1076B0ecwdEU3fRYoOWqudUgnsfQNkJyrP7NLm', role_id, '8888888888', 'active'
+FROM `roles` WHERE `role_name` IN ('Gram Sevak', 'Gram Panchayat Admin') LIMIT 1
+ON DUPLICATE KEY UPDATE `full_name` = VALUES(`full_name`);
+
+INSERT INTO `users` (`full_name`, `login_id`, `password_hash`, `role_id`, `mobile_number`, `status`)
+SELECT 'Field Officer User', 'fieldofficer', '$2y$10$fA/3ur5d81c9itWyZu7fc.YZs7nmDLNtDeG4l/YExgQ66.TU6vZcK', role_id, '7777777777', 'active'
+FROM `roles` WHERE `role_name` = 'Field Officer' LIMIT 1
+ON DUPLICATE KEY UPDATE `full_name` = VALUES(`full_name`);
+
+INSERT INTO `users` (`full_name`, `login_id`, `password_hash`, `role_id`, `mobile_number`, `status`)
+SELECT 'Super Admin User', 'superadmin', '$2y$10$OBWzmUt6HMWKSr9qO1nCbea/FEXQ2M7bvx8agnTtz9xcB5n23ICxW', role_id, '6666666666', 'active'
+FROM `roles` WHERE `role_name` = 'Super Admin' LIMIT 1
+ON DUPLICATE KEY UPDATE `full_name` = VALUES(`full_name`);
+
+INSERT INTO `users` (`full_name`, `login_id`, `password_hash`, `role_id`, `mobile_number`, `status`)
+SELECT 'Citizen User', 'citizen', '$2y$10$BBufOcaelyG8M4WL5wDvsO3i8kujh6qYjbH07ysAUHGcmL/LYkgZO', role_id, '9999999999', 'active'
+FROM `roles` WHERE `role_name` = 'Citizen' LIMIT 1
+ON DUPLICATE KEY UPDATE `full_name` = VALUES(`full_name`);
 
 -- 3. Categories Table
 CREATE TABLE IF NOT EXISTS `categories` (

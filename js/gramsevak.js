@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnLogout.addEventListener('click', (e) => {
             e.preventDefault();
             if (confirm('Are you sure you want to log out of Gram Sevak Portal?')) {
-                alert('Session ended.');
+                window.location.href = '../includes/logout.php';
             }
         });
     }
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropdownLogout.addEventListener('click', (e) => {
             e.preventDefault();
             if (confirm('Are you sure you want to log out?')) {
-                alert('Session ended.');
+                window.location.href = '../includes/logout.php';
             }
         });
     }

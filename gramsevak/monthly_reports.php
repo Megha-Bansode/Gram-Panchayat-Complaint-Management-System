@@ -1,13 +1,17 @@
 <?php
-// Session check & Backend Placeholders
-session_start();
+require_once __DIR__ . '/../includes/auth_check.php';
+
+auth_start_session();
+
+if (empty($_SESSION['is_logged_in'])) {
+    auth_redirect('../includes/official_login.php', 'Please sign in to continue.');
+}
 
 // Integration Placeholders for Gram Sevak Module
 $_SESSION['user_id'] = $_SESSION['user_id'] ?? 101;
 $_SESSION['full_name'] = $_SESSION['full_name'] ?? 'Rajesh Patil (Gram Sevak)';
 $_SESSION['role_id'] = $_SESSION['role_id'] ?? 2;
 $_SESSION['role_name'] = $_SESSION['role_name'] ?? 'Gram Sevak';
-$_SESSION['is_logged_in'] = $_SESSION['is_logged_in'] ?? true;
 
 /* 
  * Database Contract Table References:
@@ -116,7 +120,7 @@ $active_page = "monthly_reports";
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link text-danger-custom" id="btnLogout">
+                        <a href="../includes/logout.php" class="nav-link text-danger-custom" id="btnLogout">
                             <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
                         </a>
                     </li>
@@ -133,8 +137,8 @@ $active_page = "monthly_reports";
                         <i class="bi bi-list"></i>
                     </button>
                     <div class="header-app-title">
-                        <h1 class="h5 mb-0 font-weight-bold">Monthly Complaint Audit Reports</h1>
-                        <span class="text-muted small">Month-by-Month Complaint Resolution Statements for Gram Panchayat</span>
+                        <h1 class="h5 mb-0 font-weight-bold">Monthly Grievance Audit & Statement Portal</h1>
+                        <span class="text-muted small">Periodic Performance Summaries and Compliance Reports</span>
                     </div>
                 </div>
 
@@ -155,7 +159,7 @@ $active_page = "monthly_reports";
                             <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal"><i class="bi bi-person me-2"></i>My Profile</a></li>
                             <li><a class="dropdown-item" href="system_settings.php"><i class="bi bi-gear me-2"></i>Settings</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" id="dropdownLogout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                            <li><a class="dropdown-item text-danger" href="../includes/logout.php" id="dropdownLogout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                         </ul>
                     </div>
                 </div>
