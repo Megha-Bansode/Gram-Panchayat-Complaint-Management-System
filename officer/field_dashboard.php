@@ -13,13 +13,10 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
-// Require officer role (or fallback for local standalone preview)
-if (isset($_SESSION['is_logged_in'])) {
-    requireRole(['officer', 'admin']);
-}
+$user_data = requireRole(['officer', 'admin']);
 
-$officer_id = $_SESSION['user_id'] ?? 2; // Default to demo officer ID 2
-$officer_name = $_SESSION['full_name'] ?? 'Smit Ahirrao';
+$officer_id = (int) ($user_data['user_id'] ?? $_SESSION['user_id'] ?? 2);
+$officer_name = (string) ($user_data['full_name'] ?? $_SESSION['full_name'] ?? 'Field Officer');
 
 // Fetch dynamic KPI metrics from database
 $kpis = [
@@ -34,7 +31,7 @@ try {
     $kpiStmt = $conn->prepare("
         SELECT status, COUNT(*) AS total_count 
         FROM complaints 
-        WHERE assigned_officer_id = ? OR assigned_officer_id IS NULL
+        WHERE assigned_to = ? OR assigned_to IS NULL
         GROUP BY status
     ");
     $kpiStmt->bind_param('i', $officer_id);
@@ -53,11 +50,11 @@ try {
 
     // Fetch recent assigned complaints
     $recentStmt = $conn->prepare("
-        SELECT c.complaint_id, c.complaint_code, c.title, c.ward_no, c.location_address, c.status, cat.category_name
+        SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.village_ward AS ward_no, c.village_ward AS location_address, c.status, cat.category_name, c.submitted_at AS created_at
         FROM complaints c
-        JOIN categories cat ON c.category_id = cat.category_id
-        WHERE c.assigned_officer_id = ? OR c.assigned_officer_id IS NULL
-        ORDER BY c.created_at DESC
+        LEFT JOIN categories cat ON c.category_id = cat.category_id
+        WHERE c.assigned_to = ? OR c.assigned_to IS NULL
+        ORDER BY c.submitted_at DESC
         LIMIT 5
     ");
     $recentStmt->bind_param('i', $officer_id);
@@ -68,11 +65,11 @@ try {
 
     // Fetch recent activity history
     $historyStmt = $conn->prepare("
-        SELECT h.history_id, h.complaint_id, h.status_from, h.status_to, h.remarks, h.created_at, c.complaint_code
+        SELECT h.history_id, h.complaint_id, h.status AS status_to, h.note AS remarks, h.updated_at AS created_at
         FROM complaint_history h
         JOIN complaints c ON h.complaint_id = c.complaint_id
-        WHERE h.user_id = ? OR c.assigned_officer_id = ?
-        ORDER BY h.created_at DESC
+        WHERE h.updated_by = ? OR c.assigned_to = ?
+        ORDER BY h.updated_at DESC
         LIMIT 5
     ");
     $historyStmt->bind_param('ii', $officer_id, $officer_id);

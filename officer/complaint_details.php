@@ -13,24 +13,22 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
-if (isset($_SESSION['is_logged_in'])) {
-    requireRole(['officer', 'admin']);
-}
+$user_data = requireRole(['officer', 'admin']);
 
-$complaint_code = $_GET['id'] ?? 'CMP-0012';
+$complaint_code = $_GET['id'] ?? '1';
 
 try {
     // Fetch complaint details with citizen and category info
     $stmt = $conn->prepare("
-        SELECT c.*, cat.category_name, u.full_name AS citizen_name, u.phone AS citizen_phone, u.email AS citizen_email, off.full_name AS officer_name
+        SELECT c.*, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, c.village_ward AS location_address, c.submitted_at AS created_at, 'Medium' AS priority, cat.category_name, u.full_name AS citizen_name, u.mobile_number AS citizen_phone, off.full_name AS officer_name
         FROM complaints c
-        JOIN categories cat ON c.category_id = cat.category_id
-        JOIN users u ON c.citizen_id = u.user_id
-        LEFT JOIN users off ON c.assigned_officer_id = off.user_id
-        WHERE c.complaint_code = ? OR c.complaint_id = ?
+        LEFT JOIN categories cat ON c.category_id = cat.category_id
+        LEFT JOIN users u ON c.user_id = u.user_id
+        LEFT JOIN users off ON c.assigned_to = off.user_id
+        WHERE c.complaint_id = ?
         LIMIT 1
     ");
-    $stmt->bind_param('ss', $complaint_code, $complaint_code);
+    $stmt->bind_param('i', $complaint_code);
     $stmt->execute();
     $res = $stmt->get_result();
     $complaint = $res ? $res->fetch_assoc() : null;
@@ -38,18 +36,18 @@ try {
 
     if (!$complaint) {
         $complaint = [
-            'complaint_id'   => 1,
+            'complaint_id'   => (int)$complaint_code,
             'complaint_code' => $complaint_code,
-            'title'          => 'Road Potholes Repair near Primary School',
-            'description'    => 'The main road leading to the Gram Panchayat Primary School has developed multiple deep potholes following recent rainfall.',
-            'category_name'  => 'Roads & Infrastructure',
-            'ward_no'        => 'Ward 04',
-            'location_address'=> 'Station Road, Ward 04',
-            'status'         => 'in_progress',
-            'priority'       => 'high',
-            'citizen_name'   => 'Ramesh Patil',
-            'citizen_phone'  => '9876543213',
-            'officer_name'   => 'Smit Ahirrao',
+            'title'          => 'Complaint #' . $complaint_code,
+            'description'    => 'No details available.',
+            'category_name'  => 'General',
+            'ward_no'        => 'Ward 01',
+            'location_address'=> 'Gram Panchayat',
+            'status'         => 'pending',
+            'priority'       => 'medium',
+            'citizen_name'   => 'Citizen',
+            'citizen_phone'  => '—',
+            'officer_name'   => 'Field Officer',
             'created_at'     => date('Y-m-d H:i:s')
         ];
     }
@@ -73,11 +71,11 @@ try {
 
     // Fetch history timeline
     $historyStmt = $conn->prepare("
-        SELECT h.*, u.full_name 
+        SELECT h.*, h.status AS status_to, h.note AS remarks, h.updated_at AS created_at, u.full_name 
         FROM complaint_history h
-        JOIN users u ON h.user_id = u.user_id
+        LEFT JOIN users u ON h.updated_by = u.user_id
         WHERE h.complaint_id = ? 
-        ORDER BY h.created_at DESC
+        ORDER BY h.updated_at DESC
     ");
     $historyStmt->bind_param('i', $cid);
     $historyStmt->execute();

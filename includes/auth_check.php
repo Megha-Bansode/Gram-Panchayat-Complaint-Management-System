@@ -163,3 +163,32 @@ function auth_get_user_by_login_id(string $loginId): ?array
 
     return $user ?: null;
 }
+
+if (!function_exists('requireRole')) {
+    function requireRole(array|string $allowedRoles = []): array
+    {
+        $user = auth_require_auth();
+        if (empty($allowedRoles)) {
+            return $user;
+        }
+
+        $roles = is_array($allowedRoles) ? $allowedRoles : [$allowedRoles];
+        $currentRole = strtolower(trim((string) ($user['role_name'] ?? '')));
+
+        $isAllowed = false;
+        foreach ($roles as $r) {
+            $rLower = strtolower(trim((string) $r));
+            if ($rLower === '' || str_contains($currentRole, $rLower) || str_contains($rLower, $currentRole)) {
+                $isAllowed = true;
+                break;
+            }
+        }
+
+        if (!$isAllowed) {
+            $target = str_contains($currentRole, 'citizen') ? '../includes/login.php' : '../includes/official_login.php';
+            auth_redirect($target, 'Unauthorized access.');
+        }
+
+        return $user;
+    }
+}

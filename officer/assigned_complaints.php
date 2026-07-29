@@ -13,11 +13,8 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
-if (isset($_SESSION['is_logged_in'])) {
-    requireRole(['officer', 'admin']);
-}
-
-$officer_id = $_SESSION['user_id'] ?? 2;
+$user_data = requireRole(['officer', 'admin']);
+$officer_id = (int) ($user_data['user_id'] ?? $_SESSION['user_id'] ?? 2);
 
 // Get Filter Parameters
 $filter_status   = $_GET['status'] ?? '';
@@ -26,10 +23,10 @@ $search_query    = $_GET['search'] ?? '';
 
 // Build Query
 $sql = "
-    SELECT c.complaint_id, c.complaint_code, c.title, c.ward_no, c.location_address, c.status, c.created_at, c.assigned_at, cat.category_name
+    SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.village_ward AS ward_no, c.village_ward AS location_address, c.status, c.submitted_at AS created_at, c.updated_at AS assigned_at, cat.category_name
     FROM complaints c
-    JOIN categories cat ON c.category_id = cat.category_id
-    WHERE (c.assigned_officer_id = ? OR c.assigned_officer_id IS NULL)
+    LEFT JOIN categories cat ON c.category_id = cat.category_id
+    WHERE (c.assigned_to = ? OR c.assigned_to IS NULL)
 ";
 
 $types = 'i';
@@ -48,7 +45,7 @@ if (!empty($filter_category)) {
 }
 
 if (!empty($search_query)) {
-    $sql .= " AND (c.complaint_code LIKE ? OR c.title LIKE ? OR c.location_address LIKE ?)";
+    $sql .= " AND (c.complaint_id LIKE ? OR c.complaint_title LIKE ? OR c.village_ward LIKE ?)";
     $types .= 'sss';
     $search_pattern = '%' . $search_query . '%';
     $bindParams[] = $search_pattern;
@@ -56,7 +53,7 @@ if (!empty($search_query)) {
     $bindParams[] = $search_pattern;
 }
 
-$sql .= " ORDER BY c.created_at DESC";
+$sql .= " ORDER BY c.submitted_at DESC";
 
 try {
     $stmt = $conn->prepare($sql);

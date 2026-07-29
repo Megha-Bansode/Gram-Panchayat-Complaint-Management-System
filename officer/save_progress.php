@@ -13,11 +13,9 @@ if (session_status() === PHP_SESSION_NONE) {
 require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
-if (isset($_SESSION['is_logged_in'])) {
-    requireRole(['officer', 'admin']);
-}
+$user_data = requireRole(['officer', 'admin']);
 
-$officer_id = $_SESSION['user_id'] ?? 2;
+$officer_id = (int) ($user_data['user_id'] ?? $_SESSION['user_id'] ?? 2);
 $success_message = '';
 $error_message   = '';
 
@@ -35,25 +33,20 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
     try {
         // Fetch current complaint
-        $cStmt = $conn->prepare("SELECT complaint_id, complaint_code, status FROM complaints WHERE complaint_code = ? OR complaint_id = ? LIMIT 1");
-        $cStmt->bind_param('ss', $complaint_code_input, $complaint_code_input);
+        $cStmt = $conn->prepare("SELECT complaint_id, complaint_title, status FROM complaints WHERE complaint_id = ? LIMIT 1");
+        $cStmt->bind_param('i', $complaint_code_input);
         $cStmt->execute();
         $cRes = $cStmt->get_result();
         $currentComplaint = $cRes ? $cRes->fetch_assoc() : null;
         $cStmt->close();
 
         if ($currentComplaint) {
-            $real_complaint_id   = $currentComplaint['complaint_id'];
-            $real_complaint_code = $currentComplaint['complaint_code'];
+            $real_complaint_id   = (int)$currentComplaint['complaint_id'];
+            $real_complaint_code = '#' . $real_complaint_id;
             $old_status          = $currentComplaint['status'];
 
             // Update Complaints Status
-            $updateSql = "UPDATE complaints SET status = ?, updated_at = NOW()";
-            if ($status_input === 'resolved') {
-                $updateSql .= ", resolved_at = NOW()";
-            }
-            $updateSql .= " WHERE complaint_id = ?";
-
+            $updateSql = "UPDATE complaints SET status = ?, updated_at = NOW() WHERE complaint_id = ?";
             $uStmt = $conn->prepare($updateSql);
             $uStmt->bind_param('si', $status_input, $real_complaint_id);
             $uStmt->execute();
@@ -62,31 +55,31 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
             // Insert into complaint_history
             if (!empty($note_input)) {
                 $hStmt = $conn->prepare("
-                    INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks)
-                    VALUES (?, ?, ?, ?, ?)
+                    INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at)
+                    VALUES (?, ?, ?, ?, NOW())
                 ");
-                $hStmt->bind_param('iisss', $real_complaint_id, $officer_id, $old_status, $status_input, $note_input);
+                $hStmt->bind_param('issi', $real_complaint_id, $status_input, $note_input, $officer_id);
                 $hStmt->execute();
                 $hStmt->close();
             }
 
             // Handle Photo Uploads
-            $upload_dir = __DIR__ . '/../uploads/';
+            $upload_dir = __DIR__ . '/../uploads/complaints/';
             if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0777, true);
+                mkdir($upload_dir, 0755, true);
             }
 
             // Before Photo Upload
             if (!empty($_FILES['before_photo']['name']) && $_FILES['before_photo']['error'] === UPLOAD_ERR_OK) {
-                $ext = pathinfo($_FILES['before_photo']['name'], PATHINFO_EXTENSION);
+                $ext = strtolower(pathinfo($_FILES['before_photo']['name'], PATHINFO_EXTENSION));
                 $file_name = 'before_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
                 $target    = $upload_dir . $file_name;
                 if (move_uploaded_file($_FILES['before_photo']['tmp_name'], $target)) {
                     $pStmt = $conn->prepare("
-                        INSERT INTO complaint_photos (complaint_id, photo_path, uploaded_by, photo_type)
-                        VALUES (?, ?, ?, 'initial')
+                        INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
+                        VALUES (?, 'before', ?, ?, NOW())
                     ");
-                    $pPath = 'uploads/' . $file_name;
+                    $pPath = 'uploads/complaints/' . $file_name;
                     $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
                     $pStmt->execute();
                     $pStmt->close();
@@ -95,22 +88,22 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 
             // After Photo Upload
             if (!empty($_FILES['after_photo']['name']) && $_FILES['after_photo']['error'] === UPLOAD_ERR_OK) {
-                $ext = pathinfo($_FILES['after_photo']['name'], PATHINFO_EXTENSION);
+                $ext = strtolower(pathinfo($_FILES['after_photo']['name'], PATHINFO_EXTENSION));
                 $file_name = 'after_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
                 $target    = $upload_dir . $file_name;
                 if (move_uploaded_file($_FILES['after_photo']['tmp_name'], $target)) {
                     $pStmt = $conn->prepare("
-                        INSERT INTO complaint_photos (complaint_id, photo_path, uploaded_by, photo_type)
-                        VALUES (?, ?, ?, 'resolution')
+                        INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
+                        VALUES (?, 'after', ?, ?, NOW())
                     ");
-                    $pPath = 'uploads/' . $file_name;
+                    $pPath = 'uploads/complaints/' . $file_name;
                     $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
                     $pStmt->execute();
                     $pStmt->close();
                 }
             }
 
-            $success_message = "Inspection progress for " . htmlspecialchars($real_complaint_code) . " updated successfully!";
+            $success_message = "Inspection progress for Complaint #" . $real_complaint_id . " updated successfully!";
         } else {
             $error_message = "Complaint not found in database.";
         }
@@ -121,29 +114,29 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
 }
 
 // GET Request Data Loading
-$complaint_code = $_GET['id'] ?? 'CMP-0012';
+$complaint_code = $_GET['id'] ?? '1';
 
 $complaint = [
-    'complaint_id'   => 1,
-    'complaint_code' => $complaint_code,
-    'title'          => 'Road Potholes Repair near Primary School',
-    'description'    => 'The main road near the primary school is heavily damaged with multiple deep potholes.',
-    'category_name'  => 'Roads & Infrastructure',
-    'ward_no'        => 'Ward 04',
+    'complaint_id'   => (int)$complaint_code,
+    'complaint_code' => '#' . $complaint_code,
+    'title'          => 'Complaint #' . $complaint_code,
+    'description'    => 'No details available.',
+    'category_name'  => 'General',
+    'ward_no'        => 'Ward 01',
     'status'         => 'in_progress',
 ];
 $currentPhotos = [];
 
 try {
     $stmt = $conn->prepare("
-        SELECT c.*, cat.category_name, u.full_name AS citizen_name
+        SELECT c.*, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, cat.category_name, u.full_name AS citizen_name
         FROM complaints c
-        JOIN categories cat ON c.category_id = cat.category_id
-        JOIN users u ON c.citizen_id = u.user_id
-        WHERE c.complaint_code = ? OR c.complaint_id = ?
+        LEFT JOIN categories cat ON c.category_id = cat.category_id
+        LEFT JOIN users u ON c.user_id = u.user_id
+        WHERE c.complaint_id = ?
         LIMIT 1
     ");
-    $stmt->bind_param('ss', $complaint_code, $complaint_code);
+    $stmt->bind_param('i', $complaint_code);
     $stmt->execute();
     $res = $stmt->get_result();
     $dbComplaint = $res ? $res->fetch_assoc() : null;
