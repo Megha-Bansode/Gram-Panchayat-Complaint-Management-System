@@ -354,7 +354,7 @@ $conn->close();
                                 <tr>
                                     <td>
                                         <span class="citizen-complaint-id">
-                                            #<?php echo htmlspecialchars($cmp['complaint_id']); ?>
+                                            #<?php echo intval($cmp['complaint_id']); ?>
                                         </span>
                                     </td>
                                     <td>
