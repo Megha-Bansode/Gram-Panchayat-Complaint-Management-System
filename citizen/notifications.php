@@ -17,6 +17,7 @@ $user = auth_require_auth();
 if ((string) $user['role_name'] !== 'Citizen') {
     auth_redirect('../includes/login.php', 'Unauthorized access.');
 }
+$user_id = (int) $user['user_id'];
 
 
 // ── FETCH ALL NOTIFICATIONS ───────────────────────────────

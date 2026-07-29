@@ -14,10 +14,11 @@ require_once '../config/db_connect.php';
 require_once '../includes/auth_check.php';
 require_once 'citizen_helpers.php';
 
-$user = auth_require_auth();
-if ((string) $user['role_name'] !== 'Citizen') {
+$user_auth = auth_require_auth();
+if ((string) $user_auth['role_name'] !== 'Citizen') {
     auth_redirect('../includes/login.php', 'Unauthorized access.');
 }
+$user_id = (int) $user_auth['user_id'];
 
 $success_msg = '';
 $error_msg   = '';
