@@ -764,13 +764,14 @@ document.addEventListener('DOMContentLoaded', () => {
   bindFilePreview('before_photo', 'beforeUploadZone');
   bindFilePreview('after_photo', 'afterUploadZone');
 
-  // 9. Save Progress Form Standard HTML Validation
+  // 9. Save Progress Form Standard HTML Validation & Photo Constraints Check
   const saveForm = document.getElementById('saveProgressForm');
 
   if (saveForm) {
     saveForm.addEventListener('submit', (e) => {
       const noteInput = document.getElementById('note');
 
+      // Check standard form validation first
       if (!saveForm.checkValidity() || (noteInput && !noteInput.value.trim())) {
         e.preventDefault();
         e.stopPropagation();
@@ -779,6 +780,22 @@ document.addEventListener('DOMContentLoaded', () => {
           FieldToast.show('Please complete all required form fields.', 'bi-exclamation-circle-fill');
         }
         return false;
+      }
+
+      // Check photo validation: If before_photo is selected, after_photo must also be selected
+      const beforePhotoInput = document.getElementById('before_photo');
+      const afterPhotoInput = document.getElementById('after_photo');
+      if (beforePhotoInput && beforePhotoInput.files && beforePhotoInput.files.length > 0) {
+        if (!afterPhotoInput || !afterPhotoInput.files || afterPhotoInput.files.length === 0) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof FieldToast !== 'undefined') {
+            FieldToast.show('Please upload the After photo to save progress.', 'bi-exclamation-triangle-fill');
+          } else {
+            alert('Please upload the After photo to save progress.');
+          }
+          return false;
+        }
       }
       // Valid form: browser will naturally submit standard HTML POST request to save_progress.php
     });

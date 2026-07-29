@@ -84,10 +84,10 @@ $stats = [
 ];
 
 $stats_stmt = $conn->prepare(
-    "SELECT status, COUNT(*) AS cnt
+    "SELECT IF(status = 'resolved' AND is_verified = 0, 'in_progress', status) AS status, COUNT(*) AS cnt
      FROM complaints
      WHERE user_id = ?
-     GROUP BY status"
+     GROUP BY IF(status = 'resolved' AND is_verified = 0, 'in_progress', status)"
 );
 $stats_stmt->bind_param("i", $user_id);
 $stats_stmt->execute();
@@ -111,7 +111,7 @@ $comp_stmt = $conn->prepare(
         c.complaint_title,
         c.complaint_description,
         c.village_ward,
-        c.status,
+        IF(c.status = 'resolved' AND c.is_verified = 0, 'in_progress', c.status) AS status,
         c.submitted_at,
         c.updated_at,
         cat.category_name
@@ -561,7 +561,7 @@ $total_count = count($complaints);
                         <span class="citizen-new-badge" aria-label="Newly registered">NEW</span>
                         <?php endif; ?>
                     </div>
-                    <span class="citizen-status-badge <?php echo mc_status_badge($status); ?>">
+                    <span class="citizen-status-badge <?php echo status_badge_class($status); ?>">
                         <?php echo status_label($status); ?>
                     </span>
                 </div>
