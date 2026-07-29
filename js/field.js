@@ -448,6 +448,36 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderAssignedTable() {
     if (!tableBody) return;
 
+    // Detect if the table was rendered with actual database records by PHP
+    const isPhpRendered = tableBody.querySelector('td') !== null && !tableBody.querySelector('td').textContent.includes('CMP-');
+
+    if (isPhpRendered) {
+      const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const rows = tableBody.querySelectorAll('tr');
+      let visibleCount = 0;
+
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(searchTerm)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      if (emptyState && tableContainer) {
+        if (visibleCount === 0) {
+          emptyState.classList.remove('d-none');
+          tableContainer.classList.add('d-none');
+        } else {
+          emptyState.classList.add('d-none');
+          tableContainer.classList.remove('d-none');
+        }
+      }
+      return;
+    }
+
     const liveComplaints = getComplaintsData();
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
     const categoryVal = categorySelect ? categorySelect.value : '';
@@ -575,53 +605,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 7. Dynamic Data Binding for Details / Save Progress View
   const urlParams = new URLSearchParams(window.location.search);
-  const currentComplaintId = urlParams.get('id') || 'CMP-0012';
-  const liveComplaintsList = getComplaintsData();
-  const activeComplaint = liveComplaintsList.find(c => c.id === currentComplaintId) || liveComplaintsList[0];
+  const currentComplaintId = urlParams.get('id') || '';
+  const isMockId = typeof currentComplaintId === 'string' && currentComplaintId.startsWith('CMP-');
 
-  const detailTitle = document.getElementById('detailTitle');
-  const detailId = document.getElementById('detailId');
-  const detailCategory = document.getElementById('detailCategory');
-  const detailCitizen = document.getElementById('detailCitizen');
-  const detailPhone = document.getElementById('detailPhone');
-  const detailLocation = document.getElementById('detailLocation');
-  const detailDesc = document.getElementById('detailDesc');
-  const detailStatusBadge = document.getElementById('detailStatusBadge');
+  if (isMockId && currentComplaintId !== '') {
+    const liveComplaintsList = getComplaintsData();
+    const activeComplaint = liveComplaintsList.find(c => c.id === currentComplaintId) || liveComplaintsList[0];
 
-  if (detailTitle) detailTitle.textContent = activeComplaint.title;
-  if (detailId) detailId.textContent = activeComplaint.id;
-  if (detailCategory) detailCategory.textContent = activeComplaint.category;
-  if (detailCitizen) detailCitizen.textContent = activeComplaint.citizen;
-  if (detailPhone) detailPhone.textContent = activeComplaint.phone;
-  if (detailLocation) detailLocation.textContent = activeComplaint.location;
-  if (detailDesc) detailDesc.textContent = activeComplaint.desc;
+    const detailTitle = document.getElementById('detailTitle');
+    const detailId = document.getElementById('detailId');
+    const detailCategory = document.getElementById('detailCategory');
+    const detailCitizen = document.getElementById('detailCitizen');
+    const detailPhone = document.getElementById('detailPhone');
+    const detailLocation = document.getElementById('detailLocation');
+    const detailDesc = document.getElementById('detailDesc');
+    const detailStatusBadge = document.getElementById('detailStatusBadge');
 
-  if (detailStatusBadge && activeComplaint) {
-    if (activeComplaint.status === 'assigned') {
-      detailStatusBadge.className = 'status-badge assigned';
-      detailStatusBadge.innerHTML = '<i class="bi bi-circle-fill" style="font-size: 0.4rem;"></i> Assigned';
-    } else if (activeComplaint.status === 'in_progress') {
-      detailStatusBadge.className = 'status-badge in-progress';
-      detailStatusBadge.innerHTML = '<i class="bi bi-clock"></i> In Progress';
-    } else if (activeComplaint.status === 'resolved') {
-      detailStatusBadge.className = 'status-badge resolved';
-      detailStatusBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Resolved';
+    if (detailTitle) detailTitle.textContent = activeComplaint.title;
+    if (detailId) detailId.textContent = activeComplaint.id;
+    if (detailCategory) detailCategory.textContent = activeComplaint.category;
+    if (detailCitizen) detailCitizen.textContent = activeComplaint.citizen;
+    if (detailPhone) detailPhone.textContent = activeComplaint.phone;
+    if (detailLocation) detailLocation.textContent = activeComplaint.location;
+    if (detailDesc) detailDesc.textContent = activeComplaint.desc;
+
+    if (detailStatusBadge) {
+      if (activeComplaint.status === 'assigned') {
+        detailStatusBadge.className = 'status-badge assigned';
+        detailStatusBadge.innerHTML = '<i class="bi bi-circle-fill" style="font-size: 0.4rem;"></i> Assigned';
+      } else if (activeComplaint.status === 'in_progress') {
+        detailStatusBadge.className = 'status-badge in-progress';
+        detailStatusBadge.innerHTML = '<i class="bi bi-clock"></i> In Progress';
+      } else if (activeComplaint.status === 'resolved') {
+        detailStatusBadge.className = 'status-badge resolved';
+        detailStatusBadge.innerHTML = '<i class="bi bi-check-circle-fill"></i> Resolved';
+      }
     }
+
+    const saveId = document.getElementById('summaryComplaintId');
+    const saveTitle = document.getElementById('summaryComplaintTitle');
+    const saveCategory = document.getElementById('summaryCategory');
+    const saveLocation = document.getElementById('summaryLocation');
+    const saveDesc = document.getElementById('summaryDesc');
+    const hiddenIdInput = document.getElementById('hiddenComplaintId');
+
+    if (saveId) saveId.textContent = activeComplaint.id;
+    if (saveTitle) saveTitle.textContent = activeComplaint.title;
+    if (saveCategory) saveCategory.textContent = activeComplaint.category;
+    if (saveLocation) saveLocation.textContent = activeComplaint.location;
+    if (saveDesc) saveDesc.textContent = activeComplaint.desc;
+    if (hiddenIdInput) hiddenIdInput.value = activeComplaint.id;
   }
-
-  const saveId = document.getElementById('summaryComplaintId');
-  const saveTitle = document.getElementById('summaryComplaintTitle');
-  const saveCategory = document.getElementById('summaryCategory');
-  const saveLocation = document.getElementById('summaryLocation');
-  const saveDesc = document.getElementById('summaryDesc');
-  const hiddenIdInput = document.getElementById('hiddenComplaintId');
-
-  if (saveId) saveId.textContent = activeComplaint.id;
-  if (saveTitle) saveTitle.textContent = activeComplaint.title;
-  if (saveCategory) saveCategory.textContent = activeComplaint.category;
-  if (saveLocation) saveLocation.textContent = activeComplaint.location;
-  if (saveDesc) saveDesc.textContent = activeComplaint.desc;
-  if (hiddenIdInput) hiddenIdInput.value = activeComplaint.id;
 
   const noteInputElem = document.getElementById('note');
   const charCountElem = document.getElementById('charCount');
