@@ -31,7 +31,7 @@ try {
     $kpiStmt = $conn->prepare("
         SELECT status, COUNT(*) AS total_count 
         FROM complaints 
-        WHERE assigned_to = ?
+        WHERE assigned_to = ? OR assigned_to IS NULL
         GROUP BY status
     ");
     $kpiStmt->bind_param('i', $officer_id);
@@ -53,7 +53,7 @@ try {
         SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.village_ward AS ward_no, c.village_ward AS location_address, c.status, cat.category_name, c.submitted_at AS created_at
         FROM complaints c
         LEFT JOIN categories cat ON c.category_id = cat.category_id
-        WHERE c.assigned_to = ?
+        WHERE c.assigned_to = ? OR c.assigned_to IS NULL
         ORDER BY c.submitted_at DESC
         LIMIT 5
     ");
