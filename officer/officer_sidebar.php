@@ -125,14 +125,34 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </div>
       </div>
       
-      <!-- User Profile Badge Pill -->
-      <div class="user-profile-badge d-flex align-items-center gap-2 p-1 pe-2" style="cursor: pointer;">
-        <div class="user-avatar-circle d-flex align-items-center justify-content-center fw-bold text-dark" style="width: 34px; height: 34px; border-radius: 50%; background: #FAF6F0; border: 1.5px solid #DCC9A7; font-size: 0.78rem;">GP</div>
-        <div class="user-info-text d-none d-sm-block text-start" style="line-height: 1.1;">
-          <div class="user-name-title fw-bold text-dark" style="font-size: 0.84rem;"><?php echo htmlspecialchars($_SESSION['full_name'] ?? 'Sunita Deshmukh'); ?></div>
-          <div class="user-role-title text-muted" style="font-size: 0.72rem;"><?php echo htmlspecialchars($_SESSION['role_name'] ?? 'Field Officer'); ?></div>
+      <!-- User Profile Badge Dropdown -->
+      <div class="dropdown">
+        <div class="user-profile-badge d-flex align-items-center gap-2 p-1 pe-2" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+          <div class="user-avatar-circle d-flex align-items-center justify-content-center fw-bold text-dark" style="width: 34px; height: 34px; border-radius: 50%; background: #FAF6F0; border: 1.5px solid #DCC9A7; font-size: 0.78rem;">
+            <?php 
+              $name = $_SESSION['full_name'] ?? 'FO';
+              $initials = mb_strtoupper(mb_substr($name, 0, 2, 'UTF-8'));
+              echo htmlspecialchars($initials);
+            ?>
+          </div>
+          <div class="user-info-text d-none d-sm-block text-start" style="line-height: 1.1;">
+            <div class="user-name-title fw-bold text-dark" style="font-size: 0.84rem;"><?php echo htmlspecialchars($_SESSION['full_name'] ?? 'Field Officer'); ?></div>
+            <div class="user-role-title text-muted" style="font-size: 0.72rem;"><?php echo htmlspecialchars($_SESSION['role_name'] ?? 'Field Officer'); ?></div>
+          </div>
+          <i class="bi bi-chevron-down extra-small text-muted ms-1" style="font-size: 0.75rem;"></i>
         </div>
-        <i class="bi bi-chevron-down extra-small text-muted ms-1" style="font-size: 0.75rem;"></i>
+
+        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 14px; min-width: 220px; font-size: 0.88rem; padding: 0.5rem; border: 1px solid #E2D9CD !important; margin-top: 8px;">
+          <li class="px-3 py-2 border-bottom mb-1 bg-light rounded-top">
+            <div class="fw-bold text-dark" style="font-size: 0.9rem;"><?php echo htmlspecialchars($_SESSION['full_name'] ?? 'User'); ?></div>
+            <div class="text-muted extra-small" style="font-size: 0.75rem;"><?php echo htmlspecialchars($_SESSION['role_name'] ?? 'Field Officer'); ?> Account</div>
+          </li>
+          <li>
+            <a class="dropdown-item d-flex align-items-center gap-2 py-2 text-danger fw-semibold" href="../includes/logout.php" style="border-radius: 8px;">
+              <i class="bi bi-box-arrow-right me-1"></i> Logout
+            </a>
+          </li>
+        </ul>
       </div>
     </div>
   </header>
