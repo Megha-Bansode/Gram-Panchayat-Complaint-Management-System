@@ -10,7 +10,7 @@ require_once __DIR__ . '/../includes/auth_check.php';
 require_once __DIR__ . '/../config/db_connect.php';
 
 // Access Control check
-if (!isset($_SESSION['is_logged_in']) || $_SESSION['role_name'] !== 'Administrator') {
+if (!isset($_SESSION['is_logged_in']) || !in_array($_SESSION['role_name'], ['Administrator', 'Super Admin', 'Gram Panchayat Admin'], true)) {
     header("Location: ../index.php");
     exit;
 }
@@ -125,7 +125,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
             <ul class="dropdown-menu dropdown-menu-end shadow border-0">
                 <li><a class="dropdown-item" href="analytics_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                 <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item text-danger" href="../logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                <li><a class="dropdown-item text-danger" href="../includes/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
             </ul>
         </div>
     </div>
@@ -137,7 +137,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
         <ul role="list">
             <li class="nav-item-custom"><a href="analytics_dashboard.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-speedometer2"></i></span><span class="nav-text">Dashboard</span></a></li>
             <li class="nav-item-custom"><a href="manage_categories.php" class="nav-link-custom active"><span class="nav-icon"><i class="bi bi-tags-fill"></i></span><span class="nav-text">Manage Categories</span></a></li>
-            <li class="nav-item-custom"><a href="category_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span><span class="nav-text">Category Reports</span></a></li>
+            <li class="nav-item-custom"><a href="category_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-collection-fill"></i></span><span class="nav-text">Category Reports</span></a></li>
             <li class="nav-item-custom"><a href="village_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-geo-alt-fill"></i></span><span class="nav-text">Village Reports</span></a></li>
             <li class="nav-item-custom"><a href="pending_resolved_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-pie-chart-fill"></i></span><span class="nav-text">Resolution Status</span></a></li>
         </ul>

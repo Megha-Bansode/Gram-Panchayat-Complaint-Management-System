@@ -10,7 +10,7 @@ require_once __DIR__ . '/../includes/auth_check.php';
 require_once __DIR__ . '/../config/db_connect.php';
 
 // Access Control check
-if (!isset($_SESSION['is_logged_in']) || $_SESSION['role_name'] !== 'Administrator') {
+if (!isset($_SESSION['is_logged_in']) || !in_array($_SESSION['role_name'], ['Administrator', 'Super Admin', 'Gram Panchayat Admin'], true)) {
     header("Location: ../index.php");
     exit;
 }

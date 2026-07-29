@@ -225,14 +225,23 @@ function initAllCharts() {
 function chartComplaintTrend() {
     const ctx = document.getElementById('chartComplaintTrend');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const totalAttr = ctx.getAttribute('data-total');
+    const resolvedAttr = ctx.getAttribute('data-resolved');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const totalData = totalAttr ? JSON.parse(totalAttr) : [42,58,65,78,90,85,110,95,120,135,140,155];
+    const resolvedData = resolvedAttr ? JSON.parse(resolvedAttr) : [30,45,55,60,75,72,95,82,105,118,125,140];
+
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            labels: labels,
             datasets: [
                 {
                     label: 'Complaints',
-                    data: [42,58,65,78,90,85,110,95,120,135,140,155],
+                    data: totalData,
                     borderColor: GP.primary,
                     backgroundColor: GP.paletteAlpha(GP.primary, 0.12),
                     fill: true, tension: 0.45, borderWidth: 2.5,
@@ -241,7 +250,7 @@ function chartComplaintTrend() {
                 },
                 {
                     label: 'Resolved',
-                    data: [30,45,55,60,75,72,95,82,105,118,125,140],
+                    data: resolvedData,
                     borderColor: GP.secondary,
                     backgroundColor: GP.paletteAlpha(GP.secondary, 0.08),
                     fill: true, tension: 0.45, borderWidth: 2,
@@ -267,13 +276,20 @@ function chartComplaintTrend() {
 function chartMonthlyArea() {
     const ctx = document.getElementById('chartMonthlyArea');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const totalAttr = ctx.getAttribute('data-total');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const totalData = totalAttr ? JSON.parse(totalAttr) : [42,58,65,78,90,85,110,95,120,135,140,155];
+
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+            labels: labels,
             datasets: [{
                 label: 'Monthly Total',
-                data: [42,58,65,78,90,85,110,95,120,135,140,155],
+                data: totalData,
                 borderColor: GP.primary,
                 backgroundColor: {
                     type: 'linear', x: 0, y: 0, x2: 0, y2: 1,
@@ -301,13 +317,20 @@ function chartMonthlyArea() {
 function chartCategoryDoughnut() {
     const ctx = document.getElementById('chartCategoryDoughnut');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const valuesAttr = ctx.getAttribute('data-values');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Water Supply','Roads','Sanitation','Street Lighting','Electricity','Agriculture','Others'];
+    const values = valuesAttr ? JSON.parse(valuesAttr) : [35,25,18,10,6,4,2];
+
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Water Supply','Roads','Sanitation','Street Lighting','Electricity','Agriculture','Others'],
+            labels: labels,
             datasets: [{
-                data: [35,25,18,10,6,4,2],
-                backgroundColor: GP.palette.slice(0,7),
+                data: values,
+                backgroundColor: GP.palette.slice(0, labels.length),
                 borderWidth: 2, borderColor: GP.bg,
                 hoverOffset: 8,
             }]
@@ -327,21 +350,30 @@ function chartCategoryDoughnut() {
 function chartVillageBar() {
     const ctx = document.getElementById('chartVillageBar');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const valuesAttr = ctx.getAttribute('data-values');
+    const resolvedAttr = ctx.getAttribute('data-resolved');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Karanji','Pimpalgaon','Chincholi','Shirdi','Rahit','Savedi','Wadgaon'];
+    const totalData = valuesAttr ? JSON.parse(valuesAttr) : [84,62,45,95,38,67,52];
+    const resolvedData = resolvedAttr ? JSON.parse(resolvedAttr) : [65,50,35,78,28,55,40];
+
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Karanji','Pimpalgaon','Chincholi','Shirdi','Rahit','Savedi','Wadgaon'],
+            labels: labels,
             datasets: [
                 {
                     label: 'Total Complaints',
-                    data: [84,62,45,95,38,67,52],
+                    data: totalData,
                     backgroundColor: GP.paletteAlpha(GP.primary, 0.75),
                     borderColor: GP.primary, borderWidth: 1.5,
                     borderRadius: 6, barPercentage: 0.6,
                 },
                 {
                     label: 'Resolved',
-                    data: [65,50,35,78,28,55,40],
+                    data: resolvedData,
                     backgroundColor: GP.paletteAlpha(GP.secondary, 0.6),
                     borderColor: GP.secondary, borderWidth: 1.5,
                     borderRadius: 6, barPercentage: 0.6,
@@ -395,14 +427,21 @@ function chartPendingResolved() {
 function chartWeeklyActivity() {
     const ctx = document.getElementById('chartWeeklyActivity');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const valuesAttr = ctx.getAttribute('data-values');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+    const values = valuesAttr ? JSON.parse(valuesAttr) : [18,25,22,30,27,12,8];
+
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+            labels: labels,
             datasets: [{
                 label: 'Grievances Filed',
-                data: [18,25,22,30,27,12,8],
-                backgroundColor: GP.palette.slice(0,7).map(c => GP.paletteAlpha(c, 0.75)),
+                data: values,
+                backgroundColor: GP.palette.slice(0, labels.length).map(c => GP.paletteAlpha(c, 0.75)),
                 borderRadius: 8, barPercentage: 0.55,
             }]
         },
@@ -421,13 +460,20 @@ function chartWeeklyActivity() {
 function chartResolutionTimeline() {
     const ctx = document.getElementById('chartResolutionTimeline');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const valuesAttr = ctx.getAttribute('data-values');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7','Wk 8'];
+    const values = valuesAttr ? JSON.parse(valuesAttr) : [7.2,5.8,6.5,4.9,5.2,4.1,3.8,3.2];
+
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Wk 1','Wk 2','Wk 3','Wk 4','Wk 5','Wk 6','Wk 7','Wk 8'],
+            labels: labels,
             datasets: [{
                 label: 'Avg. Days to Resolve',
-                data: [7.2,5.8,6.5,4.9,5.2,4.1,3.8,3.2],
+                data: values,
                 borderColor: GP.primary,
                 backgroundColor: GP.paletteAlpha(GP.primary, 0.1),
                 fill: true, tension: 0.4, borderWidth: 2.5,
@@ -451,6 +497,13 @@ function chartResolutionTimeline() {
 function chartRadar() {
     const ctx = document.getElementById('chartRadar');
     if (!ctx) return;
+
+    const thisMonthAttr = ctx.getAttribute('data-this-month');
+    const lastMonthAttr = ctx.getAttribute('data-last-month');
+
+    const thisMonth = thisMonthAttr ? JSON.parse(thisMonthAttr) : [88,75,92,68,85,80];
+    const lastMonth = lastMonthAttr ? JSON.parse(lastMonthAttr) : [72,65,80,60,78,70];
+
     new Chart(ctx, {
         type: 'radar',
         data: {
@@ -458,14 +511,14 @@ function chartRadar() {
             datasets: [
                 {
                     label: 'This Month',
-                    data: [88,75,92,68,85,80],
+                    data: thisMonth,
                     borderColor: GP.primary,
                     backgroundColor: GP.paletteAlpha(GP.primary, 0.2),
                     borderWidth: 2, pointRadius: 4,
                 },
                 {
                     label: 'Last Month',
-                    data: [72,65,80,60,78,70],
+                    data: lastMonth,
                     borderColor: GP.accent,
                     backgroundColor: GP.paletteAlpha(GP.accent, 0.2),
                     borderWidth: 2, pointRadius: 4,
@@ -492,15 +545,28 @@ function chartRadar() {
 function chartStackedBar() {
     const ctx = document.getElementById('chartStackedBar');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const pendingAttr = ctx.getAttribute('data-pending');
+    const assignedAttr = ctx.getAttribute('data-assigned');
+    const progressAttr = ctx.getAttribute('data-progress');
+    const resolvedAttr = ctx.getAttribute('data-resolved');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Jan','Feb','Mar','Apr','May','Jun'];
+    const pendingData = pendingAttr ? JSON.parse(pendingAttr) : [10,12,8,15,9,7];
+    const assignedData = assignedAttr ? JSON.parse(assignedAttr) : [8,10,7,12,8,6];
+    const progressData = progressAttr ? JSON.parse(progressAttr) : [12,15,10,18,14,9];
+    const resolvedData = resolvedAttr ? JSON.parse(resolvedAttr) : [22,28,35,42,38,45];
+
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+            labels: labels,
             datasets: [
-                { label: 'Pending',     data: [10,12,8,15,9,7],  backgroundColor: '#8A724C', borderRadius: { topLeft:0, topRight:0, bottomLeft:4, bottomRight:4 } },
-                { label: 'Assigned',    data: [8,10,7,12,8,6],   backgroundColor: '#B99668' },
-                { label: 'In Progress', data: [12,15,10,18,14,9], backgroundColor: '#DCC9A7' },
-                { label: 'Resolved',    data: [22,28,35,42,38,45], backgroundColor: '#6E5A3A', borderRadius: { topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 } },
+                { label: 'Pending',     data: pendingData,  backgroundColor: '#8A724C', borderRadius: { topLeft:0, topRight:0, bottomLeft:4, bottomRight:4 } },
+                { label: 'Assigned',    data: assignedData,   backgroundColor: '#B99668' },
+                { label: 'In Progress', data: progressData, backgroundColor: '#DCC9A7' },
+                { label: 'Resolved',    data: resolvedData, backgroundColor: '#6E5A3A', borderRadius: { topLeft:4, topRight:4, bottomLeft:0, bottomRight:0 } },
             ]
         },
         options: {
@@ -519,14 +585,21 @@ function chartStackedBar() {
 function chartHorizontalBar() {
     const ctx = document.getElementById('chartHorizontalBar');
     if (!ctx) return;
+
+    const labelsAttr = ctx.getAttribute('data-labels');
+    const valuesAttr = ctx.getAttribute('data-values');
+
+    const labels = labelsAttr ? JSON.parse(labelsAttr) : ['Water Supply','Roads','Sanitation','Lighting','Electricity','Agriculture'];
+    const values = valuesAttr ? JSON.parse(valuesAttr) : [88,72,65,80,55,70];
+
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Water Supply','Roads','Sanitation','Lighting','Electricity','Agriculture'],
+            labels: labels,
             datasets: [{
                 label: 'Resolution Rate (%)',
-                data: [88,72,65,80,55,70],
-                backgroundColor: GP.palette.slice(0,6).map(c => GP.paletteAlpha(c, 0.8)),
+                data: values,
+                backgroundColor: GP.palette.slice(0, labels.length).map(c => GP.paletteAlpha(c, 0.8)),
                 borderRadius: 6,
             }]
         },

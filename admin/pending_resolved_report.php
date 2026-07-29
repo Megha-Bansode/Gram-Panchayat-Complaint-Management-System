@@ -100,7 +100,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
             <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="border-radius:12px;">
                 <li><a class="dropdown-item" href="analytics_dashboard.php"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
                 <li><hr class="dropdown-divider my-1"></li>
-                <li><a class="dropdown-item text-danger" href="../logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
+                <li><a class="dropdown-item text-danger" href="../includes/logout.php"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
             </ul>
         </div>
     </div>
@@ -115,18 +115,19 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
         <div class="sidebar-label">MAIN NAVIGATION</div>
         <ul role="list">
             <li class="nav-item-custom"><a href="analytics_dashboard.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-speedometer2"></i></span><span class="nav-text">Dashboard</span></a></li>
-            <li class="nav-item-custom"><a href="category_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-grid-3x3-gap-fill"></i></span><span class="nav-text">Category Reports</span></a></li>
+            <li class="nav-item-custom"><a href="category_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-collection-fill"></i></span><span class="nav-text">Category Reports</span></a></li>
             <li class="nav-item-custom"><a href="village_report.php" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-geo-alt-fill"></i></span><span class="nav-text">Village Reports</span></a></li>
             <li class="nav-item-custom"><a href="pending_resolved_report.php" class="nav-link-custom active" aria-current="page"><span class="nav-icon"><i class="bi bi-pie-chart-fill"></i></span><span class="nav-text">Resolution Status</span></a></li>
         </ul>
         <div class="sidebar-label mt-3">TOOLS</div>
         <ul role="list">
             <li class="nav-item-custom"><a href="#" class="nav-link-custom" onclick="exportTableCSV('tblResolutionReport','GPCMS_Resolution.csv'); return false;"><span class="nav-icon"><i class="bi bi-download"></i></span><span class="nav-text">Export CSV</span></a></li>
-            <li class="nav-item-custom"><a href="#" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-gear-fill"></i></span><span class="nav-text">Settings</span></a></li>
+            <li class="nav-item-custom"><a href="#" data-bs-toggle="modal" data-bs-target="#notificationsModal" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-bell-fill"></i></span><span class="nav-text">Notifications</span></a></li>
+            <li class="nav-item-custom"><a href="#" data-bs-toggle="modal" data-bs-target="#settingsModal" class="nav-link-custom"><span class="nav-icon"><i class="bi bi-gear-fill"></i></span><span class="nav-text">Settings</span></a></li>
         </ul>
     </div>
     <div class="sidebar-footer">
-        <a href="../logout.php" class="nav-link-custom nav-link-logout"><span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span><span class="nav-text">Logout</span></a>
+        <a href="../includes/logout.php" class="nav-link-custom nav-link-logout"><span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span><span class="nav-text">Logout</span></a>
     </div>
 </nav>
 
@@ -202,21 +203,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 
     <!-- CHART ROW 1: Pie + Trend -->
     <div class="row g-4 mb-4 anim-fadeInUp anim-delay-2">
-        <div class="col-12 col-lg-4">
-            <div class="section-card h-100">
-                <div class="section-card-header">
-                    <div class="section-card-title"><i class="bi bi-pie-chart-fill"></i>Resolution Ratio</div>
-                </div>
-                <div class="section-card-body">
-                    <div class="chart-wrap" style="height:280px;"><canvas id="chartPendingResolved" <?= $pieAttr ?>></canvas></div>
-                    <div class="text-center mt-3">
-                        <div class="fw-700" style="font-size:1.8rem; color:var(--gp-primary);"><?= $resolutionRate ?>%</div>
-                        <div class="fs-sm text-muted-gp">Overall Resolution Rate</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-lg-8">
+        <div class="col-12">
             <div class="section-card h-100">
                 <div class="section-card-header">
                     <div class="section-card-title"><i class="bi bi-graph-up-arrow"></i>Complaint Trend (12 Months)</div>
@@ -326,11 +313,7 @@ $adminInitial = strtoupper(substr($_SESSION['full_name'] ?? 'A', 0, 1));
 </div>
 </div>
 
-<footer class="app-footer">
-    <div><strong style="color:var(--gp-primary);">GPCMS Analytics</strong> &nbsp;|&nbsp; Resolution Status Report &nbsp;|&nbsp; v2.0</div>
-    <div class="footer-links"><a href="#">Privacy Policy</a><a href="#">Support</a></div>
-    <div class="text-muted-gp fs-xs">&copy; <?= date('Y') ?> Digital India Initiative</div>
-</footer>
+<?php require_once __DIR__ . 'footer.php'; ?>
 </main>
 
 <button class="fab ripple-btn" id="fabBtn" title="Quick Actions"><i class="bi bi-plus-lg"></i></button>
