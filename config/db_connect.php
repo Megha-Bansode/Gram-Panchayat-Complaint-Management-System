@@ -24,3 +24,22 @@ if (!function_exists('get_db_connection')) {
 
 // Expose global $conn variable expected by all modules
 $conn = get_db_connection();
+
+if (!isset($pdo)) {
+    try {
+        $host = '127.0.0.1';
+        $user = 'root';
+        $pass = '';
+        $dbname = 'gpcms';
+        $port = 3306;
+        $dsn = "mysql:host=$host;dbname=$dbname;port=$port;charset=utf8mb4";
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
+        ];
+        $pdo = new PDO($dsn, $user, $pass, $options);
+    } catch (PDOException $e) {
+        error_log("PDO Connection failed: " . $e->getMessage());
+    }
+}

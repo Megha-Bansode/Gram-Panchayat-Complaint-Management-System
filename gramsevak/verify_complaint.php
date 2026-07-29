@@ -40,9 +40,8 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
                 $stmt->execute([$status_update, $cid]);
 
                 // 2. Write to complaint_history table - use correct schema
-                // complaint_history: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
-                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks) VALUES (?, ?, 'in_progress', ?, ?)");
-                $stmt_hist->execute([$cid, $_SESSION['user_id'], $status_update, $remarks]);
+                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, ?, ?, ?, NOW())");
+                $stmt_hist->execute([$cid, $status_update, $remarks, $_SESSION['user_id']]);
 
                 $pdo->commit();
                 $success_msg = "Complaint " . htmlspecialchars($cid) . " verified and set to canonical status '" . htmlspecialchars($status_update) . "'!";
@@ -66,29 +65,27 @@ $history = [];
 
 if (!empty($complaint_id) && isset($pdo) && $pdo !== null) {
     try {
-        // Main complaint details query - use correct column names
-        $stmt = $pdo->prepare("SELECT c.complaint_id, c.complaint_code, c.title, c.description, c.ward_no, c.landmark, c.location_address, c.priority, c.status, c.assigned_officer_id, c.assigned_at, c.resolved_at, c.created_at, c.updated_at,
-                                      cat.category_name, u.full_name as officer_name, u.phone as officer_mobile
+        // Main complaint details query - use correct column names with aliases
+        $stmt = $pdo->prepare("SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, c.village_ward AS landmark, c.village_ward AS location_address, 'Medium' AS priority, c.status, c.assigned_to AS assigned_officer_id, c.updated_at AS assigned_at, c.updated_at AS resolved_at, c.submitted_at AS created_at, c.updated_at,
+                                      cat.category_name, u.full_name as officer_name, u.mobile_number as officer_mobile
                                FROM complaints c
                                LEFT JOIN categories cat ON c.category_id = cat.category_id
-                               LEFT JOIN users u ON c.assigned_officer_id = u.user_id
+                               LEFT JOIN users u ON c.assigned_to = u.user_id
                                WHERE c.complaint_id = ?");
         $stmt->execute([$complaint_id]);
         $complaint = $stmt->fetch();
 
         // Photos query from complaint_photos - use correct schema
-        // complaint_photos: photo_id, complaint_id, photo_type (enum: 'before', 'after', 'progress'), file_path, uploaded_by, uploaded_at
-        $stmt_p = $pdo->prepare("SELECT * FROM complaint_photos WHERE complaint_id = ? ORDER BY photo_id DESC");
+        $stmt_p = $pdo->prepare("SELECT photo_id, complaint_id, photo_type, photo_path AS file_path, uploaded_by, uploaded_at FROM complaint_photos WHERE complaint_id = ? ORDER BY photo_id DESC");
         $stmt_p->execute([$complaint_id]);
         $photos = $stmt_p->fetchAll();
 
         // History query from complaint_history - use correct schema
-        // complaint_history: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
-        $stmt_h = $pdo->prepare("SELECT h.*, u.full_name as updater_name
+        $stmt_h = $pdo->prepare("SELECT h.history_id, h.complaint_id, h.updated_by AS user_id, 'pending' AS status_from, h.status AS status_to, h.note AS remarks, h.updated_at AS created_at, u.full_name as updater_name
                                  FROM complaint_history h
-                                 LEFT JOIN users u ON h.user_id = u.user_id
+                                 LEFT JOIN users u ON h.updated_by = u.user_id
                                  WHERE h.complaint_id = ?
-                                 ORDER BY h.created_at ASC");
+                                 ORDER BY h.updated_at ASC");
         $stmt_h->execute([$complaint_id]);
         $history = $stmt_h->fetchAll();
     } catch (Exception $e) {

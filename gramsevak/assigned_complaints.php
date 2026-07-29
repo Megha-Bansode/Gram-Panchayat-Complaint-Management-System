@@ -29,14 +29,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
                 $pdo->beginTransaction();
 
                 // Update complaints table: status set to canonical 'assigned'
-                // Use correct column name: assigned_officer_id (not assigned_to)
-                $stmt = $pdo->prepare("UPDATE complaints SET assigned_officer_id = ?, status = 'assigned', assigned_at = NOW(), updated_at = NOW() WHERE complaint_id = ?");
+                $stmt = $pdo->prepare("UPDATE complaints SET assigned_to = ?, status = 'assigned', updated_at = NOW() WHERE complaint_id = ?");
                 $stmt->execute([$officer_id, $complaint_id]);
 
-                // Record in complaint_history table - use correct schema
-                // complaint_history: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
-                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks) VALUES (?, ?, 'pending', 'assigned', ?)");
-                $stmt_hist->execute([$complaint_id, $_SESSION['user_id'], $remarks]);
+                // Record in complaint_history table
+                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, 'assigned', ?, ?, NOW())");
+                $stmt_hist->execute([$complaint_id, $remarks, $_SESSION['user_id']]);
 
                 $pdo->commit();
                 $success_msg = "Complaint " . htmlspecialchars($complaint_id) . " successfully assigned!";
@@ -54,32 +52,31 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
     }
 }
 
-// Fetch Field Officers (role_id = 2 for 'officer' role in database)
+// Fetch Field Officers (role_id = 3 for 'Field Officer' role in database)
 $field_officers = [];
 // Fetch Complaints
 $complaints_list = [];
 
 if (isset($pdo) && $pdo !== null) {
     try {
-        // Fetch field officers - database uses role_id=2 for 'officer' role
-        $officer_stmt = $pdo->query("SELECT u.user_id, u.full_name, u.phone as mobile_number
+        // Fetch field officers - database uses role_id=3 for 'Field Officer'
+        $officer_stmt = $pdo->query("SELECT u.user_id, u.full_name, u.mobile_number
                                     FROM users u
                                     LEFT JOIN roles r ON u.role_id = r.role_id
-                                    WHERE u.role_id = 2 OR r.role_name = 'officer'");
+                                    WHERE u.role_id = 3 OR r.role_name = 'Field Officer'");
         $field_officers = $officer_stmt->fetchAll();
 
-        // Fetch assigned & pending complaints - use correct column names
-        $sql = "SELECT c.complaint_id, c.complaint_code, c.title, c.description, c.ward_no, c.landmark, c.location_address, c.priority, c.status, c.assigned_officer_id, c.assigned_at, c.resolved_at, c.created_at, c.updated_at,
+        // Fetch assigned & pending complaints - use correct column names with aliases
+        $sql = "SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, c.village_ward AS landmark, c.village_ward AS location_address, 'Medium' AS priority, c.status, c.assigned_to, c.updated_at AS assigned_at, c.updated_at AS resolved_at, c.submitted_at AS created_at, c.updated_at,
                        cat.category_name, u.full_name as officer_name
                 FROM complaints c
                 LEFT JOIN categories cat ON c.category_id = cat.category_id
-                LEFT JOIN users u ON c.assigned_officer_id = u.user_id
+                LEFT JOIN users u ON c.assigned_to = u.user_id
                 WHERE c.status IN ('pending', 'assigned', 'in_progress', 'resolved')
-                ORDER BY c.created_at DESC";
+                ORDER BY c.submitted_at DESC";
         $comp_stmt = $pdo->query($sql);
         $complaints_list = $comp_stmt->fetchAll();
     } catch (Exception $e) {
-        // Fallback for UI if DB tables are empty
         error_log('Assigned complaints query error: ' . $e->getMessage());
     }
 }

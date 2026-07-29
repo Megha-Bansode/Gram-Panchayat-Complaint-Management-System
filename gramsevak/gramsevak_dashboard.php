@@ -41,20 +41,16 @@ if (isset($pdo) && $pdo !== null) {
         $count_resolved = $status_data['resolved'] ?? 0;
         $count_total = array_sum($status_data);
 
-        // Fetch recent complaints - use correct column names from schema
-        // complaints table: complaint_id (PK), complaint_code (unique), citizen_id, category_id, title, description, ward_no, landmark, location_address, priority, status, assigned_officer_id, assigned_at, resolved_at, created_at, updated_at
-        // categories table: category_id, category_name
-        // users table: user_id, full_name
-        $sql = "SELECT c.complaint_id, c.complaint_code, c.title, c.description, c.ward_no, c.landmark, c.location_address, c.priority, c.status, c.assigned_officer_id, c.assigned_at, c.resolved_at, c.created_at, c.updated_at,
+        // Fetch recent complaints - use correct column names from schema with aliases
+        $sql = "SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, c.village_ward AS landmark, c.village_ward AS location_address, 'Medium' AS priority, c.status, c.assigned_to AS assigned_officer_id, c.updated_at AS assigned_at, c.updated_at AS resolved_at, c.submitted_at AS created_at, c.updated_at,
                        cat.category_name, u.full_name as officer_name
                 FROM complaints c
                 LEFT JOIN categories cat ON c.category_id = cat.category_id
-                LEFT JOIN users u ON c.assigned_officer_id = u.user_id
-                ORDER BY c.created_at DESC LIMIT 10";
+                LEFT JOIN users u ON c.assigned_to = u.user_id
+                ORDER BY c.submitted_at DESC LIMIT 10";
         $recent_stmt = $pdo->query($sql);
         $recent_complaints = $recent_stmt->fetchAll();
     } catch (Exception $e) {
-        // Fallback for initial UI rendering if tables empty
         error_log('Dashboard query error: ' . $e->getMessage());
     }
 }
