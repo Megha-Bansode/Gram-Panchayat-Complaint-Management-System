@@ -32,10 +32,10 @@ $stats = [
 ];
 
 $stats_stmt = $conn->prepare(
-    "SELECT status, COUNT(*) AS cnt
+    "SELECT IF(status = 'resolved' AND is_verified = 0, 'in_progress', status) AS status, COUNT(*) AS cnt
      FROM complaints
      WHERE user_id = ?
-     GROUP BY status"
+     GROUP BY IF(status = 'resolved' AND is_verified = 0, 'in_progress', status)"
 );
 $stats_stmt->bind_param("i", $user_id);
 $stats_stmt->execute();
@@ -83,7 +83,7 @@ $recent_complaints = [];
 $recent_stmt = $conn->prepare(
     "SELECT c.complaint_id,
             c.complaint_title,
-            c.status,
+            IF(c.status = 'resolved' AND c.is_verified = 0, 'in_progress', c.status) AS status,
             c.submitted_at,
             cat.category_name
      FROM complaints c

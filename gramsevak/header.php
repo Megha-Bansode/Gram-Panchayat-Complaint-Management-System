@@ -60,7 +60,8 @@ if (isset($conn) && $conn !== null) {
     $comp_query = "
         SELECT c.complaint_id, c.category_id, c.assigned_to, c.status, c.complaint_title, c.complaint_description, c.village_ward, c.submitted_at,
                cat.category_name,
-               u_cit.full_name AS complainant_name, u_cit.mobile_number AS complainant_mobile,
+               IFNULL(c.complainant_name, u_cit.full_name) AS complainant_name, 
+               IFNULL(c.mobile_number, u_cit.mobile_number) AS complainant_mobile,
                u_off.full_name AS officer_name
         FROM complaints c
         LEFT JOIN categories cat ON c.category_id = cat.category_id

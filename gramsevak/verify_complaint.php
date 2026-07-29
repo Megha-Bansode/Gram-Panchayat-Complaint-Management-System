@@ -35,9 +35,10 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
             try {
                 $pdo->beginTransaction();
 
-                // 1. Update complaints table status
-                $stmt = $pdo->prepare("UPDATE complaints SET status = ?, updated_at = NOW() WHERE complaint_id = ?");
-                $stmt->execute([$status_update, $cid]);
+                // 1. Update complaints table status and is_verified flag
+                $is_verified_val = ($status_update === 'resolved') ? 1 : 0;
+                $stmt = $pdo->prepare("UPDATE complaints SET status = ?, is_verified = ?, updated_at = NOW() WHERE complaint_id = ?");
+                $stmt->execute([$status_update, $is_verified_val, $cid]);
 
                 // 2. Write to complaint_history table - use correct schema
                 $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, ?, ?, ?, NOW())");
@@ -80,7 +81,8 @@ if (!empty($complaint_id) && isset($pdo) && $pdo !== null) {
         $stmt = $pdo->prepare("SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, c.village_ward AS landmark, c.village_ward AS location_address, 'Medium' AS priority, c.status, c.assigned_to AS assigned_officer_id, c.updated_at AS assigned_at, c.updated_at AS resolved_at, c.submitted_at AS created_at, c.updated_at,
                                       cat.category_name, 
                                       u.full_name as officer_name, u.mobile_number as officer_mobile,
-                                      cit.full_name as complainant_name, cit.mobile_number as complainant_mobile
+                                      IFNULL(c.complainant_name, cit.full_name) as complainant_name, 
+                                      IFNULL(c.mobile_number, cit.mobile_number) as complainant_mobile
                                FROM complaints c
                                LEFT JOIN categories cat ON c.category_id = cat.category_id
                                LEFT JOIN users u ON c.assigned_to = u.user_id
@@ -186,8 +188,14 @@ require_once __DIR__ . '/header.php';
         foreach ($photos as $photo) {
             if (($photo['photo_type'] ?? '') === 'before') {
                 $before_photo = $photo['file_path'] ?? '';
+                if (!empty($before_photo) && strpos($before_photo, 'http') !== 0 && strpos($before_photo, '../') !== 0) {
+                    $before_photo = '../' . $before_photo;
+                }
             } elseif (($photo['photo_type'] ?? '') === 'after') {
                 $after_photo = $photo['file_path'] ?? '';
+                if (!empty($after_photo) && strpos($after_photo, 'http') !== 0 && strpos($after_photo, '../') !== 0) {
+                    $after_photo = '../' . $after_photo;
+                }
             }
         }
     }
@@ -257,7 +265,7 @@ require_once __DIR__ . '/header.php';
 
                 <form action="verify_complaint.php?id=<?php echo urlencode((string)$c_id); ?>" method="POST">
                     <input type="hidden" name="action" value="verify_resolution">
-                    <input type="hidden" name="complaint_id" value="<?php echo htmlspecialchars($c_id); ?>">
+                    <input type="hidden" name="complaint_id" value="<?php echo htmlspecialchars((string)$c_id); ?>">
 
                     <div class="mb-3">
                         <label for="status" class="form-label fw-semibold">Canonical Status Update</label>

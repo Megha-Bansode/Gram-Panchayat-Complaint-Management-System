@@ -66,7 +66,7 @@ $stmt->close();
 // ── COMPLAINT COUNT SUMMARY ───────────────────────────────
 $counts = ['total' => 0, 'pending' => 0, 'resolved' => 0];
 $c_stmt = $conn->prepare(
-    "SELECT status, COUNT(*) AS cnt FROM complaints WHERE user_id = ? GROUP BY status"
+    "SELECT IF(status = 'resolved' AND is_verified = 0, 'in_progress', status) AS status, COUNT(*) AS cnt FROM complaints WHERE user_id = ? GROUP BY IF(status = 'resolved' AND is_verified = 0, 'in_progress', status)"
 );
 $c_stmt->bind_param("i", $user_id);
 $c_stmt->execute();

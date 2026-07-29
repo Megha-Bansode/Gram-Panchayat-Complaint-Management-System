@@ -27,9 +27,11 @@ $photos    = [];
 $history   = [];
 
 if ($search_id && $search_id > 0) {
-    // Fetch complaint for this citizen only
     $stmt = $conn->prepare(
-        "SELECT c.*, cat.category_name, u.full_name AS officer_name
+        "SELECT c.complaint_id, c.user_id, c.category_id, c.complaint_title, c.complaint_description, c.village_ward, 
+                IF(c.status = 'resolved' AND c.is_verified = 0, 'in_progress', c.status) AS status,
+                c.assigned_to, c.submitted_at, c.updated_at,
+                cat.category_name, u.full_name AS officer_name
          FROM complaints c
          LEFT JOIN categories cat ON c.category_id = cat.category_id
          LEFT JOIN users u ON c.assigned_to = u.user_id
@@ -57,12 +59,13 @@ if ($search_id && $search_id > 0) {
         }
         $p_stmt->close();
 
-        // Fetch history timeline
+        // Fetch history timeline (exclude resolved status if complaint not verified by Gram Sevak)
         $h_stmt = $conn->prepare(
             "SELECT ch.*, u.full_name AS updated_by_name
              FROM complaint_history ch
              LEFT JOIN users u ON ch.updated_by = u.user_id
-             WHERE ch.complaint_id = ?
+             JOIN complaints c ON ch.complaint_id = c.complaint_id
+             WHERE ch.complaint_id = ? AND (ch.status != 'resolved' OR c.is_verified = 1)
              ORDER BY ch.updated_at ASC"
         );
         $h_stmt->bind_param("i", $search_id);

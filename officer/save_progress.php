@@ -31,85 +31,93 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
         $status_input = 'in_progress';
     }
 
-    try {
-        // Fetch current complaint
-        $cStmt = $conn->prepare("SELECT complaint_id, complaint_title, status FROM complaints WHERE complaint_id = ? LIMIT 1");
-        $cStmt->bind_param('i', $complaint_code_input);
-        $cStmt->execute();
-        $cRes = $cStmt->get_result();
-        $currentComplaint = $cRes ? $cRes->fetch_assoc() : null;
-        $cStmt->close();
+    // Validate photo upload rule: if before photo is uploaded, after photo must also be uploaded
+    $before_photo_uploaded = !empty($_FILES['before_photo']['name']) && $_FILES['before_photo']['error'] === UPLOAD_ERR_OK;
+    $after_photo_uploaded  = !empty($_FILES['after_photo']['name']) && $_FILES['after_photo']['error'] === UPLOAD_ERR_OK;
 
-        if ($currentComplaint) {
-            $real_complaint_id   = (int)$currentComplaint['complaint_id'];
-            $real_complaint_code = '#' . $real_complaint_id;
-            $old_status          = $currentComplaint['status'];
+    if ($before_photo_uploaded && !$after_photo_uploaded) {
+        $error_message = "Please upload the After photo to save the progress.";
+    } else {
+        try {
+            // Fetch current complaint
+            $cStmt = $conn->prepare("SELECT complaint_id, complaint_title, status FROM complaints WHERE complaint_id = ? LIMIT 1");
+            $cStmt->bind_param('i', $complaint_code_input);
+            $cStmt->execute();
+            $cRes = $cStmt->get_result();
+            $currentComplaint = $cRes ? $cRes->fetch_assoc() : null;
+            $cStmt->close();
 
-            // Update Complaints Status
-            $updateSql = "UPDATE complaints SET status = ?, updated_at = NOW() WHERE complaint_id = ?";
-            $uStmt = $conn->prepare($updateSql);
-            $uStmt->bind_param('si', $status_input, $real_complaint_id);
-            $uStmt->execute();
-            $uStmt->close();
+            if ($currentComplaint) {
+                $real_complaint_id   = (int)$currentComplaint['complaint_id'];
+                $real_complaint_code = '#' . $real_complaint_id;
+                $old_status          = $currentComplaint['status'];
 
-            // Insert into complaint_history
-            if (!empty($note_input)) {
-                $hStmt = $conn->prepare("
-                    INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at)
-                    VALUES (?, ?, ?, ?, NOW())
-                ");
-                $hStmt->bind_param('issi', $real_complaint_id, $status_input, $note_input, $officer_id);
-                $hStmt->execute();
-                $hStmt->close();
-            }
+                // Update Complaints Status
+                $updateSql = "UPDATE complaints SET status = ?, updated_at = NOW() WHERE complaint_id = ?";
+                $uStmt = $conn->prepare($updateSql);
+                $uStmt->bind_param('si', $status_input, $real_complaint_id);
+                $uStmt->execute();
+                $uStmt->close();
 
-            // Handle Photo Uploads
-            $upload_dir = __DIR__ . '/../uploads/complaints/';
-            if (!is_dir($upload_dir)) {
-                mkdir($upload_dir, 0755, true);
-            }
-
-            // Before Photo Upload
-            if (!empty($_FILES['before_photo']['name']) && $_FILES['before_photo']['error'] === UPLOAD_ERR_OK) {
-                $ext = strtolower(pathinfo($_FILES['before_photo']['name'], PATHINFO_EXTENSION));
-                $file_name = 'before_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
-                $target    = $upload_dir . $file_name;
-                if (move_uploaded_file($_FILES['before_photo']['tmp_name'], $target)) {
-                    $pStmt = $conn->prepare("
-                        INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
-                        VALUES (?, 'before', ?, ?, NOW())
+                // Insert into complaint_history
+                if (!empty($note_input)) {
+                    $hStmt = $conn->prepare("
+                        INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at)
+                        VALUES (?, ?, ?, ?, NOW())
                     ");
-                    $pPath = 'uploads/complaints/' . $file_name;
-                    $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
-                    $pStmt->execute();
-                    $pStmt->close();
+                    $hStmt->bind_param('issi', $real_complaint_id, $status_input, $note_input, $officer_id);
+                    $hStmt->execute();
+                    $hStmt->close();
                 }
-            }
 
-            // After Photo Upload
-            if (!empty($_FILES['after_photo']['name']) && $_FILES['after_photo']['error'] === UPLOAD_ERR_OK) {
-                $ext = strtolower(pathinfo($_FILES['after_photo']['name'], PATHINFO_EXTENSION));
-                $file_name = 'after_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
-                $target    = $upload_dir . $file_name;
-                if (move_uploaded_file($_FILES['after_photo']['tmp_name'], $target)) {
-                    $pStmt = $conn->prepare("
-                        INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
-                        VALUES (?, 'after', ?, ?, NOW())
-                    ");
-                    $pPath = 'uploads/complaints/' . $file_name;
-                    $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
-                    $pStmt->execute();
-                    $pStmt->close();
+                // Handle Photo Uploads
+                $upload_dir = __DIR__ . '/../uploads/complaints/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
                 }
-            }
 
-            $success_message = "Inspection progress for Complaint #" . $real_complaint_id . " updated successfully!";
-        } else {
-            $error_message = "Complaint not found in database.";
+                // Before Photo Upload
+                if (!empty($_FILES['before_photo']['name']) && $_FILES['before_photo']['error'] === UPLOAD_ERR_OK) {
+                    $ext = strtolower(pathinfo($_FILES['before_photo']['name'], PATHINFO_EXTENSION));
+                    $file_name = 'before_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
+                    $target    = $upload_dir . $file_name;
+                    if (move_uploaded_file($_FILES['before_photo']['tmp_name'], $target)) {
+                        $pStmt = $conn->prepare("
+                            INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
+                            VALUES (?, 'before', ?, ?, NOW())
+                        ");
+                        $pPath = 'uploads/complaints/' . $file_name;
+                        $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
+                        $pStmt->execute();
+                        $pStmt->close();
+                    }
+                }
+
+                // After Photo Upload
+                if (!empty($_FILES['after_photo']['name']) && $_FILES['after_photo']['error'] === UPLOAD_ERR_OK) {
+                    $ext = strtolower(pathinfo($_FILES['after_photo']['name'], PATHINFO_EXTENSION));
+                    $file_name = 'after_' . time() . '_' . rand(1000, 9999) . '.' . $ext;
+                    $target    = $upload_dir . $file_name;
+                    if (move_uploaded_file($_FILES['after_photo']['tmp_name'], $target)) {
+                        $pStmt = $conn->prepare("
+                            INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
+                            VALUES (?, 'after', ?, ?, NOW())
+                        ");
+                        $pPath = 'uploads/complaints/' . $file_name;
+                        $pStmt->bind_param('isi', $real_complaint_id, $pPath, $officer_id);
+                        $pStmt->execute();
+                        $pStmt->close();
+                    }
+                }
+
+                $success_message = "Inspection progress for Complaint #" . $real_complaint_id . " updated successfully!";
+            } else {
+                $error_message = "Complaint not found in database.";
+            }
+        } catch (Throwable $e) {
+            error_log("Save progress error: " . $e->getMessage());
+            $error_message = "Database error while saving progress updates: " . $e->getMessage();
         }
-    } catch (Throwable $e) {
-        error_log("Save progress error: " . $e->getMessage());
-        $error_message = "Database error while saving progress updates: " . $e->getMessage();
     }
 }
 

@@ -168,10 +168,10 @@ try {
     }
     
     $stmt = $conn->prepare(
-        "INSERT INTO complaints (user_id, category_id, complaint_title, complaint_description, village_ward, status, submitted_at)
-         VALUES (?, ?, ?, ?, ?, 'pending', NOW())"
+        "INSERT INTO complaints (user_id, category_id, complaint_title, complaint_description, village_ward, status, submitted_at, complainant_name, mobile_number)
+         VALUES (?, ?, ?, ?, ?, 'pending', NOW(), ?, ?)"
     );
-    $stmt->bind_param('iisss', $user_id, $category_id, $complaint_title, $full_description, $village_ward);
+    $stmt->bind_param('iisssss', $user_id, $category_id, $complaint_title, $full_description, $village_ward, $complainant_name, $mobile_number);
     $stmt->execute();
     
     $complaint_id = $conn->insert_id;
