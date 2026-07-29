@@ -354,7 +354,7 @@ require_once 'officer_sidebar.php';
                     </span>
                   </div>
                   
-                  <div id="beforeUploadZone" onclick="document.getElementById('before_photo').click();" style="cursor: pointer;" class="py-2">
+                  <div id="beforeUploadZone" style="cursor: pointer;" class="py-2">
                     <div class="d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px; background: #FFF; color: #5E4D34; border-radius: 50%; font-size: 1.3rem; border: 1.5px solid rgba(220, 201, 167, 0.8);">
                       <i class="bi bi-cloud-arrow-up-fill"></i>
                     </div>
@@ -374,7 +374,7 @@ require_once 'officer_sidebar.php';
                     </span>
                   </div>
                   
-                  <div id="afterUploadZone" onclick="document.getElementById('after_photo').click();" style="cursor: pointer;" class="py-2">
+                  <div id="afterUploadZone" style="cursor: pointer;" class="py-2">
                     <div class="d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 48px; height: 48px; background: #E8F5E9; color: #2E7D32; border-radius: 50%; font-size: 1.3rem; border: 1.5px solid #A5D6A7;">
                       <i class="bi bi-cloud-arrow-up-fill"></i>
                     </div>

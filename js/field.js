@@ -574,6 +574,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderAssignedTable();
 
   // 7. Dynamic Data Binding for Details / Save Progress View
+  const urlParams = new URLSearchParams(window.location.search);
   const currentComplaintId = urlParams.get('id') || 'CMP-0012';
   const liveComplaintsList = getComplaintsData();
   const activeComplaint = liveComplaintsList.find(c => c.id === currentComplaintId) || liveComplaintsList[0];
