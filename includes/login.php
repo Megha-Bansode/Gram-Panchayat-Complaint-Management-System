@@ -87,5 +87,13 @@ if (isset($_GET['error']) && $_GET['error'] !== '') {
     </div>
 
     <script src="../js/auth.js"></script>
+    <script>
+        if (window.history && window.history.pushState) {
+            history.pushState({ page: 'login' }, '', window.location.href);
+            window.addEventListener('popstate', function() {
+                window.location.replace('../index.php');
+            });
+        }
+    </script>
 </body>
 </html>

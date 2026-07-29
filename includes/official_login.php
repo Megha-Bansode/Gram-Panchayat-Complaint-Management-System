@@ -75,11 +75,22 @@ if (isset($_GET['error']) && $_GET['error'] !== '') {
 
                         <button type="submit" class="btn-primary">Sign In</button>
                     </form>
+                    <div class="auth-links" style="margin-top:15px; text-align:center;">
+                        <a href="../index.php" style="font-weight:600; text-decoration:none;"><i class="fa-solid fa-house me-1"></i> Back to Home</a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="../js/auth.js"></script>
+    <script>
+        if (window.history && window.history.pushState) {
+            history.pushState({ page: 'login' }, '', window.location.href);
+            window.addEventListener('popstate', function() {
+                window.location.replace('../index.php');
+            });
+        }
+    </script>
 </body>
 </html>
