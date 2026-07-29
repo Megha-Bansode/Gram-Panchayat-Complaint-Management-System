@@ -79,6 +79,7 @@ if (isset($_GET['error']) && $_GET['error'] !== '') {
                     <div class="auth-links">
                         <a href="register.php">Create Account</a>
                         <a href="forgot_password.php">Forgot Password?</a>
+                        <a href="../index.php" style="margin-top:5px; font-weight:600;"><i class="fa-solid fa-house me-1"></i> Back to Home</a>
                     </div>
                 </div>
             </div>

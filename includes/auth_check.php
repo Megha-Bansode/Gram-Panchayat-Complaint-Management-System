@@ -47,8 +47,17 @@ function auth_require_auth(): array
 {
     auth_start_session();
 
+    if (!headers_sent()) {
+        header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+        header('Cache-Control: post-check=0, pre-check=0', false);
+        header('Pragma: no-cache');
+        header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+    }
+
     if (empty($_SESSION['is_logged_in']) || empty($_SESSION['user_id'])) {
-        auth_redirect('login.php', 'Please sign in to continue.');
+        $script_path = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+        $target = (strpos($script_path, '/citizen/') !== false) ? '../includes/login.php' : 'login.php';
+        auth_redirect($target, 'Please sign in to continue.');
     }
 
     // Generate CSRF token if not present (Handbook §10)
@@ -122,7 +131,6 @@ function auth_logout(): void
     }
 
     session_destroy();
-    session_regenerate_id(true);
 }
 
 function auth_get_role_id_by_name(string $roleName): ?int

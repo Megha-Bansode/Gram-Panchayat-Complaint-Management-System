@@ -41,7 +41,7 @@ if ($is_citizen_portal):
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                    <a class="dropdown-item text-danger" href="../includes/logout.php">
+                    <a class="dropdown-item text-danger" href="../includes/logout.php?portal=citizen">
                         <i class="bi bi-box-arrow-right me-2"></i>Logout
                     </a>
                 </li>
