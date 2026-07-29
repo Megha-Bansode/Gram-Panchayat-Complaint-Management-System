@@ -7,6 +7,35 @@
  */
 
 $current_page = basename($_SERVER['PHP_SELF']);
+
+// Fetch notifications for the officer from the database
+$officer_notifications = [];
+$unread_officer_count = 0;
+if (isset($conn) && $conn !== null && isset($officer_id)) {
+    try {
+        $notif_stmt = $conn->prepare("
+            SELECT notification_id, complaint_id, message, is_read, created_at 
+            FROM notifications 
+            WHERE user_id = ? OR complaint_id IN (SELECT complaint_id FROM complaints WHERE assigned_to = ?)
+            ORDER BY created_at DESC 
+            LIMIT 5
+        ");
+        $notif_stmt->bind_param("ii", $officer_id, $officer_id);
+        $notif_stmt->execute();
+        $notif_res = $notif_stmt->get_result();
+        if ($notif_res) {
+            while ($row = $notif_res->fetch_assoc()) {
+                $officer_notifications[] = $row;
+                if ((int)$row['is_read'] === 0) {
+                    $unread_officer_count++;
+                }
+            }
+        }
+        $notif_stmt->close();
+    } catch (Throwable $e) {
+        error_log("Sidebar notifications query error: " . $e->getMessage());
+    }
+}
 ?>
 
 <!-- Responsive Sidebar Navigation Matching Reference UI -->
@@ -104,24 +133,39 @@ $current_page = basename($_SERVER['PHP_SELF']);
       <!-- Notification Bell -->
       <div class="notification-bell position-relative" id="notificationBellBtn" aria-label="Notifications" tabindex="0" style="cursor: pointer;">
         <i class="bi bi-bell-fill text-muted fs-5"></i>
-        <span class="notification-badge" style="position: absolute; top: -4px; right: -4px; background: #D9534F; color: #FFF; font-size: 0.65rem; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">2</span>
+        <?php if ($unread_officer_count > 0): ?>
+          <span class="notification-badge" style="position: absolute; top: -4px; right: -4px; background: #D9534F; color: #FFF; font-size: 0.65rem; width: 16px; height: 16px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;"><?php echo $unread_officer_count; ?></span>
+        <?php endif; ?>
         
-        <!-- Mock Notifications Dropdown -->
-        <div class="notification-dropdown" id="notificationDropdown">
+        <!-- Live Notifications Dropdown -->
+        <div class="notification-dropdown" id="notificationDropdown" style="width: 280px; max-height: 380px; overflow-y: auto;">
           <div class="d-flex align-items-center justify-content-between pb-2 border-bottom mb-2">
             <span class="fw-bold text-dark small">Notifications</span>
-            <span class="badge bg-danger">2 New</span>
+            <?php if ($unread_officer_count > 0): ?>
+              <span class="badge bg-danger"><?php echo $unread_officer_count; ?> New</span>
+            <?php else: ?>
+              <span class="badge bg-secondary">0 New</span>
+            <?php endif; ?>
           </div>
-          <div class="notification-item">
-            <div class="fw-semibold text-dark">New Assignment: CMP-0041</div>
-            <div class="text-muted extra-small">Drainage Overflow assigned to you.</div>
-            <div class="text-primary extra-small mt-1">10 mins ago</div>
-          </div>
-          <div class="notification-item">
-            <div class="fw-semibold text-dark">Update Pending: CMP-0012</div>
-            <div class="text-muted extra-small">Road Potholes Repair progress report due today.</div>
-            <div class="text-primary extra-small mt-1">1 hour ago</div>
-          </div>
+          <?php if (empty($officer_notifications)): ?>
+            <div class="p-3 text-center text-muted small">No notifications found.</div>
+          <?php else: ?>
+            <?php foreach ($officer_notifications as $notif): ?>
+              <?php
+                $created_time = strtotime($notif['created_at']);
+                $diff = time() - $created_time;
+                if ($diff < 60) $time_str = "Just now";
+                elseif ($diff < 3600) $time_str = floor($diff / 60) . " mins ago";
+                elseif ($diff < 86400) $time_str = floor($diff / 3600) . " hours ago";
+                else $time_str = date('d M Y', $created_time);
+              ?>
+              <div class="notification-item" style="padding: 8px 10px; border-bottom: 1px solid #F1ECE3; <?php echo (int)$notif['is_read'] === 0 ? 'background-color: #FCF8F2;' : ''; ?>">
+                <div class="fw-semibold text-dark" style="font-size: 0.82rem;">Complaint #<?php echo htmlspecialchars((string)$notif['complaint_id']); ?></div>
+                <div class="text-muted extra-small" style="font-size: 0.72rem; line-height: 1.3; margin-top: 2px;"><?php echo htmlspecialchars($notif['message']); ?></div>
+                <div class="text-primary extra-small mt-1" style="font-size: 0.68rem;"><?php echo $time_str; ?></div>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </div>
       </div>
       

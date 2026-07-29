@@ -18,7 +18,7 @@
 // 1. DATABASE CONTRACT DUMMY DATASET (Integration Safe)
 // ==========================================================================
 
-const gpcmsDataset = {
+const gpcmsDataset = window.gpcmsDataset || {
     // Database table: users
     users: [
         { user_id: 101, full_name: "Rajesh Patil (Gram Sevak)", mobile_number: "9876543210", role_id: 2, role_name: "Gram Sevak" },
@@ -156,6 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSidebarToggle();
     initLiveClock();
     initGlobalSearch();
+    populateNotificationsList();
     
     // Page specific initializations based on DOM elements
     if (document.getElementById('dashboardTableBody')) {
@@ -478,29 +479,29 @@ function populateActivityFeed() {
     const feed = document.getElementById('activityFeedList');
     if (!feed) return;
 
-    feed.innerHTML = `
-        <li class="list-group-item p-3 border-0 border-bottom">
-            <div class="d-flex w-100 justify-content-between">
-                <span class="fw-semibold text-dark">CMP-2024-001 Registered</span>
-                <small class="text-muted">Today, 09:30 AM</small>
-            </div>
-            <p class="mb-0 small text-muted">Citizen Sunil Deshmukh logged a Water Supply issue in Shivaji Nagar.</p>
-        </li>
-        <li class="list-group-item p-3 border-0 border-bottom">
-            <div class="d-flex w-100 justify-content-between">
-                <span class="fw-semibold text-info-custom">CMP-2024-003 Assigned</span>
-                <small class="text-muted">Yesterday</small>
-            </div>
-            <p class="mb-0 small text-muted">Assigned to Field Officer Ramesh Shinde.</p>
-        </li>
-        <li class="list-group-item p-3 border-0">
-            <div class="d-flex w-100 justify-content-between">
-                <span class="fw-semibold text-success-custom">CMP-2024-004 Resolved</span>
-                <small class="text-muted">22 Jul 2026</small>
-            </div>
-            <p class="mb-0 small text-muted">Work verified & closed by Gram Sevak.</p>
-        </li>
-    `;
+    if (!gpcmsDataset.history || gpcmsDataset.history.length === 0) {
+        feed.innerHTML = '<li class="list-group-item p-3 text-center text-muted">No recent activity</li>';
+        return;
+    }
+
+    feed.innerHTML = gpcmsDataset.history.slice(0, 5).map(h => {
+        let statusColorClass = 'text-dark';
+        if (h.status === 'assigned') statusColorClass = 'text-info-custom';
+        else if (h.status === 'in_progress') statusColorClass = 'text-primary';
+        else if (h.status === 'resolved') statusColorClass = 'text-success-custom';
+
+        const statusText = h.status.charAt(0).toUpperCase() + h.status.slice(1);
+
+        return `
+            <li class="list-group-item p-3 border-0 border-bottom">
+                <div class="d-flex w-100 justify-content-between">
+                    <span class="fw-semibold ${statusColorClass}">Complaint #${h.complaint_id} ${statusText}</span>
+                    <small class="text-muted">${h.timestamp.split(',')[0]}</small>
+                </div>
+                <p class="mb-0 small text-muted">${h.remarks || 'Status updated to ' + h.status}</p>
+            </li>
+        `;
+    }).join('');
 }
 
 function initDashboardOverviewChart() {
@@ -931,24 +932,9 @@ function submitStatusUpdate() {
     const btnExec = document.getElementById('btnExecuteStatusUpdate');
     if (btnExec) {
         btnExec.onclick = () => {
-            const complaint = gpcmsDataset.complaints.find(c => c.complaint_id === complaintId);
-            if (complaint) {
-                complaint.status = newStatus;
-                gpcmsDataset.history.push({
-                    history_id: Date.now(),
-                    complaint_id: complaintId,
-                    status: newStatus,
-                    remarks: remarks,
-                    timestamp: new Date().toLocaleString()
-                });
-
-                alert(`Status successfully updated to '${newStatus}' for ${complaintId}!`);
-                const modalEl = document.getElementById('statusConfirmModal');
-                const modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
-
-                renderUpdateStatusPage();
-                onComplaintSelectChange(complaintId);
+            const form = document.getElementById('formUpdateStatus');
+            if (form) {
+                form.submit();
             }
         };
     }
@@ -1402,4 +1388,27 @@ function generateMonthlyReport() {
             options: { responsive: true, maintainAspectRatio: false }
         });
     }
+}
+
+function populateNotificationsList() {
+    const list = document.getElementById('notificationList');
+    if (!list) return;
+
+    if (!gpcmsDataset.notifications || gpcmsDataset.notifications.length === 0) {
+        list.innerHTML = '<div class="list-group-item p-3 text-center text-muted">No notifications found</div>';
+        return;
+    }
+
+    list.innerHTML = gpcmsDataset.notifications.map(n => {
+        const readBadge = n.is_read ? '' : '<span class="badge bg-danger ms-2">New</span>';
+        return `
+            <div class="list-group-item p-3">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h6 class="mb-1 text-primary-custom">Complaint ID: ${n.complaint_id} ${readBadge}</h6>
+                    <small class="text-muted">${n.timestamp}</small>
+                </div>
+                <p class="mb-1 small text-dark">${n.message}</p>
+            </div>
+        `;
+    }).join('');
 }

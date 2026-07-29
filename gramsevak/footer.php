@@ -85,6 +85,6 @@
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Custom Gram Sevak JS -->
-    <script src="../js/gramsevak.js"></script>
+    <script src="../js/gramsevak.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

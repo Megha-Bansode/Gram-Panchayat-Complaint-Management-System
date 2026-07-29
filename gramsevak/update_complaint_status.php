@@ -1,4 +1,5 @@
 <?php
+require_once __DIR__ . '/../config/db_connect.php';
 require_once __DIR__ . '/../includes/auth_check.php';
 
 auth_start_session();
@@ -12,6 +13,63 @@ $_SESSION['user_id'] = $_SESSION['user_id'] ?? 101;
 $_SESSION['full_name'] = $_SESSION['full_name'] ?? 'Rajesh Patil (Gram Sevak)';
 $_SESSION['role_id'] = $_SESSION['role_id'] ?? 2;
 $_SESSION['role_name'] = $_SESSION['role_name'] ?? 'Gram Sevak';
+
+$success_msg = "";
+$error_msg = "";
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'update_status') {
+    $complaint_id = intval($_POST['complaint_id'] ?? 0);
+    $status_update = trim($_POST['status'] ?? '');
+    $remarks = trim($_POST['remarks'] ?? '');
+    $user_id = intval($_SESSION['user_id'] ?? 101);
+
+    $allowed_canonical_statuses = ['pending', 'assigned', 'in_progress', 'resolved'];
+
+    if ($complaint_id > 0 && in_array($status_update, $allowed_canonical_statuses, true) && !empty($remarks)) {
+        if (isset($conn) && $conn !== null) {
+            $conn->begin_transaction();
+            try {
+                // 1. Update complaints table
+                $stmt = $conn->prepare("UPDATE complaints SET status = ?, updated_at = NOW() WHERE complaint_id = ?");
+                $stmt->bind_param("si", $status_update, $complaint_id);
+                $stmt->execute();
+                $stmt->close();
+
+                // 2. Insert into complaint_history
+                $hist_stmt = $conn->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, ?, ?, ?, NOW())");
+                $hist_stmt->bind_param("issi", $complaint_id, $status_update, $remarks, $user_id);
+                $hist_stmt->execute();
+                $hist_stmt->close();
+
+                // 3. Fetch citizen user_id and insert notification
+                $user_stmt = $conn->prepare("SELECT user_id FROM complaints WHERE complaint_id = ?");
+                $user_stmt->bind_param("i", $complaint_id);
+                $user_stmt->execute();
+                $user_stmt->bind_result($citizen_id);
+                $user_stmt->fetch();
+                $user_stmt->close();
+
+                if ($citizen_id) {
+                    $notif_msg = "Your complaint (ID: " . $complaint_id . ") status has been updated to '" . $status_update . "'.";
+                    $notif_stmt = $conn->prepare("INSERT INTO notifications (user_id, complaint_id, message, is_read, created_at) VALUES (?, ?, ?, 0, NOW())");
+                    $notif_stmt->bind_param("iis", $citizen_id, $complaint_id, $notif_msg);
+                    $notif_stmt->execute();
+                    $notif_stmt->close();
+                }
+
+                $conn->commit();
+                $success_msg = "Status successfully updated to '" . htmlspecialchars($status_update) . "' for complaint #" . $complaint_id . "!";
+            } catch (Exception $e) {
+                $conn->rollback();
+                $error_msg = "Failed to update status: " . $e->getMessage();
+            }
+        } else {
+            $error_msg = "Database connection error.";
+        }
+    } else {
+        $error_msg = "Invalid inputs. Please complete all fields.";
+    }
+}
 
 /* 
  * Database Contract Table References:
@@ -49,6 +107,21 @@ require_once __DIR__ . '/header.php';
                     </div>
                 </div>
 
+                <!-- Alert Messages -->
+                <?php if (!empty($success_msg)): ?>
+                    <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i><?php echo $success_msg; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($error_msg)): ?>
+                    <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i><?php echo $error_msg; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
                 <div class="row g-4">
                     <!-- Left Column: Complaint Select & Update Form -->
                     <div class="col-lg-7">
@@ -57,10 +130,11 @@ require_once __DIR__ . '/header.php';
                                 <h6 class="card-title mb-0"><i class="bi bi-pencil-square me-2 text-primary-custom"></i>Status Modification Form</h6>
                             </div>
                             <div class="card-body">
-                                <form id="formUpdateStatus" onsubmit="event.preventDefault(); submitStatusUpdate();">
+                                <form id="formUpdateStatus" method="POST" action="update_complaint_status.php" onsubmit="event.preventDefault(); submitStatusUpdate();">
+                                    <input type="hidden" name="action" value="update_status">
                                     <div class="mb-3">
                                         <label for="selectComplaintForUpdate" class="form-label font-weight-bold">Select Active Complaint <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="selectComplaintForUpdate" onchange="onComplaintSelectChange(this.value)" required>
+                                        <select class="form-select" id="selectComplaintForUpdate" name="complaint_id" onchange="onComplaintSelectChange(this.value)" required>
                                             <option value="">-- Choose Complaint --</option>
                                         </select>
                                     </div>
@@ -81,7 +155,7 @@ require_once __DIR__ . '/header.php';
 
                                     <div class="mb-3">
                                         <label for="newStatusSelect" class="form-label font-weight-bold">New Status <span class="text-danger">*</span></label>
-                                        <select class="form-select" id="newStatusSelect" required>
+                                        <select class="form-select" id="newStatusSelect" name="status" required>
                                             <option value="">-- Select Allowed Status --</option>
                                             <option value="pending">pending</option>
                                             <option value="assigned">assigned</option>
@@ -93,7 +167,7 @@ require_once __DIR__ . '/header.php';
 
                                     <div class="mb-3">
                                         <label for="statusRemarks" class="form-label font-weight-bold">Official Remarks / Comments <span class="text-danger">*</span></label>
-                                        <textarea class="form-control" id="statusRemarks" rows="4" placeholder="Enter detailed official notes regarding status change..." required></textarea>
+                                        <textarea class="form-control" id="statusRemarks" name="remarks" rows="4" placeholder="Enter detailed official notes regarding status change..." required></textarea>
                                     </div>
 
                                     <div class="d-flex justify-content-end gap-2">

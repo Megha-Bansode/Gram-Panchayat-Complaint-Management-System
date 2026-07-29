@@ -36,6 +36,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
                 $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, 'assigned', ?, ?, NOW())");
                 $stmt_hist->execute([$complaint_id, $remarks, $_SESSION['user_id']]);
 
+                // Fetch citizen user_id and insert notification
+                $user_stmt = $pdo->prepare("SELECT user_id FROM complaints WHERE complaint_id = ?");
+                $user_stmt->execute([$complaint_id]);
+                $citizen_id = $user_stmt->fetchColumn();
+
+                if ($citizen_id) {
+                    $notif_msg = "Your complaint (ID: " . $complaint_id . ") has been assigned to a Field Officer.";
+                    $notif_ins = $pdo->prepare("INSERT INTO notifications (user_id, complaint_id, message, is_read, created_at) VALUES (?, ?, ?, 0, NOW())");
+                    $notif_ins->execute([$citizen_id, $complaint_id, $notif_msg]);
+                }
+
                 $pdo->commit();
                 $success_msg = "Complaint " . htmlspecialchars($complaint_id) . " successfully assigned!";
             } catch (Exception $e) {
@@ -127,8 +138,8 @@ require_once __DIR__ . '/header.php';
                             <option value="">-- Choose Complaint --</option>
                             <?php if (!empty($complaints_list)): ?>
                                 <?php foreach ($complaints_list as $cmp): ?>
-                                    <option value="<?php echo htmlspecialchars($cmp['complaint_id']); ?>">
-                                        <?php echo htmlspecialchars(($cmp['complaint_code'] ?? $cmp['complaint_id']) . ' - ' . $cmp['title'] . ' (' . $cmp['status'] . ')'); ?>
+                                    <option value="<?php echo htmlspecialchars((string)$cmp['complaint_id']); ?>">
+                                        <?php echo htmlspecialchars((string)($cmp['complaint_code'] ?? $cmp['complaint_id']) . ' - ' . $cmp['title'] . ' (' . $cmp['status'] . ')'); ?>
                                     </option>
                                 <?php endforeach; ?>
                             <?php else: ?>
@@ -144,7 +155,7 @@ require_once __DIR__ . '/header.php';
                             <option value="">-- Choose Officer --</option>
                             <?php if (!empty($field_officers)): ?>
                                 <?php foreach ($field_officers as $officer): ?>
-                                    <option value="<?php echo htmlspecialchars($officer['user_id']); ?>">
+                                    <option value="<?php echo htmlspecialchars((string)$officer['user_id']); ?>">
                                         <?php echo htmlspecialchars($officer['full_name'] . ' (' . ($officer['mobile_number'] ?? $officer['phone'] ?? 'N/A') . ')'); ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -199,7 +210,7 @@ require_once __DIR__ . '/header.php';
                                 <?php if (!empty($complaints_list)): ?>
                                     <?php foreach ($complaints_list as $row): ?>
                                         <tr>
-                                            <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['complaint_code'] ?? $row['complaint_id']); ?></span></td>
+                                            <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars((string)($row['complaint_code'] ?? $row['complaint_id'])); ?></span></td>
                                             <td><strong><?php echo htmlspecialchars($row['title']); ?></strong></td>
                                             <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category_name'] ?? 'General'); ?></span></td>
                                             <td><?php echo htmlspecialchars($row['ward_no'] ?? $row['location_address'] ?? 'N/A'); ?></td>
@@ -216,7 +227,7 @@ require_once __DIR__ . '/header.php';
                                             </td>
                                             <td><small><?php echo date('d M Y', strtotime($row['created_at'])); ?></small></td>
                                             <td class="text-end">
-                                                <a href="verify_complaint.php?id=<?php echo urlencode($row['complaint_id']); ?>" class="btn btn-sm btn-outline-primary">
+                                                <a href="verify_complaint.php?id=<?php echo urlencode((string)$row['complaint_id']); ?>" class="btn btn-sm btn-outline-primary">
                                                     <i class="bi bi-eye"></i> Details
                                                 </a>
                                             </td>

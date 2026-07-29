@@ -43,6 +43,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
                 $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, ?, ?, ?, NOW())");
                 $stmt_hist->execute([$cid, $status_update, $remarks, $_SESSION['user_id']]);
 
+                // 3. Fetch citizen user_id and insert notification
+                $user_stmt = $pdo->prepare("SELECT user_id FROM complaints WHERE complaint_id = ?");
+                $user_stmt->execute([$cid]);
+                $citizen_id = $user_stmt->fetchColumn();
+
+                if ($citizen_id) {
+                    $notif_msg = "Your complaint (ID: " . $cid . ") has been verified and set to status '" . $status_update . "'.";
+                    $notif_stmt = $pdo->prepare("INSERT INTO notifications (user_id, complaint_id, message, is_read, created_at) VALUES (?, ?, ?, 0, NOW())");
+                    $notif_stmt->execute([$citizen_id, $cid, $notif_msg]);
+                }
+
                 $pdo->commit();
                 $success_msg = "Complaint " . htmlspecialchars($cid) . " verified and set to canonical status '" . htmlspecialchars($status_update) . "'!";
                 $complaint_id = $cid;
@@ -186,7 +197,7 @@ require_once __DIR__ . '/header.php';
             <div class="gpcms-card p-4 h-100">
                 <div class="d-flex justify-content-between align-items-start mb-3">
                     <div>
-                        <span class="badge bg-light text-dark border me-2"><?php echo htmlspecialchars($c_id); ?></span>
+                        <span class="badge bg-light text-dark border me-2"><?php echo htmlspecialchars((string)$c_id); ?></span>
                         <span class="badge bg-secondary"><?php echo htmlspecialchars($c_cat); ?></span>
                         <h4 class="fw-bold mt-2 mb-1"><?php echo htmlspecialchars($c_title); ?></h4>
                     </div>
@@ -235,7 +246,7 @@ require_once __DIR__ . '/header.php';
                 <h5 class="fw-bold mb-3"><i class="bi bi-patch-check me-2 text-success"></i>Verification & Action</h5>
                 <p class="text-muted small">Update status through approved GPCMS canonical workflow.</p>
 
-                <form action="verify_complaint.php?id=<?php echo urlencode($c_id); ?>" method="POST">
+                <form action="verify_complaint.php?id=<?php echo urlencode((string)$c_id); ?>" method="POST">
                     <input type="hidden" name="action" value="verify_resolution">
                     <input type="hidden" name="complaint_id" value="<?php echo htmlspecialchars($c_id); ?>">
 

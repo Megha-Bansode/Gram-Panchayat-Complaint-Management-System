@@ -305,7 +305,55 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('activityTimelineContainer');
     if (!container) return;
 
-    const activities = getActivityLogs();
+    let activities = [];
+    if (window.gpcmsActivities && Array.isArray(window.gpcmsActivities)) {
+      activities = window.gpcmsActivities.map(act => {
+        let type = 'status';
+        let title = 'Status Updated';
+        const stLower = act.status_to.toLowerCase();
+        let desc = `Complaint #${act.complaint_id} status changed to <span class="badge-status-subtle">${act.status_to.toUpperCase()}</span>`;
+
+        if (stLower === 'resolved') {
+          type = 'resolved';
+          title = 'Complaint Resolved';
+          desc = `Complaint #${act.complaint_id} marked as Resolved`;
+        } else if (act.remarks && act.remarks.toLowerCase().includes('photo')) {
+          type = 'photo';
+          title = 'Progress Photo Uploaded';
+          desc = `Uploaded work evidence photo for Complaint #${act.complaint_id}`;
+        }
+
+        // Add remarks if available and not just default status update
+        if (act.remarks && act.remarks !== desc && !act.remarks.toLowerCase().includes('photo')) {
+          desc += `<br><small class="text-muted">${escapeHtml(act.remarks)}</small>`;
+        }
+
+        // Relative time helper
+        let timeStr = act.created_at;
+        try {
+          const diffMs = Date.now() - new Date(act.created_at).getTime();
+          const diffMins = Math.floor(diffMs / 60000);
+          if (diffMins < 1) timeStr = 'Just now';
+          else if (diffMins < 60) timeStr = `${diffMins} mins ago`;
+          else if (diffMins < 1440) timeStr = `${Math.floor(diffMins / 60)} hours ago`;
+          else {
+            const d = new Date(act.created_at);
+            timeStr = d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+          }
+        } catch (err) {}
+
+        return {
+          id: act.history_id,
+          type: type,
+          title: title,
+          desc: desc,
+          time: timeStr
+        };
+      });
+    } else {
+      activities = getActivityLogs();
+    }
+
     if (activities.length === 0) {
       container.innerHTML = '<div class="text-muted small py-3 text-center">No recent activity recorded.</div>';
       return;

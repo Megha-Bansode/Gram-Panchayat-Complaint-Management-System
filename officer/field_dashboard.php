@@ -86,6 +86,11 @@ try {
 
 $page_title = "Field Officer Dashboard - GPCMS";
 require_once 'header.php';
+?>
+<script>
+window.gpcmsActivities = <?php echo json_encode($activities); ?>;
+</script>
+<?php
 require_once 'officer_sidebar.php';
 ?>
 
@@ -290,7 +295,7 @@ require_once 'officer_sidebar.php';
               <div class="timeline-body" style="margin-left: 50px !important;">
                 <div class="timeline-title" style="font-weight: 800 !important; color: #241D15 !important; font-size: 0.88rem !important; line-height: 1.2 !important;">Status Updated</div>
                 <div class="timeline-desc" style="color: #6E6255 !important; font-size: 0.82rem !important; margin-top: 3px !important; line-height: 1.4 !important;">
-                  <a href="save_progress.php?id=<?= urlencode($act['complaint_code']) ?>" class="cmp-link" style="color: #6E5A3B !important; font-weight: 700 !important; text-decoration: none !important;"><?= htmlspecialchars($act['complaint_code']) ?></a> status changed to <span class="badge-status-subtle" style="font-size: 0.74rem !important; font-weight: 800 !important; color: #D35400 !important; background-color: #FFF3E0 !important; padding: 2px 6px !important; border-radius: 4px !important;"><?= strtoupper(str_replace('_', ' ', $act['status_to'])) ?></span>
+                  <a href="save_progress.php?id=<?= urlencode((string)$act['complaint_id']) ?>" class="cmp-link" style="color: #6E5A3B !important; font-weight: 700 !important; text-decoration: none !important;">Complaint #<?= htmlspecialchars((string)$act['complaint_id']) ?></a> status changed to <span class="badge-status-subtle" style="font-size: 0.74rem !important; font-weight: 800 !important; color: #D35400 !important; background-color: #FFF3E0 !important; padding: 2px 6px !important; border-radius: 4px !important;"><?= strtoupper(str_replace('_', ' ', $act['status_to'])) ?></span>
                 </div>
                 <div class="timeline-time" style="font-size: 0.75rem !important; color: #8C7B6B !important; margin-top: 3px !important; display: flex !important; align-items: center !important; gap: 0.25rem !important;"><i class="bi bi-clock me-1"></i><?= date('M d, g:i a', strtotime($act['created_at'])) ?></div>
               </div>

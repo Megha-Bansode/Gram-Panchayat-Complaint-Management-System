@@ -8,6 +8,165 @@ if (session_status() === PHP_SESSION_NONE) {
 
 $page_title = $page_title ?? 'Gram Sevak Portal';
 $active_page = $active_page ?? 'dashboard';
+
+// Include database connection
+require_once __DIR__ . '/../config/db_connect.php';
+
+$users_data = [];
+$categories_data = [];
+$complaints_data = [];
+$history_data = [];
+$notifications_data = [];
+
+if (isset($conn) && $conn !== null) {
+    // 1. Fetch Users (excluding Citizens)
+    $u_stmt = $conn->query("
+        SELECT u.user_id, u.full_name, u.mobile_number, u.role_id, r.role_name 
+        FROM users u 
+        LEFT JOIN roles r ON u.role_id = r.role_id 
+        WHERE LOWER(r.role_name) != 'citizen'
+    ");
+    if ($u_stmt) {
+        while ($row = $u_stmt->fetch_assoc()) {
+            $users_data[] = [
+                'user_id' => (int)$row['user_id'],
+                'full_name' => $row['full_name'],
+                'mobile_number' => $row['mobile_number'] ?? '',
+                'role_id' => (int)$row['role_id'],
+                'role_name' => $row['role_name']
+            ];
+        }
+    }
+
+    // 2. Fetch Categories
+    $cat_stmt = $conn->query("
+        SELECT c.category_id, c.category_name, c.category_description, 
+               (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt 
+        FROM categories c
+    ");
+    if ($cat_stmt) {
+        while ($row = $cat_stmt->fetch_assoc()) {
+            $categories_data[] = [
+                'category_id' => (int)$row['category_id'],
+                'category_name' => $row['category_name'],
+                'description' => $row['category_description'] ?? '',
+                'count' => (int)$row['cnt'],
+                'status' => 'Active'
+            ];
+        }
+    }
+
+    // 3. Fetch Complaints
+    $comp_query = "
+        SELECT c.complaint_id, c.category_id, c.assigned_to, c.status, c.complaint_title, c.complaint_description, c.village_ward, c.submitted_at,
+               cat.category_name,
+               u_cit.full_name AS complainant_name, u_cit.mobile_number AS complainant_mobile,
+               u_off.full_name AS officer_name
+        FROM complaints c
+        LEFT JOIN categories cat ON c.category_id = cat.category_id
+        LEFT JOIN users u_cit ON c.user_id = u_cit.user_id
+        LEFT JOIN users u_off ON c.assigned_to = u_off.user_id
+        ORDER BY c.submitted_at DESC
+    ";
+    $comp_stmt = $conn->query($comp_query);
+    if ($comp_stmt) {
+        while ($row = $comp_stmt->fetch_assoc()) {
+            $cid = (int)$row['complaint_id'];
+            
+            // Fetch photos
+            $before_photo = null;
+            $after_photo = null;
+            $photo_stmt = $conn->prepare("SELECT photo_type, photo_path FROM complaint_photos WHERE complaint_id = ?");
+            if ($photo_stmt) {
+                $photo_stmt->bind_param("i", $cid);
+                $photo_stmt->execute();
+                $photo_res = $photo_stmt->get_result();
+                while ($p_row = $photo_res->fetch_assoc()) {
+                    if (in_array($p_row['photo_type'], ['initial', 'before'])) {
+                        $before_photo = '../' . $p_row['photo_path'];
+                    } elseif ($p_row['photo_type'] === 'after') {
+                        $after_photo = '../' . $p_row['photo_path'];
+                    }
+                }
+                $photo_stmt->close();
+            }
+            
+            if (empty($before_photo)) {
+                $before_photo = 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=500&auto=format&fit=crop&q=60';
+            }
+            
+            // Fetch latest remarks
+            $remarks = null;
+            $hist_stmt = $conn->prepare("SELECT note FROM complaint_history WHERE complaint_id = ? AND note IS NOT NULL AND note != '' ORDER BY updated_at DESC LIMIT 1");
+            if ($hist_stmt) {
+                $hist_stmt->bind_param("i", $cid);
+                $hist_stmt->execute();
+                $hist_res = $hist_stmt->get_result();
+                if ($h_row = $hist_res->fetch_assoc()) {
+                    $remarks = $h_row['note'];
+                }
+                $hist_stmt->close();
+            }
+
+            $complaints_data[] = [
+                'complaint_id' => (string)$cid,
+                'category_id' => (int)$row['category_id'],
+                'category_name' => $row['category_name'] ?? 'General',
+                'assigned_to' => $row['assigned_to'] ? (int)$row['assigned_to'] : null,
+                'officer_name' => $row['officer_name'] ?? 'Unassigned',
+                'status' => $row['status'],
+                'complaint_title' => $row['complaint_title'],
+                'complaint_description' => $row['complaint_description'],
+                'complaint_image' => $before_photo,
+                'complainant_name' => $row['complainant_name'] ?? 'Unknown Citizen',
+                'mobile_number' => $row['complainant_mobile'] ?? 'N/A',
+                'village_ward' => $row['village_ward'],
+                'submission_date' => date('d M Y, h:i A', strtotime($row['submitted_at'])),
+                'before_photo' => $before_photo,
+                'after_photo' => $after_photo,
+                'officer_remarks' => $remarks
+            ];
+        }
+    }
+
+    // 4. Fetch History
+    $hist_query = "
+        SELECT h.history_id, h.complaint_id, h.status, h.note, h.updated_at
+        FROM complaint_history h
+        ORDER BY h.updated_at DESC
+    ";
+    $hist_stmt = $conn->query($hist_query);
+    if ($hist_stmt) {
+        while ($row = $hist_stmt->fetch_assoc()) {
+            $history_data[] = [
+                'history_id' => (int)$row['history_id'],
+                'complaint_id' => (string)$row['complaint_id'],
+                'status' => $row['status'],
+                'remarks' => $row['note'] ?? '',
+                'timestamp' => date('d M Y, h:i A', strtotime($row['updated_at']))
+            ];
+        }
+    }
+
+    // 5. Fetch Notifications
+    $notif_query = "
+        SELECT n.notification_id, n.complaint_id, n.message, n.is_read, n.created_at
+        FROM notifications n
+        ORDER BY n.created_at DESC
+    ";
+    $notif_stmt = $conn->query($notif_query);
+    if ($notif_stmt) {
+        while ($row = $notif_stmt->fetch_assoc()) {
+            $notifications_data[] = [
+                'notification_id' => (int)$row['notification_id'],
+                'complaint_id' => (string)$row['complaint_id'],
+                'message' => $row['message'],
+                'is_read' => (int)$row['is_read'],
+                'timestamp' => date('d M Y, h:i A', strtotime($row['created_at']))
+            ];
+        }
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,6 +182,17 @@ $active_page = $active_page ?? 'dashboard';
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Custom Gram Sevak CSS -->
     <link rel="stylesheet" href="../css/gramsevak.css">
+    
+    <!-- Dynamic Dataset for Gram Sevak JS -->
+    <script>
+    window.gpcmsDataset = {
+        users: <?php echo json_encode($users_data); ?>,
+        categories: <?php echo json_encode($categories_data); ?>,
+        complaints: <?php echo json_encode($complaints_data); ?>,
+        history: <?php echo json_encode($history_data); ?>,
+        notifications: <?php echo json_encode($notifications_data); ?>
+    };
+    </script>
 </head>
 <body>
     <div class="gpcms-wrapper">
@@ -86,7 +256,15 @@ $active_page = $active_page ?? 'dashboard';
                     <li class="nav-item">
                         <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#notificationModal">
                             <i class="bi bi-bell-fill"></i> <span>Notifications</span>
-                            <span class="badge rounded-pill bg-danger ms-auto">3</span>
+                            <?php
+                            $unread_count = 0;
+                            foreach ($notifications_data as $n) {
+                                if (isset($n['is_read']) && $n['is_read'] === 0) {
+                                    $unread_count++;
+                                }
+                            }
+                            ?>
+                            <span class="badge rounded-pill bg-danger ms-auto" id="notifBadgeCount"><?php echo $unread_count; ?></span>
                         </a>
                     </li>
                     <li class="nav-item">

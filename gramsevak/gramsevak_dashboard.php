@@ -259,7 +259,7 @@ require_once __DIR__ . '/header.php';
                                             <?php if (!empty($recent_complaints)): ?>
                                                 <?php foreach ($recent_complaints as $row): ?>
                                                     <tr>
-                                                        <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars($row['complaint_code'] ?? $row['complaint_id']); ?></span></td>
+                                                        <td><span class="badge bg-light text-dark border"><?php echo htmlspecialchars((string)($row['complaint_code'] ?? $row['complaint_id'])); ?></span></td>
                                                         <td><?php echo htmlspecialchars($row['title']); ?></td>
                                                         <td><?php echo htmlspecialchars($row['ward_no'] ?? $row['location_address'] ?? 'N/A'); ?></td>
                                                         <td><span class="badge bg-secondary"><?php echo htmlspecialchars($row['category_name'] ?? 'General'); ?></span></td>
@@ -277,7 +277,7 @@ require_once __DIR__ . '/header.php';
                                                         <td><?php echo htmlspecialchars($row['officer_name'] ?? 'Unassigned'); ?></td>
                                                         <td><small><?php echo date('d M Y', strtotime($row['created_at'])); ?></small></td>
                                                         <td class="text-end">
-                                                            <a href="verify_complaint.php?id=<?php echo urlencode($row['complaint_id']); ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> View</a>
+                                                            <a href="verify_complaint.php?id=<?php echo urlencode((string)$row['complaint_id']); ?>" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i> View</a>
                                                         </td>
                                                     </tr>
                                                 <?php endforeach; ?>

@@ -38,6 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
             $del_stmt->execute();
             if ($del_stmt->affected_rows > 0) {
                 $delete_success_msg = "Complaint #{$complaint_id} has been deleted successfully.";
+                // Reset complaints AUTO_INCREMENT to MAX(complaint_id) + 1 to keep IDs sequential
+                $conn->query("ALTER TABLE complaints AUTO_INCREMENT = 1");
             } else {
                 $delete_error_msg = "Unable to delete complaint #{$complaint_id}. Only pending complaints registered by you can be deleted.";
             }
@@ -50,7 +52,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
 // save_complaint.php redirects here with ?created=<id> after success
 $created_id = null;
 if (isset($_GET['created']) && ctype_digit((string) $_GET['created'])) {
-    $created_id = (int) $_GET['created'];
+    $check_id = (int) $_GET['created'];
+    // Verify if this complaint exists for the user
+    $check_stmt = $conn->prepare("SELECT complaint_id FROM complaints WHERE complaint_id = ? AND user_id = ?");
+    $check_stmt->bind_param("ii", $check_id, $user_id);
+    $check_stmt->execute();
+    $check_res = $check_stmt->get_result();
+    if ($check_res->num_rows > 0) {
+        $created_id = $check_id;
+    } else {
+        // Fallback: If the complaint was renumbered or doesn't exist, find the latest pending/registered complaint for this user
+        $latest_stmt = $conn->prepare("SELECT complaint_id FROM complaints WHERE user_id = ? ORDER BY submitted_at DESC, complaint_id DESC LIMIT 1");
+        $latest_stmt->bind_param("i", $user_id);
+        $latest_stmt->execute();
+        $latest_res = $latest_stmt->get_result();
+        if ($row = $latest_res->fetch_assoc()) {
+            $created_id = (int)$row['complaint_id'];
+        }
+        $latest_stmt->close();
+    }
+    $check_stmt->close();
 }
 
 // ── COMPLAINT STATISTICS ──────────────────────────────────────────────────────
