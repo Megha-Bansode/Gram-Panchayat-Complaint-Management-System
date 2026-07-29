@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 $conn = get_db_connection();
                 $passwordHash = password_hash($newPassword, PASSWORD_BCRYPT);
-                $stmt = $conn->prepare('UPDATE users SET password_hash = ? WHERE username = ? AND mobile_number = ?');
+                $stmt = $conn->prepare('UPDATE users SET password_hash = ? WHERE login_id = ? AND mobile_number = ?');
                 $stmt->bind_param('sss', $passwordHash, $loginId, $mobileNumber);
                 $stmt->execute();
                 $stmt->close();
