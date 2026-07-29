@@ -332,7 +332,7 @@ a {
 }
 
 .section-subtitle {
-    color: var(--text-muted);
+    color: #3B2F2F;
     font-size: 1rem;
     max-width: 600px;
     margin: 0 auto 1.5rem;
@@ -2520,4 +2520,26 @@ footer ul a::before {
 
 .gap-custom {
     gap: 1.5rem;
+}
+
+/* About Section Dark Readability Overrides */
+#about .section-title {
+    color: #2D2D2D !important;
+}
+#about p {
+    color: #3B2F2F !important;
+}
+#about .about-content-list li {
+    color: #3B2F2F !important;
+}
+#about .about-content-list li i {
+    color: #2D2D2D !important;
+}
+#about .btn-secondary-custom {
+    color: #2D2D2D !important;
+    border-color: #2D2D2D !important;
+}
+#about .btn-secondary-custom:hover {
+    background: rgba(45, 45, 45, 0.08) !important;
+    border-color: #2D2D2D !important;
 }

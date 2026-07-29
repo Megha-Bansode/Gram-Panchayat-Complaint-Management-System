@@ -148,12 +148,14 @@ include 'includes/header.php';
 
             <!-- Card 6 -->
             <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
-                <div class="service-card">
-                    <div class="service-icon"><i class="fa-solid fa-comments"></i></div>
-                    <div class="service-title"><?php echo __('s6_title'); ?></div>
-                    <p class="service-desc"><?php echo __('s6_desc'); ?></p>
-                    <div class="service-arrow"><?php echo __('share_now'); ?> <i class="fa-solid fa-arrow-right"></i></div>
-                </div>
+                <a href="citizen/my_complaints.php" class="text-decoration-none">
+                    <div class="service-card">
+                        <div class="service-icon"><i class="fa-solid fa-comments"></i></div>
+                        <div class="service-title"><?php echo __('s6_title'); ?></div>
+                        <p class="service-desc"><?php echo __('s6_desc'); ?></p>
+                        <div class="service-arrow"><?php echo __('share_now'); ?> <i class="fa-solid fa-arrow-right"></i></div>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
@@ -668,7 +670,7 @@ include 'includes/header.php';
             <!-- Swachh Bharat Mission -->
             <div class="col-lg-3 col-md-6" data-aos="fade-up" data-aos-delay="60">
                 <div class="glass-card scheme-card scheme-card-wrap d-flex flex-column h-100">
-                    <div class="feature-icon-box bg-secondary-soft"><i class="fa-solid fa-hands-clean"></i></div>
+                    <div class="feature-icon-box bg-secondary-soft"><i class="fa-solid fa-hands-bubbles"></i></div>
                     <h6 class="scheme-title"><?php echo __('s_sbm_title'); ?></h6>
                     <p class="scheme-desc"><?php echo __('s_sbm_desc'); ?></p>
                     <div class="scheme-eligibility mb-3"><strong><?php echo __('eligibility'); ?>:</strong> <?php echo __('s_sbm_elig'); ?></div>
@@ -810,49 +812,49 @@ include 'includes/header.php';
         </div>
         <div class="gallery-grid" data-aos="fade-up">
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1577495508048-b635879837f1?w=600&auto=format&fit=crop&q=80" alt="Gram Panchayat Office" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1577495508048-b635879837f1?w=600&auto=format&fit=crop&q=80" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-building me-2"></i><?php echo __('g_office'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&auto=format&fit=crop&q=80" alt="Village Lake" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=600&auto=format&fit=crop&q=80" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-water me-2"></i><?php echo __('g_lake'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=600&auto=format&fit=crop&q=80" alt="Village Roads" loading="lazy">
+                <img src="assets/images/village_road.png" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-road me-2"></i><?php echo __('g_roads'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&auto=format&fit=crop&q=80" alt="Village School" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&auto=format&fit=crop&q=80" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-school me-2"></i><?php echo __('g_school'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80" alt="Plantation Drive" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop&q=80" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-tree me-2"></i><?php echo __('g_plantation'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&auto=format&fit=crop&q=80" alt="Community Hall" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&auto=format&fit=crop&q=80" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-people-roof me-2"></i><?php echo __('g_community'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1532094349884-543559c5bc5b?w=600&auto=format&fit=crop&q=80" alt="Clean Village Campaign" loading="lazy">
+                <img src="assets/images/clean_village.png" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-broom me-2"></i><?php echo __('g_clean'); ?></div>
                 </div>
             </div>
             <div class="gallery-item">
-                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&auto=format&fit=crop&q=80" alt="Gram Sabha Meeting" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=600&auto=format&fit=crop&q=80" alt="" loading="lazy">
                 <div class="gallery-overlay">
                     <div class="gallery-overlay-title"><i class="fa-solid fa-people-group me-2"></i><?php echo __('g_gramsabha'); ?></div>
                 </div>

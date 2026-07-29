@@ -1,0 +1,18 @@
+/* ==========================================================================
+   ADMIN PORTAL STYLESHEET - GPCMS VERSION 3.1
+   Imports the base design tokens from gramsevak.css and defines admin overrides
+   ========================================================================== */
+
+@import url('gramsevak.css');
+
+/* Custom overrides for the Admin Dashboard */
+.badge-role {
+    background-color: var(--gpcms-surface);
+    color: var(--gpcms-dark);
+}
+
+.admin-welcome-card {
+    background: linear-gradient(135deg, var(--gpcms-primary) 0%, var(--gpcms-secondary) 100%);
+    border-radius: var(--border-radius-base);
+    box-shadow: var(--soft-shadow);
+}
