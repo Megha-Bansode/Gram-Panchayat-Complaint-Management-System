@@ -78,10 +78,13 @@ if (!empty($complaint_id) && isset($pdo) && $pdo !== null) {
     try {
         // Main complaint details query - use correct column names with aliases
         $stmt = $pdo->prepare("SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.complaint_description AS description, c.village_ward AS ward_no, c.village_ward AS landmark, c.village_ward AS location_address, 'Medium' AS priority, c.status, c.assigned_to AS assigned_officer_id, c.updated_at AS assigned_at, c.updated_at AS resolved_at, c.submitted_at AS created_at, c.updated_at,
-                                      cat.category_name, u.full_name as officer_name, u.mobile_number as officer_mobile
+                                      cat.category_name, 
+                                      u.full_name as officer_name, u.mobile_number as officer_mobile,
+                                      cit.full_name as complainant_name, cit.mobile_number as complainant_mobile
                                FROM complaints c
                                LEFT JOIN categories cat ON c.category_id = cat.category_id
                                LEFT JOIN users u ON c.assigned_to = u.user_id
+                               LEFT JOIN users cit ON c.user_id = cit.user_id
                                WHERE c.complaint_id = ?");
         $stmt->execute([$complaint_id]);
         $complaint = $stmt->fetch();
@@ -165,10 +168,16 @@ require_once __DIR__ . '/header.php';
     $c_cat = $complaint['category_name'] ?? 'Water Supply';
     $c_desc = $complaint['description'] ?? 'Main supply pipeline damaged resulting in drinking water wastage and low pressure in Ward 3.';
     $c_status = strtolower($complaint['status'] ?? 'in_progress');
-    $c_complainant = $complaint['complainant_name'] ?? 'Sunil Deshmukh';  // This might not exist in complaints table
-    $c_mobile = $complaint['mobile_number'] ?? '9890112233';  // This might not exist in complaints table
+    if (!empty($complaint)) {
+        $c_complainant = $complaint['complainant_name'] ?? 'Unknown Citizen';
+        $c_mobile = $complaint['complainant_mobile'] ?? '—';
+        $c_officer = !empty($complaint['officer_name']) ? $complaint['officer_name'] : 'Not Assigned';
+    } else {
+        $c_complainant = 'Sunil Deshmukh';
+        $c_mobile = '9890112233';
+        $c_officer = 'Ramesh Shinde (Field Officer)';
+    }
     $c_village = $complaint['ward_no'] ?? ($complaint['location_address'] ?? 'Shivaji Nagar');
-    $c_officer = $complaint['officer_name'] ?? 'Ramesh Shinde (Field Officer)';
 
     // Photos from complaint_photos table - photo_type enum: 'before', 'after', 'progress'
     $before_photo = '';

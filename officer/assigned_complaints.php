@@ -26,7 +26,7 @@ $sql = "
     SELECT c.complaint_id, c.complaint_id AS complaint_code, c.complaint_title AS title, c.village_ward AS ward_no, c.village_ward AS location_address, c.status, c.submitted_at AS created_at, c.updated_at AS assigned_at, cat.category_name
     FROM complaints c
     LEFT JOIN categories cat ON c.category_id = cat.category_id
-    WHERE (c.assigned_to = ? OR c.assigned_to IS NULL)
+    WHERE c.assigned_to = ?
 ";
 
 $types = 'i';
