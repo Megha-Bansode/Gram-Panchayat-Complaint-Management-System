@@ -23,6 +23,29 @@ $user_id = (int) $user['user_id'];
 
 
 
+// ── HANDLE COMPLAINT DELETION (POST) ─────────────────────────────────────────
+$delete_success_msg = '';
+$delete_error_msg   = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delete_complaint') {
+    if (empty($_POST['csrf_token']) || !hash_equals($_SESSION['csrf_token'] ?? '', $_POST['csrf_token'])) {
+        $delete_error_msg = 'Invalid CSRF token. Please try again.';
+    } else {
+        $complaint_id = intval($_POST['complaint_id'] ?? 0);
+        if ($complaint_id > 0) {
+            $del_stmt = $conn->prepare("DELETE FROM complaints WHERE complaint_id = ? AND user_id = ? AND status = 'pending'");
+            $del_stmt->bind_param("ii", $complaint_id, $user_id);
+            $del_stmt->execute();
+            if ($del_stmt->affected_rows > 0) {
+                $delete_success_msg = "Complaint #{$complaint_id} has been deleted successfully.";
+            } else {
+                $delete_error_msg = "Unable to delete complaint #{$complaint_id}. Only pending complaints registered by you can be deleted.";
+            }
+            $del_stmt->close();
+        }
+    }
+}
+
 // ── READ ?created= PARAM FOR SUCCESS BANNER ───────────────────────────────────
 // save_complaint.php redirects here with ?created=<id> after success
 $created_id = null;
@@ -183,6 +206,29 @@ $total_count = count($complaints);
                     aria-label="Dismiss success banner">
                 <i class="bi bi-x-lg"></i>
             </button>
+        </div>
+        <?php endif; ?>
+
+        <!-- ── Deletion Alerts ───────────────────────────── -->
+        <?php if (!empty($delete_success_msg)): ?>
+        <div class="citizen-alert citizen-alert-success mb-4" role="alert" data-auto-dismiss="8000">
+            <span class="citizen-alert-icon" aria-hidden="true"><i class="bi bi-check-circle-fill"></i></span>
+            <div class="citizen-alert-body">
+                <strong>Complaint Deleted!</strong>
+                <div class="mt-1"><?php echo htmlspecialchars($delete_success_msg); ?></div>
+            </div>
+            <button type="button" class="citizen-alert-close" aria-label="Dismiss"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <?php endif; ?>
+
+        <?php if (!empty($delete_error_msg)): ?>
+        <div class="citizen-alert citizen-alert-error mb-4" role="alert">
+            <span class="citizen-alert-icon" aria-hidden="true"><i class="bi bi-exclamation-triangle-fill"></i></span>
+            <div class="citizen-alert-body">
+                <strong>Action Failed:</strong>
+                <div class="mt-1"><?php echo htmlspecialchars($delete_error_msg); ?></div>
+            </div>
+            <button type="button" class="citizen-alert-close" aria-label="Dismiss"><i class="bi bi-x-lg"></i></button>
         </div>
         <?php endif; ?>
 
@@ -427,12 +473,22 @@ $total_count = count($complaints);
                             </td>
 
                             <td>
-                                <div class="d-flex gap-2">
+                                <div class="d-flex gap-2 align-items-center">
                                     <a href="track_complaint.php?complaint_id=<?php echo $cid; ?>"
                                        class="btn citizen-btn-action-sm"
                                        aria-label="Track complaint #<?php echo $cid; ?>">
                                         <i class="bi bi-search me-1" aria-hidden="true"></i>Track
                                     </a>
+                                    <?php if ($status === 'pending'): ?>
+                                    <form method="POST" action="my_complaints.php" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete complaint #<?php echo $cid; ?>?');">
+                                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                                        <input type="hidden" name="action" value="delete_complaint">
+                                        <input type="hidden" name="complaint_id" value="<?php echo $cid; ?>">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete Complaint">
+                                            <i class="bi bi-trash me-1" aria-hidden="true"></i>Delete
+                                        </button>
+                                    </form>
+                                    <?php endif; ?>
                                 </div>
                             </td>
 
@@ -521,12 +577,22 @@ $total_count = count($complaints);
                 </div>
 
                 <!-- Action -->
-                <div class="citizen-mc-actions">
+                <div class="citizen-mc-actions d-flex gap-2">
                     <a href="track_complaint.php?complaint_id=<?php echo $cid; ?>"
-                       class="btn citizen-btn-action-sm w-100"
+                       class="btn citizen-btn-action-sm flex-fill"
                        aria-label="Track complaint #<?php echo $cid; ?>">
-                        <i class="bi bi-search me-1" aria-hidden="true"></i>Track Complaint
+                        <i class="bi bi-search me-1" aria-hidden="true"></i>Track
                     </a>
+                    <?php if ($status === 'pending'): ?>
+                    <form method="POST" action="my_complaints.php" class="flex-fill" onsubmit="return confirm('Are you sure you want to delete complaint #<?php echo $cid; ?>?');">
+                        <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($_SESSION['csrf_token'] ?? ''); ?>">
+                        <input type="hidden" name="action" value="delete_complaint">
+                        <input type="hidden" name="complaint_id" value="<?php echo $cid; ?>">
+                        <button type="submit" class="btn btn-sm btn-outline-danger w-100" title="Delete Complaint">
+                            <i class="bi bi-trash me-1" aria-hidden="true"></i>Delete
+                        </button>
+                    </form>
+                    <?php endif; ?>
                 </div>
             </div>
             <?php endforeach; ?>
