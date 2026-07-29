@@ -1,13 +1,63 @@
 <?php
 require_once __DIR__ . '/language.php';
 
+// Check if currently inside Citizen portal
+$script_path = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
+$is_citizen_portal = (strpos($script_path, '/citizen/') !== false);
+
+if ($is_citizen_portal):
+    $full_name = $_SESSION['full_name'] ?? 'User';
+    $role_name = $_SESSION['role_name'] ?? 'Citizen';
+    $user_initial = mb_strtoupper(mb_substr($full_name, 0, 1, 'UTF-8'));
+?>
+<!-- ═══════════════════════════════════════════════════════
+     TOP HEADER BAR FOR CITIZEN PORTAL
+     ═══════════════════════════════════════════════════════ -->
+<header class="citizen-topheader">
+    <div class="d-flex align-items-center gap-3">
+        <button class="citizen-nav-toggler d-lg-none" type="button" id="sidebarToggleBtn" aria-label="Toggle sidebar">
+            <i class="bi bi-list fs-4"></i>
+        </button>
+        <div class="citizen-topheader-title d-none d-sm-block">
+            Gram Panchayat Complaint Management System
+        </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-3">
+        <div class="citizen-topheader-meta d-none d-md-block">
+            <i class="bi bi-clock me-1"></i><?php echo date('D, d M Y, h:i a'); ?>
+        </div>
+
+        <!-- User Dropdown -->
+        <div class="dropdown">
+            <a class="d-flex align-items-center gap-2 text-decoration-none text-dark dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="citizen-avatar"><?php echo htmlspecialchars($user_initial); ?></span>
+                <span class="d-none d-md-inline fw-semibold" style="font-size: 0.9rem;"><?php echo htmlspecialchars($full_name); ?></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow border-0 citizen-profile-dropdown">
+                <li class="px-3 pt-2 pb-1">
+                    <div class="fw-semibold citizen-profile-name"><?php echo htmlspecialchars($full_name); ?></div>
+                    <small class="text-muted"><?php echo htmlspecialchars($role_name); ?> Account</small>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item text-danger" href="../includes/logout.php">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</header>
+<?php
+else:
+// Public Landing Page Header
 // Calculate base path for assets and URLs relative to project root
-$script_name = str_replace('\\', '/', $_SERVER['SCRIPT_NAME']);
 $project_folder = 'Gram-Panchayat-Complaint-Management-System';
-$pos = strpos($script_name, '/' . $project_folder . '/');
+$pos = strpos($script_path, '/' . $project_folder . '/');
 
 if ($pos !== false) {
-    $sub_path = substr($script_name, $pos + strlen('/' . $project_folder . '/'));
+    $sub_path = substr($script_path, $pos + strlen('/' . $project_folder . '/'));
     $depth = substr_count(trim(dirname($sub_path), '.'), '/');
     if (dirname($sub_path) === '.') { $depth = 0; }
     $base_path = ($depth > 0) ? str_repeat('../', $depth) : '';
@@ -15,9 +65,8 @@ if ($pos !== false) {
     $base_path = file_exists('css/style.css') ? '' : '../';
 }
 
-// Absolute root-relative URL prefix for the project (works from any subfolder depth)
 $project_root_url = ($pos !== false)
-    ? substr($script_name, 0, $pos + strlen('/' . $project_folder)) . '/'
+    ? substr($script_path, 0, $pos + strlen('/' . $project_folder)) . '/'
     : '/Gram-Panchayat-Complaint-Management-System/';
 
 if (!function_exists('getLangUrl')) {
@@ -40,26 +89,17 @@ $lang_labels = [
     'hi' => '🇮🇳 हिन्दी'
 ];
 
-// ── Active Nav Detection ──────────────────────────────────────────────────────
-// Determine which nav section is active based on the current page.
-// On index.php the JS scrollspy handles highlighting — PHP outputs nothing.
 $request_path = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
 $current_file = !empty($request_path) ? basename($request_path) : basename($_SERVER['PHP_SELF'] ?? '');
 
-// Map page filename → active nav key
 $page_nav_map = [
-    // index.php — scrollspy handles this, PHP outputs no class
     'index.php'              => '',
-    // register complaint → Services
     'register_complaint.php' => 'services',
-    // track complaint → Track Status tab
     'track_complaint.php'    => 'track',
     'complaint_status.php'   => 'track',
     'complaint-status.php'   => 'track',
     'status.php'             => 'track',
-    // scheme detail → Government Schemes
     'scheme_details.php'     => 'schemes',
-    // login pages → no specific section highlighted
     'login.php'              => '',
     'register.php'           => '',
     'forgot_password.php'    => '',
@@ -67,10 +107,11 @@ $page_nav_map = [
 
 $active_nav = $page_nav_map[$current_file] ?? '';
 
-// Helper: output " active-nav active" CSS class if the key matches current page
-function navActive(string $key): string {
-    global $active_nav;
-    return ($active_nav !== '' && $active_nav === $key) ? ' active-nav active' : '';
+if (!function_exists('navActive')) {
+    function navActive(string $key): string {
+        global $active_nav;
+        return ($active_nav !== '' && $active_nav === $key) ? ' active-nav active' : '';
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -159,13 +200,8 @@ function navActive(string $key): string {
                         <li class="nav-item"><a class="nav-link<?php echo navActive('contact'); ?>" data-nav-key="contact" href="<?php echo $base_path; ?>index.php#contact"><?php echo __('nav_contact'); ?></a></li>
                     </ul>
 
-
-
                     <!-- Right Side Controls -->
                     <div class="d-flex align-items-center gap-2 ms-lg-3 my-2 my-lg-0">
-
-
-
                         <!-- Global Language Switcher -->
                         <div class="nav-item dropdown">
                             <div class="language-selector dropdown-toggle" id="langDropdown" role="button"
@@ -243,11 +279,9 @@ function navActive(string $key): string {
                                 </li>
                             </ul>
                         </div>
-
                     </div>
                 </div><!-- /navbar-collapse -->
             </nav>
         </div>
     </header>
-
-
+<?php endif; ?>
