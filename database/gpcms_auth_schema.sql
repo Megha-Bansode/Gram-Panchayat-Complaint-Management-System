@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS `complaints` (
   `complaint_description` TEXT NOT NULL,
   `village_ward` VARCHAR(100) NOT NULL,
   `status` ENUM('pending', 'assigned', 'in_progress', 'resolved') DEFAULT 'pending',
+  `is_verified` TINYINT DEFAULT 0,
   `assigned_to` INT DEFAULT NULL,
   `submitted_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
   `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
