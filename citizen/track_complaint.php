@@ -60,13 +60,14 @@ if ($search_id && $search_id > 0) {
         $p_stmt->close();
 
         // Fetch history timeline (exclude resolved status if updated by a Field Officer)
+        // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
         $h_stmt = $conn->prepare(
             "SELECT ch.*, u.full_name AS updated_by_name
              FROM complaint_history ch
-             LEFT JOIN users u ON ch.updated_by = u.user_id
+             LEFT JOIN users u ON ch.user_id = u.user_id
              LEFT JOIN roles r ON u.role_id = r.role_id
-             WHERE ch.complaint_id = ? AND (ch.status != 'resolved' OR (r.role_name != 'Field Officer' AND ch.status = 'resolved'))
-             ORDER BY ch.updated_at ASC"
+             WHERE ch.complaint_id = ? AND (ch.status_to != 'resolved' OR (r.role_name != 'Field Officer' AND ch.status_to = 'resolved'))
+             ORDER BY ch.created_at ASC"
         );
         $h_stmt->bind_param("i", $search_id);
         $h_stmt->execute();
@@ -268,10 +269,10 @@ $conn->close();
                             <?php foreach ($history as $h): ?>
                             <li class="mb-4 position-relative">
                                 <span class="position-absolute translate-middle bg-primary rounded-circle" style="left: -21px; top: 8px; width: 12px; height: 12px;"></span>
-                                <div class="fw-bold text-dark"><?php echo status_label($h['status']); ?></div>
-                                <div class="citizen-small text-muted mb-1"><?php echo date('d M Y, h:i A', strtotime($h['updated_at'])); ?></div>
-                                <?php if (!empty($h['note'])): ?>
-                                <div class="citizen-small bg-light p-2 rounded border mt-1 text-secondary"><?php echo htmlspecialchars($h['note']); ?></div>
+                                <div class="fw-bold text-dark"><?php echo status_label($h['status_to']); ?></div>
+                                <div class="citizen-small text-muted mb-1"><?php echo date('d M Y, h:i A', strtotime($h['created_at'])); ?></div>
+                                <?php if (!empty($h['remarks'])): ?>
+                                <div class="citizen-small bg-light p-2 rounded border mt-1 text-secondary"><?php echo htmlspecialchars($h['remarks']); ?></div>
                                 <?php endif; ?>
                             </li>
                             <?php endforeach; ?>

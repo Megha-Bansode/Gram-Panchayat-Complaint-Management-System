@@ -162,16 +162,17 @@ try {
     // 1. Insert into complaints table
     // Canonical columns from handbook: user_id, category_id, complaint_title, complaint_description, village_ward, status, submitted_at
     // Note: address form field is appended to complaint_description since schema only has village_ward column
+    // Note: complainant_name and mobile_number are stored in users table (referenced by user_id)
     $full_description = $complaint_description;
     if ($address !== '') {
         $full_description .= "\n\nAddress / Landmark: " . $address;
     }
     
     $stmt = $conn->prepare(
-        "INSERT INTO complaints (user_id, category_id, complaint_title, complaint_description, village_ward, status, submitted_at, complainant_name, mobile_number)
-         VALUES (?, ?, ?, ?, ?, 'pending', NOW(), ?, ?)"
+        "INSERT INTO complaints (user_id, category_id, complaint_title, complaint_description, village_ward, status, submitted_at)
+         VALUES (?, ?, ?, ?, ?, 'pending', NOW())"
     );
-    $stmt->bind_param('iisssss', $user_id, $category_id, $complaint_title, $full_description, $village_ward, $complainant_name, $mobile_number);
+    $stmt->bind_param('iisss', $user_id, $category_id, $complaint_title, $full_description, $village_ward);
     $stmt->execute();
     
     $complaint_id = $conn->insert_id;
@@ -182,10 +183,11 @@ try {
     }
     
     // 2. Insert into complaint_photos if image was uploaded
+    // Table columns: complaint_id, photo_path, uploaded_by, photo_type, uploaded_at
     if ($uploaded_photo_path !== null) {
         $photo_stmt = $conn->prepare(
-            "INSERT INTO complaint_photos (complaint_id, photo_type, photo_path, uploaded_by, uploaded_at)
-             VALUES (?, 'initial', ?, ?, NOW())"
+            "INSERT INTO complaint_photos (complaint_id, photo_path, uploaded_by, photo_type, uploaded_at)
+             VALUES (?, ?, ?, 'initial', NOW())"
         );
         $photo_stmt->bind_param('isi', $complaint_id, $uploaded_photo_path, $user_id);
         $photo_stmt->execute();
@@ -193,21 +195,22 @@ try {
     }
     
     // 3. Insert initial history entry into complaint_history (audit trail)
-    // Canonical columns: complaint_id, status, note, updated_by, updated_at
+    // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
     $history_stmt = $conn->prepare(
-        "INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at)
-         VALUES (?, 'pending', 'Complaint registered by citizen', ?, NOW())"
+        "INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks, created_at)
+         VALUES (?, ?, NULL, 'pending', 'Complaint registered by citizen', NOW())"
     );
     $history_stmt->bind_param('ii', $complaint_id, $user_id);
     $history_stmt->execute();
     $history_stmt->close();
     
     // 4. Create notification for the citizen
+    // Table columns: user_id, title, message, is_read, created_at
     $notif_stmt = $conn->prepare(
-        "INSERT INTO notifications (user_id, complaint_id, message, is_read, created_at)
-         VALUES (?, ?, CONCAT('Your complaint has been registered successfully. Complaint ID: ', ?), 0, NOW())"
+        "INSERT INTO notifications (user_id, title, message, is_read, created_at)
+         VALUES (?, 'Complaint Registered', CONCAT('Your complaint has been registered successfully. Complaint ID: ', ?), 0, NOW())"
     );
-    $notif_stmt->bind_param('iii', $user_id, $complaint_id, $complaint_id);
+    $notif_stmt->bind_param('ii', $user_id, $complaint_id);
     $notif_stmt->execute();
     $notif_stmt->close();
     
