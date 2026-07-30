@@ -40,8 +40,13 @@ if (isset($conn) && $conn !== null) {
 
     // 2. Fetch Categories
     $cat_stmt = $conn->query("
+<<<<<<< HEAD
         SELECT c.category_id, c.category_name, c.description,
                (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt
+=======
+        SELECT c.category_id, c.category_name, c.description, 
+               (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt 
+>>>>>>> 92ebabfd8923d81e9bd6bf4dcca57c497f1c7e14
         FROM categories c
     ");
     if ($cat_stmt) {
@@ -61,7 +66,11 @@ if (isset($conn) && $conn !== null) {
     $comp_query = "
         SELECT c.complaint_id, c.category_id, c.assigned_to, c.status, c.complaint_title, c.complaint_description, c.village_ward, c.submitted_at,
                cat.category_name,
+<<<<<<< HEAD
                u_cit.full_name AS complainant_name,
+=======
+               u_cit.full_name AS complainant_name, 
+>>>>>>> 92ebabfd8923d81e9bd6bf4dcca57c497f1c7e14
                u_cit.mobile_number AS complainant_mobile,
                u_off.full_name AS officer_name
         FROM complaints c
