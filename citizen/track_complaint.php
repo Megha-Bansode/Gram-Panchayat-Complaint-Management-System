@@ -59,13 +59,13 @@ if ($search_id && $search_id > 0) {
         }
         $p_stmt->close();
 
-        // Fetch history timeline (exclude resolved status if complaint not verified by Gram Sevak)
+        // Fetch history timeline (exclude resolved status if updated by a Field Officer)
         $h_stmt = $conn->prepare(
             "SELECT ch.*, u.full_name AS updated_by_name
              FROM complaint_history ch
              LEFT JOIN users u ON ch.updated_by = u.user_id
-             JOIN complaints c ON ch.complaint_id = c.complaint_id
-             WHERE ch.complaint_id = ? AND (ch.status != 'resolved' OR c.is_verified = 1)
+             LEFT JOIN roles r ON u.role_id = r.role_id
+             WHERE ch.complaint_id = ? AND (ch.status != 'resolved' OR (r.role_name != 'Field Officer' AND ch.status = 'resolved'))
              ORDER BY ch.updated_at ASC"
         );
         $h_stmt->bind_param("i", $search_id);

@@ -75,6 +75,7 @@ if (isset($conn) && $conn !== null) {
             $cid = (int)$row['complaint_id'];
             
             // Fetch photos
+            $citizen_photo = null;
             $before_photo = null;
             $after_photo = null;
             $photo_stmt = $conn->prepare("SELECT photo_type, photo_path FROM complaint_photos WHERE complaint_id = ?");
@@ -83,17 +84,15 @@ if (isset($conn) && $conn !== null) {
                 $photo_stmt->execute();
                 $photo_res = $photo_stmt->get_result();
                 while ($p_row = $photo_res->fetch_assoc()) {
-                    if (in_array($p_row['photo_type'], ['initial', 'before'])) {
+                    if ($p_row['photo_type'] === 'initial') {
+                        $citizen_photo = '../' . $p_row['photo_path'];
+                    } elseif ($p_row['photo_type'] === 'before') {
                         $before_photo = '../' . $p_row['photo_path'];
                     } elseif ($p_row['photo_type'] === 'after') {
                         $after_photo = '../' . $p_row['photo_path'];
                     }
                 }
                 $photo_stmt->close();
-            }
-            
-            if (empty($before_photo)) {
-                $before_photo = 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=500&auto=format&fit=crop&q=60';
             }
             
             // Fetch latest remarks
@@ -118,7 +117,7 @@ if (isset($conn) && $conn !== null) {
                 'status' => $row['status'],
                 'complaint_title' => $row['complaint_title'],
                 'complaint_description' => $row['complaint_description'],
-                'complaint_image' => $before_photo,
+                'complaint_image' => $citizen_photo,
                 'complainant_name' => $row['complainant_name'] ?? 'Unknown Citizen',
                 'mobile_number' => $row['complainant_mobile'] ?? 'N/A',
                 'village_ward' => $row['village_ward'],

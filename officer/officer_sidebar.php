@@ -77,8 +77,8 @@ if (isset($conn) && $conn !== null && isset($officer_id)) {
   <!-- Section 2: Account Options -->
   <div class="sidebar-section-label mt-4">ACCOUNT OPTIONS</div>
   <ul class="sidebar-menu">
-    <li>
-      <a href="#">
+    <li class="<?php echo ($current_page === 'notifications.php') ? 'active' : ''; ?>">
+      <a href="notifications.php">
         <i class="bi bi-bell"></i>
         <span>Notifications</span>
       </a>
@@ -117,11 +117,7 @@ if (isset($conn) && $conn !== null && isset($officer_id)) {
       </div>
     </div>
     
-    <!-- Center Search Bar Pill -->
-    <div class="navbar-search-pill d-none d-lg-flex align-items-center px-3 py-1.5" style="background: #FFFFFF; border: 1px solid #E2D9CD; border-radius: 50px;">
-      <input type="text" class="form-control border-0 bg-transparent p-0 shadow-none" placeholder="Search complaints..." style="font-size: 0.82rem; width: 170px;">
-      <i class="bi bi-search text-muted ms-2" style="font-size: 0.85rem;"></i>
-    </div>
+
     
     <div class="navbar-right d-flex align-items-center gap-3">
       <!-- Live Date & Clock Display -->

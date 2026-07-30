@@ -595,7 +595,9 @@ function renderViewComplaintsTable() {
             <td><span class="badge bg-surface-custom text-dark">${c.category_name}</span></td>
             <td><span class="fw-semibold text-dark">${c.complaint_title}</span></td>
             <td>
-                <img src="${c.complaint_image}" class="complaint-img-thumb" alt="Complaint Photo" onclick="openLightbox('${c.complaint_image}', '${c.complaint_title}')">
+                ${c.complaint_image ? `
+                    <img src="${c.complaint_image}" class="complaint-img-thumb" alt="Complaint Photo" onclick="openLightbox('${c.complaint_image}', '${c.complaint_title}')" style="cursor: pointer;">
+                ` : '<span class="text-muted small">No Photo</span>'}
             </td>
             <td>${getStatusBadgeHTML(c.status)}</td>
             <td>${c.officer_name}</td>
@@ -682,7 +684,9 @@ function openComplaintModal(complaintId) {
 
             <div class="mb-3">
                 <label class="text-muted small d-block mb-1">Uploaded Evidence Photo</label>
-                <img src="${complaint.complaint_image}" class="img-fluid rounded border" style="max-height: 250px;" alt="Evidence Image">
+                ${complaint.complaint_image ? `
+                    <img src="${complaint.complaint_image}" class="img-fluid rounded border" style="max-height: 250px; cursor: pointer;" alt="Evidence Image" onclick="openLightbox('${complaint.complaint_image}', '${complaint.complaint_title}')">
+                ` : '<div class="p-3 bg-light rounded text-muted small"><i class="bi bi-image me-1"></i>No evidence photo uploaded by citizen.</div>'}
             </div>
 
             <hr>

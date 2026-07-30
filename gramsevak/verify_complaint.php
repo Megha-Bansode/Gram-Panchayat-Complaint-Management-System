@@ -199,13 +199,7 @@ require_once __DIR__ . '/header.php';
             }
         }
     }
-    // Fallback to complaint image or placeholder
-    if (empty($before_photo)) {
-        $before_photo = $complaint['complaint_image'] ?? 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?w=500&auto=format&fit=crop&q=60';
-    }
-    if (empty($after_photo)) {
-        $after_photo = 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=500&auto=format&fit=crop&q=60';
-    }
+    // No fallbacks to Unsplash images
     ?>
 
     <!-- Complaint Overview Details -->
@@ -303,7 +297,14 @@ require_once __DIR__ . '/header.php';
                                 <i class="bi bi-image me-1"></i> Before Photo (Reported Issue)
                             </div>
                             <div class="card-body">
-                                <img src="<?php echo htmlspecialchars($before_photo); ?>" alt="Before Work Photo" class="img-fluid rounded shadow-sm max-h-300" style="max-height: 280px; object-fit: cover;">
+                                <?php if (!empty($before_photo)): ?>
+                                    <img src="<?php echo htmlspecialchars($before_photo); ?>" alt="Before Work Photo" class="img-fluid rounded shadow-sm max-h-300" style="max-height: 280px; object-fit: cover;">
+                                <?php else: ?>
+                                    <div class="p-5 bg-light rounded text-muted">
+                                        <i class="bi bi-camera-fill display-4 d-block mb-2"></i>
+                                        <span>No Before photo uploaded by Field Officer yet.</span>
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>
