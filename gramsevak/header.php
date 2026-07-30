@@ -40,7 +40,7 @@ if (isset($conn) && $conn !== null) {
 
     // 2. Fetch Categories
     $cat_stmt = $conn->query("
-        SELECT c.category_id, c.category_name, c.category_description, 
+        SELECT c.category_id, c.category_name, c.description, 
                (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt 
         FROM categories c
     ");
@@ -49,7 +49,7 @@ if (isset($conn) && $conn !== null) {
             $categories_data[] = [
                 'category_id' => (int)$row['category_id'],
                 'category_name' => $row['category_name'],
-                'description' => $row['category_description'] ?? '',
+                'description' => $row['description'] ?? '',
                 'count' => (int)$row['cnt'],
                 'status' => 'Active'
             ];
@@ -60,8 +60,8 @@ if (isset($conn) && $conn !== null) {
     $comp_query = "
         SELECT c.complaint_id, c.category_id, c.assigned_to, c.status, c.complaint_title, c.complaint_description, c.village_ward, c.submitted_at,
                cat.category_name,
-               IFNULL(c.complainant_name, u_cit.full_name) AS complainant_name, 
-               IFNULL(c.mobile_number, u_cit.mobile_number) AS complainant_mobile,
+               u_cit.full_name AS complainant_name, 
+               u_cit.mobile_number AS complainant_mobile,
                u_off.full_name AS officer_name
         FROM complaints c
         LEFT JOIN categories cat ON c.category_id = cat.category_id
@@ -97,13 +97,13 @@ if (isset($conn) && $conn !== null) {
             
             // Fetch latest remarks
             $remarks = null;
-            $hist_stmt = $conn->prepare("SELECT note FROM complaint_history WHERE complaint_id = ? AND note IS NOT NULL AND note != '' ORDER BY updated_at DESC LIMIT 1");
+            $hist_stmt = $conn->prepare("SELECT remarks FROM complaint_history WHERE complaint_id = ? AND remarks IS NOT NULL AND remarks != '' ORDER BY created_at DESC LIMIT 1");
             if ($hist_stmt) {
                 $hist_stmt->bind_param("i", $cid);
                 $hist_stmt->execute();
                 $hist_res = $hist_stmt->get_result();
                 if ($h_row = $hist_res->fetch_assoc()) {
-                    $remarks = $h_row['note'];
+                    $remarks = $h_row['remarks'];
                 }
                 $hist_stmt->close();
             }
@@ -131,9 +131,9 @@ if (isset($conn) && $conn !== null) {
 
     // 4. Fetch History
     $hist_query = "
-        SELECT h.history_id, h.complaint_id, h.status, h.note, h.updated_at
+        SELECT h.history_id, h.complaint_id, h.status_to AS status, h.remarks AS note, h.created_at AS updated_at
         FROM complaint_history h
-        ORDER BY h.updated_at DESC
+        ORDER BY h.created_at DESC
     ";
     $hist_stmt = $conn->query($hist_query);
     if ($hist_stmt) {
