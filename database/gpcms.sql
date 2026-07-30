@@ -21,14 +21,12 @@ DROP TABLE IF EXISTS `roles`;
 
 -- ----------------------------------------------------------------------------
 -- Table 1: roles
--- Defines user authorization levels (admin, officer, citizen)
+-- Defines user authorization levels matching SRS specifications
 -- ----------------------------------------------------------------------------
 CREATE TABLE `roles` (
   `role_id` INT AUTO_INCREMENT PRIMARY KEY,
-  `role_name` VARCHAR(50) NOT NULL UNIQUE,
-  `description` VARCHAR(255) DEFAULT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `role_name` VARCHAR(50) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------------------------------------------------------
 -- Table 2: users
@@ -37,18 +35,14 @@ CREATE TABLE `roles` (
 CREATE TABLE `users` (
   `user_id` INT AUTO_INCREMENT PRIMARY KEY,
   `full_name` VARCHAR(100) NOT NULL,
-  `email` VARCHAR(100) NOT NULL UNIQUE,
-  `phone` VARCHAR(15) NOT NULL,
-  `password` VARCHAR(255) NOT NULL,
+  `login_id` VARCHAR(100) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
   `role_id` INT NOT NULL,
-  `ward_no` VARCHAR(50) DEFAULT NULL,
-  `designation` VARCHAR(100) DEFAULT NULL,
-  `profile_image` VARCHAR(255) DEFAULT 'default_avatar.png',
-  `status` ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`) ON DELETE RESTRICT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `mobile_number` VARCHAR(15) DEFAULT NULL,
+  `status` ENUM('active', 'inactive') DEFAULT 'active',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`role_id`) REFERENCES `roles`(`role_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------------------------------------------------------
 -- Table 3: categories
@@ -69,25 +63,20 @@ CREATE TABLE `categories` (
 -- ----------------------------------------------------------------------------
 CREATE TABLE `complaints` (
   `complaint_id` INT AUTO_INCREMENT PRIMARY KEY,
-  `complaint_code` VARCHAR(20) NOT NULL UNIQUE,
-  `citizen_id` INT NOT NULL,
+  `user_id` INT NOT NULL,
   `category_id` INT NOT NULL,
-  `title` VARCHAR(255) NOT NULL,
-  `description` TEXT NOT NULL,
-  `ward_no` VARCHAR(50) NOT NULL,
-  `landmark` VARCHAR(255) DEFAULT NULL,
-  `location_address` TEXT DEFAULT NULL,
-  `priority` ENUM('low', 'medium', 'high', 'urgent') NOT NULL DEFAULT 'medium',
-  `status` ENUM('pending', 'assigned', 'in_progress', 'resolved') NOT NULL DEFAULT 'pending',
-  `assigned_officer_id` INT DEFAULT NULL,
-  `assigned_at` DATETIME DEFAULT NULL,
-  `resolved_at` DATETIME DEFAULT NULL,
-  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  FOREIGN KEY (`citizen_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
-  FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`) ON DELETE RESTRICT,
-  FOREIGN KEY (`assigned_officer_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `complaint_title` VARCHAR(150) NOT NULL,
+  `complaint_description` TEXT NOT NULL,
+  `village_ward` VARCHAR(100) NOT NULL,
+  `status` ENUM('pending', 'assigned', 'in_progress', 'resolved') DEFAULT 'pending',
+  `is_verified` TINYINT DEFAULT 0,
+  `assigned_to` INT DEFAULT NULL,
+  `submitted_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE,
+  FOREIGN KEY (`category_id`) REFERENCES `categories`(`category_id`),
+  FOREIGN KEY (`assigned_to`) REFERENCES `users`(`user_id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------------------------------------------------------
 -- Table 5: complaint_photos
@@ -165,19 +154,24 @@ CREATE TABLE `settings` (
 -- ============================================================================
 
 -- 1. Seed Roles
-INSERT INTO `roles` (`role_id`, `role_name`, `description`) VALUES
-(1, 'admin', 'Gram Sevak / System Administrator'),
-(2, 'officer', 'Field Officer / Junior Engineer / Inspector'),
-(3, 'citizen', 'Gram Panchayat Resident / Citizen');
+INSERT INTO `roles` (`role_id`, `role_name`) VALUES
+(1, 'Super Admin'),
+(2, 'Gram Panchayat Admin'),
+(3, 'Field Officer'),
+(4, 'Citizen'),
+(5, 'Gram Sevak')
+ON DUPLICATE KEY UPDATE `role_name` = VALUES(`role_name`);
 
 -- 2. Seed Users
 -- Password for demo accounts: 'password123'
-INSERT INTO `users` (`user_id`, `full_name`, `email`, `phone`, `password`, `role_id`, `ward_no`, `designation`) VALUES
-(1, 'Gram Panchayat Admin', 'admin@gpcms.gov.in', '9876543210', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 1, 'Main Office', 'Gram Sevak'),
-(2, 'Smit Ahirrao', 'smit.officer@gpcms.gov.in', '9876543211', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 2, 'Ward 04', 'Field Officer / Junior Engineer'),
-(3, 'Mukund Thorat', 'mukund.officer@gpcms.gov.in', '9876543212', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 2, 'Ward 02', 'Sanitation Inspector'),
-(4, 'Ramesh Patil', 'ramesh.citizen@gmail.com', '9876543213', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 3, 'Ward 04', NULL),
-(5, 'Suresh Sharma', 'suresh.citizen@gmail.com', '9876543214', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 3, 'Ward 03', NULL);
+INSERT INTO `users` (`full_name`, `login_id`, `password_hash`, `role_id`, `mobile_number`, `status`) VALUES
+('Super Admin User', 'superadmin', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 1, '9876543210', 'active'),
+('Gram Panchayat Admin', 'admin', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 2, '9876543211', 'active'),
+('Smit Ahirrao', 'smit_officer', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 3, '9876543212', 'active'),
+('Mukund Thorat', 'mukund_officer', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 3, '9876543213', 'active'),
+('Ramesh Patil', 'ramesh_citizen', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 4, '9876543214', 'active'),
+('Suresh Sharma', 'suresh_citizen', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 4, '9876543215', 'active'),
+('Gram Sevak User', 'gramsevak', '$2y$10$e0MYzXyjpJS7Pd0RVvHwHe11x34jYVz8d7q.xXJ5sZ9', 5, '9876543216', 'active');
 
 -- 3. Seed Categories
 INSERT INTO `categories` (`category_id`, `category_name`, `description`, `icon_class`) VALUES
@@ -189,17 +183,17 @@ INSERT INTO `categories` (`category_id`, `category_name`, `description`, `icon_c
 (6, 'Public Health & Hygiene', 'Mosquito breeding, fogging request, stray animals, or public toilet maintenance', 'bi-heart-pulse-fill');
 
 -- 4. Seed Complaints
-INSERT INTO `complaints` (`complaint_id`, `complaint_code`, `citizen_id`, `category_id`, `title`, `description`, `ward_no`, `landmark`, `location_address`, `priority`, `status`, `assigned_officer_id`, `assigned_at`, `created_at`) VALUES
-(1, 'CMP-0012', 4, 1, 'Major Water Pipeline Burst Near Primary School', 'Main water pipeline cracked near Ward 4 primary school causing severe water logging on main street.', 'Ward 04', 'Near Primary School Gate', 'Station Road, Ward 04', 'high', 'in_progress', 2, NOW() - INTERVAL 2 DAY, NOW() - INTERVAL 3 DAY),
-(2, 'CMP-0024', 5, 2, 'Deep Pothole Hazard on Market Main Road', 'Dangerous large pothole formed near market square causing traffic congestion and risks to two-wheelers.', 'Ward 03', 'Market Square Circle', 'Market Road, Ward 03', 'urgent', 'in_progress', 2, NOW() - INTERVAL 1 DAY, NOW() - INTERVAL 2 DAY),
-(3, 'CMP-0035', 4, 4, 'Non-functional Street Lights in Residential Area', 'Three street light poles (P-14 to P-16) have been dark for 4 days creating safety concerns at night.', 'Ward 04', 'Opposite Community Hall', 'Shivaji Nagar, Ward 04', 'medium', 'assigned', 2, NOW() - INTERVAL 5 HOUR, NOW() - INTERVAL 1 DAY),
-(4, 'CMP-0041', 5, 3, 'Blocked Drainage & Overflow Near Temple', 'Drain line choked with garbage causing overflow near temple entrance.', 'Ward 02', 'Near Hanuman Temple', 'Temple Lane, Ward 02', 'medium', 'pending', NULL, NULL, NOW() - INTERVAL 2 HOUR);
+INSERT INTO `complaints` (`complaint_id`, `user_id`, `category_id`, `complaint_title`, `complaint_description`, `village_ward`, `status`, `is_verified`, `assigned_to`, `submitted_at`) VALUES
+(1, 5, 1, 'Major Water Pipeline Burst Near Primary School', 'Main water pipeline cracked near Ward 4 primary school causing severe water logging on main street.', 'Ward 04', 'in_progress', 0, 3, NOW() - INTERVAL 3 DAY),
+(2, 6, 2, 'Deep Pothole Hazard on Market Main Road', 'Dangerous large pothole formed near market square causing traffic congestion and risks to two-wheelers.', 'Ward 03', 'in_progress', 0, 3, NOW() - INTERVAL 2 DAY),
+(3, 5, 4, 'Non-functional Street Lights in Residential Area', 'Three street light poles (P-14 to P-16) have been dark for 4 days creating safety concerns at night.', 'Ward 04', 'assigned', 0, 3, NOW() - INTERVAL 1 DAY),
+(4, 6, 3, 'Blocked Drainage & Overflow Near Temple', 'Drain line choked with garbage causing overflow near temple entrance.', 'Ward 02', 'pending', 0, NULL, NOW() - INTERVAL 2 HOUR);
 
 -- 5. Seed Complaint History
 INSERT INTO `complaint_history` (`history_id`, `complaint_id`, `user_id`, `status_from`, `status_to`, `remarks`, `created_at`) VALUES
-(1, 1, 1, 'pending', 'assigned', 'Assigned complaint to Officer Smit Ahirrao for immediate site inspection.', NOW() - INTERVAL 2 DAY),
-(2, 1, 2, 'assigned', 'in_progress', 'Inspected pipeline leakage at Ward 04. Excavation completed, heavy clamp replacement work underway.', NOW() - INTERVAL 1 DAY),
-(3, 2, 2, 'assigned', 'in_progress', 'Initial site inspection completed. Marked area with safety cones and arranged gravel filling team.', NOW() - INTERVAL 12 HOUR);
+(1, 1, 2, 'pending', 'assigned', 'Assigned complaint to Officer Smit Ahirrao for immediate site inspection.', NOW() - INTERVAL 2 DAY),
+(2, 1, 3, 'assigned', 'in_progress', 'Inspected pipeline leakage at Ward 04. Excavation completed, heavy clamp replacement work underway.', NOW() - INTERVAL 1 DAY),
+(3, 2, 3, 'assigned', 'in_progress', 'Initial site inspection completed. Marked area with safety cones and arranged gravel filling team.', NOW() - INTERVAL 12 HOUR);
 
 -- 6. Seed Settings
 INSERT INTO `settings` (`setting_id`, `setting_key`, `setting_value`) VALUES
