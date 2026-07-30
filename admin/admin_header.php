@@ -43,7 +43,8 @@ if (isset($conn) && $conn !== null) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <!-- Google Fonts (Poppins) -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom Admin CSS -->
+    <!-- Custom Base & Admin CSS -->
+    <link rel="stylesheet" href="../css/gramsevak.css">
     <link rel="stylesheet" href="../css/admin.css">
 </head>
 <body>
@@ -71,23 +72,8 @@ if (isset($conn) && $conn !== null) {
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="village_report.php" class="nav-link <?php echo ($active_page === 'village_report') ? 'active' : ''; ?>">
-                            <i class="bi bi-geo-alt-fill"></i> <span>Village Reports</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
                         <a href="../gramsevak/gramsevak_dashboard.php" class="nav-link">
                             <i class="bi bi-arrow-left-right"></i> <span>Gram Sevak Portal</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../gramsevak/complaint_category_management.php" class="nav-link">
-                            <i class="bi bi-grid-3x3-gap-fill"></i> <span>Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../gramsevak/system_settings.php" class="nav-link">
-                            <i class="bi bi-sliders"></i> <span>System Settings</span>
                         </a>
                     </li>
                 </ul>
@@ -132,8 +118,6 @@ if (isset($conn) && $conn !== null) {
                             </div>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="../gramsevak/system_settings.php"><i class="bi bi-gear me-2"></i>Settings</a></li>
-                            <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item text-danger" href="../includes/logout.php" id="dropdownLogout"><i class="bi bi-box-arrow-right me-2"></i>Logout</a></li>
                         </ul>
                     </div>

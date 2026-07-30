@@ -122,10 +122,10 @@ $count_total = array_sum($counts);
         </div>
         
         <div class="d-flex gap-2">
-            <button class="btn btn-danger btn-sm" onclick="printElement('reportTablePrintArea', 'Pending and Resolved Complaints Statement')">
+            <button class="btn btn-danger btn-sm" onclick="exportPDFReport('reportTablePrintArea', 'Pending and Resolved Complaints Statement')">
                 <i class="bi bi-file-earmark-pdf-fill me-1"></i> Export PDF
             </button>
-            <button class="btn btn-success btn-sm" onclick="exportCSVReport('reportDataTable', 'pending_resolved_report.csv')">
+            <button class="btn btn-success btn-sm" onclick="exportExcelReport('reportDataTable', 'pending_resolved_report.xls')">
                 <i class="bi bi-file-earmark-excel-fill me-1"></i> Export Excel
             </button>
             <button class="btn btn-dark btn-sm" onclick="printElement('reportTablePrintArea', 'Pending and Resolved Complaints Statement')">
@@ -155,7 +155,6 @@ $count_total = array_sum($counts);
                             <option value="<?php echo $cat['category_id']; ?>" <?php echo $filter_category === (int)$cat['category_id'] ? 'selected' : ''; ?>>
                                 <?php echo htmlspecialchars($cat['category_name']); ?>
                             </option>
-                        <?php endphp ?>
                         <?php endforeach; ?>
                     </select>
                 </div>

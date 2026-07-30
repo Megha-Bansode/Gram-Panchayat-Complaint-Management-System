@@ -40,13 +40,8 @@ if (isset($conn) && $conn !== null) {
 
     // 2. Fetch Categories
     $cat_stmt = $conn->query("
-<<<<<<< HEAD
-        SELECT c.category_id, c.category_name, c.description,
+        SELECT c.category_id, c.category_name, '' AS description,
                (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt
-=======
-        SELECT c.category_id, c.category_name, c.description, 
-               (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt 
->>>>>>> 92ebabfd8923d81e9bd6bf4dcca57c497f1c7e14
         FROM categories c
     ");
     if ($cat_stmt) {
@@ -65,12 +60,7 @@ if (isset($conn) && $conn !== null) {
     // Note: complainant_name and mobile_number are in users table, not complaints table
     $comp_query = "
         SELECT c.complaint_id, c.category_id, c.assigned_to, c.status, c.complaint_title, c.complaint_description, c.village_ward, c.submitted_at,
-               cat.category_name,
-<<<<<<< HEAD
                u_cit.full_name AS complainant_name,
-=======
-               u_cit.full_name AS complainant_name, 
->>>>>>> 92ebabfd8923d81e9bd6bf4dcca57c497f1c7e14
                u_cit.mobile_number AS complainant_mobile,
                u_off.full_name AS officer_name
         FROM complaints c
@@ -108,7 +98,7 @@ if (isset($conn) && $conn !== null) {
             // Fetch latest remarks
             // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
             $remarks = null;
-            $hist_stmt = $conn->prepare("SELECT remarks FROM complaint_history WHERE complaint_id = ? AND remarks IS NOT NULL AND remarks != '' ORDER BY created_at DESC LIMIT 1");
+            $hist_stmt = $conn->prepare("SELECT note AS remarks FROM complaint_history WHERE complaint_id = ? AND note IS NOT NULL AND note != '' ORDER BY updated_at DESC LIMIT 1");
             if ($hist_stmt) {
                 $hist_stmt->bind_param("i", $cid);
                 $hist_stmt->execute();
@@ -141,11 +131,11 @@ if (isset($conn) && $conn !== null) {
     }
 
     // 4. Fetch History
-    // Table columns: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
+    // Table columns: history_id, complaint_id, status, note, updated_by, updated_at
     $hist_query = "
-        SELECT h.history_id, h.complaint_id, h.status_to AS status, h.remarks AS note, h.created_at AS updated_at
+        SELECT h.history_id, h.complaint_id, h.status, h.note, h.updated_at
         FROM complaint_history h
-        ORDER BY h.created_at DESC
+        ORDER BY h.updated_at DESC
     ";
     $hist_stmt = $conn->query($hist_query);
     if ($hist_stmt) {
@@ -161,9 +151,9 @@ if (isset($conn) && $conn !== null) {
     }
 
     // 5. Fetch Notifications
-    // Table columns: notification_id, user_id, title, message, is_read, created_at
+    // Table columns: notification_id, user_id, complaint_id, message, is_read, created_at
     $notif_query = "
-        SELECT n.notification_id, n.user_id, n.title, n.message, n.is_read, n.created_at
+        SELECT n.notification_id, n.user_id, 'Notification' AS title, n.message, n.is_read, n.created_at
         FROM notifications n
         ORDER BY n.created_at DESC
     ";

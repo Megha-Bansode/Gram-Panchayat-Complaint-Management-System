@@ -56,11 +56,8 @@ if (isset($pdo) && $pdo !== null) {
                         <p class="mb-0 opacity-75">You are logged in as Super Admin. Access portal statistics and generated reports.</p>
                     </div>
                     <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                        <a href="pending_resolved_report.php" class="btn btn-light btn-sm fw-semibold text-dark shadow-sm me-2">
+                        <a href="pending_resolved_report.php" class="btn btn-light btn-sm fw-semibold text-dark shadow-sm">
                             <i class="bi bi-file-earmark-bar-graph me-1"></i> Pending & Resolved Report
-                        </a>
-                        <a href="village_report.php" class="btn btn-outline-light btn-sm fw-semibold">
-                            <i class="bi bi-geo-alt me-1"></i> Village Reports
                         </a>
                     </div>
                 </div>

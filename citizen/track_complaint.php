@@ -60,14 +60,14 @@ if ($search_id && $search_id > 0) {
         $p_stmt->close();
 
         // Fetch history timeline (exclude resolved status if updated by a Field Officer)
-        // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
+        // Table columns: history_id, complaint_id, status, note, updated_by, updated_at
         $h_stmt = $conn->prepare(
-            "SELECT ch.*, u.full_name AS updated_by_name
+            "SELECT ch.history_id, ch.complaint_id, ch.status AS status_to, ch.note AS remarks, ch.updated_at AS created_at, u.full_name AS updated_by_name
              FROM complaint_history ch
-             LEFT JOIN users u ON ch.user_id = u.user_id
+             LEFT JOIN users u ON ch.updated_by = u.user_id
              LEFT JOIN roles r ON u.role_id = r.role_id
-             WHERE ch.complaint_id = ? AND (ch.status_to != 'resolved' OR (r.role_name != 'Field Officer' AND ch.status_to = 'resolved'))
-             ORDER BY ch.created_at ASC"
+             WHERE ch.complaint_id = ? AND (ch.status != 'resolved' OR (r.role_name != 'Field Officer' AND ch.status = 'resolved'))
+             ORDER BY ch.updated_at ASC"
         );
         $h_stmt->bind_param("i", $search_id);
         $h_stmt->execute();

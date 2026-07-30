@@ -195,22 +195,22 @@ try {
     }
     
     // 3. Insert initial history entry into complaint_history (audit trail)
-    // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
+    // Table columns: complaint_id, status, note, updated_by, updated_at
     $history_stmt = $conn->prepare(
-        "INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks, created_at)
-         VALUES (?, ?, NULL, 'pending', 'Complaint registered by citizen', NOW())"
+        "INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at)
+         VALUES (?, 'pending', 'Complaint registered by citizen', ?, NOW())"
     );
     $history_stmt->bind_param('ii', $complaint_id, $user_id);
     $history_stmt->execute();
     $history_stmt->close();
     
     // 4. Create notification for the citizen
-    // Table columns: user_id, title, message, is_read, created_at
+    // Table columns: user_id, complaint_id, message, is_read, created_at
     $notif_stmt = $conn->prepare(
-        "INSERT INTO notifications (user_id, title, message, is_read, created_at)
-         VALUES (?, 'Complaint Registered', CONCAT('Your complaint has been registered successfully. Complaint ID: ', ?), 0, NOW())"
+        "INSERT INTO notifications (user_id, complaint_id, message, is_read, created_at)
+         VALUES (?, ?, CONCAT('Your complaint has been registered successfully. Complaint ID: ', ?), 0, NOW())"
     );
-    $notif_stmt->bind_param('ii', $user_id, $complaint_id);
+    $notif_stmt->bind_param('iii', $user_id, $complaint_id, $complaint_id);
     $notif_stmt->execute();
     $notif_stmt->close();
     
