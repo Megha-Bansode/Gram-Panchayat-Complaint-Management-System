@@ -60,12 +60,13 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST') {
                 $uStmt->close();
 
                 // Insert into complaint_history
+                // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
                 if (!empty($note_input)) {
                     $hStmt = $conn->prepare("
-                        INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at)
-                        VALUES (?, ?, ?, ?, NOW())
+                        INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks, created_at)
+                        VALUES (?, ?, ?, ?, ?, NOW())
                     ");
-                    $hStmt->bind_param('issi', $real_complaint_id, $status_input, $note_input, $officer_id);
+                    $hStmt->bind_param('iissi', $real_complaint_id, $officer_id, $old_status, $status_input, $note_input);
                     $hStmt->execute();
                     $hStmt->close();
                 }

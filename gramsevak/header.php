@@ -40,8 +40,8 @@ if (isset($conn) && $conn !== null) {
 
     // 2. Fetch Categories
     $cat_stmt = $conn->query("
-        SELECT c.category_id, c.category_name, c.category_description, 
-               (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt 
+        SELECT c.category_id, c.category_name, c.description,
+               (SELECT COUNT(*) FROM complaints co WHERE co.category_id = c.category_id) AS cnt
         FROM categories c
     ");
     if ($cat_stmt) {
@@ -49,7 +49,7 @@ if (isset($conn) && $conn !== null) {
             $categories_data[] = [
                 'category_id' => (int)$row['category_id'],
                 'category_name' => $row['category_name'],
-                'description' => $row['category_description'] ?? '',
+                'description' => $row['description'] ?? '',
                 'count' => (int)$row['cnt'],
                 'status' => 'Active'
             ];
@@ -57,11 +57,12 @@ if (isset($conn) && $conn !== null) {
     }
 
     // 3. Fetch Complaints
+    // Note: complainant_name and mobile_number are in users table, not complaints table
     $comp_query = "
         SELECT c.complaint_id, c.category_id, c.assigned_to, c.status, c.complaint_title, c.complaint_description, c.village_ward, c.submitted_at,
                cat.category_name,
-               IFNULL(c.complainant_name, u_cit.full_name) AS complainant_name, 
-               IFNULL(c.mobile_number, u_cit.mobile_number) AS complainant_mobile,
+               u_cit.full_name AS complainant_name,
+               u_cit.mobile_number AS complainant_mobile,
                u_off.full_name AS officer_name
         FROM complaints c
         LEFT JOIN categories cat ON c.category_id = cat.category_id
@@ -96,14 +97,15 @@ if (isset($conn) && $conn !== null) {
             }
             
             // Fetch latest remarks
+            // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
             $remarks = null;
-            $hist_stmt = $conn->prepare("SELECT note FROM complaint_history WHERE complaint_id = ? AND note IS NOT NULL AND note != '' ORDER BY updated_at DESC LIMIT 1");
+            $hist_stmt = $conn->prepare("SELECT remarks FROM complaint_history WHERE complaint_id = ? AND remarks IS NOT NULL AND remarks != '' ORDER BY created_at DESC LIMIT 1");
             if ($hist_stmt) {
                 $hist_stmt->bind_param("i", $cid);
                 $hist_stmt->execute();
                 $hist_res = $hist_stmt->get_result();
                 if ($h_row = $hist_res->fetch_assoc()) {
-                    $remarks = $h_row['note'];
+                    $remarks = $h_row['remarks'];
                 }
                 $hist_stmt->close();
             }
@@ -130,10 +132,11 @@ if (isset($conn) && $conn !== null) {
     }
 
     // 4. Fetch History
+    // Table columns: history_id, complaint_id, user_id, status_from, status_to, remarks, created_at
     $hist_query = "
-        SELECT h.history_id, h.complaint_id, h.status, h.note, h.updated_at
+        SELECT h.history_id, h.complaint_id, h.status_to AS status, h.remarks AS note, h.created_at AS updated_at
         FROM complaint_history h
-        ORDER BY h.updated_at DESC
+        ORDER BY h.created_at DESC
     ";
     $hist_stmt = $conn->query($hist_query);
     if ($hist_stmt) {
@@ -149,8 +152,9 @@ if (isset($conn) && $conn !== null) {
     }
 
     // 5. Fetch Notifications
+    // Table columns: notification_id, user_id, title, message, is_read, created_at
     $notif_query = "
-        SELECT n.notification_id, n.complaint_id, n.message, n.is_read, n.created_at
+        SELECT n.notification_id, n.user_id, n.title, n.message, n.is_read, n.created_at
         FROM notifications n
         ORDER BY n.created_at DESC
     ";
@@ -159,7 +163,8 @@ if (isset($conn) && $conn !== null) {
         while ($row = $notif_stmt->fetch_assoc()) {
             $notifications_data[] = [
                 'notification_id' => (int)$row['notification_id'],
-                'complaint_id' => (string)$row['complaint_id'],
+                'user_id' => (int)$row['user_id'],
+                'title' => $row['title'],
                 'message' => $row['message'],
                 'is_read' => (int)$row['is_read'],
                 'timestamp' => date('d M Y, h:i A', strtotime($row['created_at']))

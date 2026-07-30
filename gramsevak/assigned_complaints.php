@@ -33,8 +33,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
                 $stmt->execute([$officer_id, $complaint_id]);
 
                 // Record in complaint_history table
-                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, status, note, updated_by, updated_at) VALUES (?, 'assigned', ?, ?, NOW())");
-                $stmt_hist->execute([$complaint_id, $remarks, $_SESSION['user_id']]);
+                // Table columns: complaint_id, user_id, status_from, status_to, remarks, created_at
+                $stmt_hist = $pdo->prepare("INSERT INTO complaint_history (complaint_id, user_id, status_from, status_to, remarks, created_at) VALUES (?, ?, 'pending', 'assigned', ?, NOW())");
+                $stmt_hist->execute([$complaint_id, $_SESSION['user_id'], $remarks]);
 
                 // Fetch citizen user_id and insert notification
                 $user_stmt = $pdo->prepare("SELECT user_id FROM complaints WHERE complaint_id = ?");
@@ -43,8 +44,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST' && isset($_POST['action']) 
 
                 if ($citizen_id) {
                     $notif_msg = "Your complaint (ID: " . $complaint_id . ") has been assigned to a Field Officer.";
-                    $notif_ins = $pdo->prepare("INSERT INTO notifications (user_id, complaint_id, message, is_read, created_at) VALUES (?, ?, ?, 0, NOW())");
-                    $notif_ins->execute([$citizen_id, $complaint_id, $notif_msg]);
+                    // Table columns: notification_id, user_id, title, message, is_read, created_at
+                    $notif_ins = $pdo->prepare("INSERT INTO notifications (user_id, title, message, is_read, created_at) VALUES (?, 'Complaint Assigned', ?, 0, NOW())");
+                    $notif_ins->execute([$citizen_id, $notif_msg]);
                 }
 
                 $pdo->commit();
